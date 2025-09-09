@@ -1,0 +1,2 @@
+public clas java{
+}
