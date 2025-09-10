@@ -20,6 +20,7 @@ public class MedicamentoController {
         this.medicamentoService = medicamentoService;
     }
 
+
     @PostMapping("/crear")
     public ResponseEntity<Medicamento> crearMedicamento(@RequestBody Medicamento medicamento) {
         Medicamento m = medicamentoService.crearMedicamento(medicamento);
