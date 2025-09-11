@@ -11,6 +11,6 @@ public class MiController {
     @GetMapping("/")
     public String pruebas(){
 
-        return "index";
+        return "p";
     }
 }

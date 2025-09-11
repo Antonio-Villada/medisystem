@@ -4,7 +4,145 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSystem</title>
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+          background-color: #1E3A5F;
+          color: white;
+          padding: 20px;
+        }
+
+        nav ul {
+          display: flex;
+          list-style: none;
+          gap: 20px;
+          justify-content: center;
+        }
+
+        nav a {
+          color: white;
+          text-decoration: none;
+          font-weight: bold;
+          padding: 5px 10px;
+          transition: background 0.3s;
+        }
+
+        nav a:hover {
+          background-color: #4A90E2;
+          border-radius: 5px;
+        }
+
+        /* Sección principal */
+        section {
+          background-color: #4A90E2;
+          color: white;
+          padding: 60px 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+
+        section h1 {
+          font-size: 2.5rem;
+          margin-bottom: 20px;
+        }
+
+        section p {
+          max-width: 700px;
+          font-size: 1.2rem;
+        }
+
+        /* Article con funcionalidades */
+        article {
+          background-color: #f2f2f2;
+          color: #333;
+          padding: 40px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          align-items: center;
+          text-align: center;
+        }
+
+        article h2 {
+          font-size: 2rem;
+          margin-bottom: 10px;
+        }
+
+        article ul {
+          list-style: disc;
+          padding-left: 20px;
+          max-width: 700px;
+          text-align: left;
+        }
+
+        article ul li {
+          margin-bottom: 10px;
+        }
+
+        /* Footer opcional */
+        footer {
+          background-color: #1E3A5F;
+          color: white;
+          text-align: center;
+          padding: 15px;
+        }
+    </style>
+</head>
 <body>
-    <p> hola </p>
+
+<header>
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#funcionalidades">Funcionalidades</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section id="inicio">
+    <h1>MediSystem</h1>
+    <p>Aplicación web desarrollada en Java Spring Boot para la gestión de citas médicas. Permite a los pacientes agendar, modificar y cancelar citas, mientras los médicos administran horarios y especialidades. Incluye panel de administración y base de datos para un control seguro y eficiente.</p>
+</section>
+
+<article id="funcionalidades">
+    <h2>Funcionalidades principales</h2>
+    <ul>
+        <li>Gestión de citas médicas para pacientes y médicos.</li>
+        <li>Panel de administración para supervisar horarios y especialidades.</li>
+        <li>Base de datos segura y eficiente para el control de información.</li>
+        <li>Interfaz intuitiva y responsiva con navegación fácil.</li>
+    </ul>
+</article>
+
+<footer>
+    &copy; 2025 MediSystem. Todos los derechos reservados.
+</footer>
+
 </body>
+</html>
+
 </html>
