@@ -4,7 +4,6 @@ import medisystem.avanzada.uq.citas_service.entities.Medico;
 import medisystem.avanzada.uq.citas_service.exceptions.MedicoNoEncontradoException;
 import medisystem.avanzada.uq.citas_service.repositories.MedicoRepository;
 import medisystem.avanzada.uq.citas_service.services.MedicoService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +40,8 @@ public class MedicoServiceImpl implements MedicoService {
     public Medico putMedico(Long idMedico, Medico medico) {
         return medicoRepository.findById(idMedico)
                 .map(m -> {
-                    m.setNombre(medico.getNombre());
+                    m.setEspecialidad(medico.getEspecialidad());
+                    m.setNombreMedico(medico.getNombreMedico());
                     m.setCorreo(medico.getCorreo());
                     return medicoRepository.save(m);
                 })
@@ -54,7 +54,8 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public void deleteMedico(Long idMedico) {
         Medico medico = medicoRepository.findById(idMedico)
-                .orElseThrow(() -> new MedicoNoEncontradoException("Medico con ID " + idMedico + " no encontrado"));
+                .orElseThrow(() -> new MedicoNoEncontradoException
+                        ("Medico con ID " + idMedico + " no encontrado"));
         medicoRepository.delete(medico);
     }
 
@@ -65,14 +66,17 @@ public class MedicoServiceImpl implements MedicoService {
                 .orElseThrow(() -> new RuntimeException("Medico no encontrado con id: " + idMedico));
 
         // Actualizar solo los campos que recibes en el JSON
-        if (medico.getNombre() != null) {
-            existente.setNombre(medico.getNombre());
+        if (medico.getNombreMedico() != null) {
+            existente.setNombreMedico(medico.getNombreMedico());
         }
         if (medico.getTelefono() != null) {
             existente.setTelefono(medico.getTelefono());
         }
         if(medico.getCorreo() != null){
             existente.setCorreo(medico.getCorreo());
+        }
+        if(medico.getEspecialidad() != null){
+            existente.setEspecialidad(medico.getEspecialidad());
         }
         return medicoRepository.save(existente);
     }

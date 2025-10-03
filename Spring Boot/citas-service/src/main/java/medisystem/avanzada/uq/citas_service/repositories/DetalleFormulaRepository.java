@@ -1,9 +1,9 @@
 package medisystem.avanzada.uq.citas_service.repositories;
 
-import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MedicamentoRepository extends JpaRepository<Medicamento, Integer> {
+public interface DetalleFormulaRepository extends JpaRepository<DetalleFormula, Integer> {
 }

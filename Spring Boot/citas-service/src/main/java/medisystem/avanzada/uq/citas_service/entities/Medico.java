@@ -12,9 +12,10 @@ public class Medico {
     public Medico() {
     }
 
-    public Medico(Long idMedico, String nombre, String telefono, String correo) {
+    public Medico(Long idMedico, String nombreMedico, Especialidad especialidad, String telefono, String correo) {
         this.idMedico = idMedico;
-        this.nombre = nombre;
+        this.nombreMedico = nombreMedico;
+        this.especialidad = especialidad;
         this.telefono = telefono;
         this.correo = correo;
     }
@@ -23,8 +24,11 @@ public class Medico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMedico;
 
-    private String nombre;
-    //private Especialidad especialidad;
+    private String nombreMedico;
+
+    @ManyToOne
+    @JoinColumn(name = "especialidad_id") // nombre de la FK en la tabla Medico
+    private Especialidad especialidad;
     private String telefono;
     private String correo;
 
@@ -36,12 +40,20 @@ public class Medico {
         this.idMedico = idMedico;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreMedico() {
+        return nombreMedico;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreMedico(String nombreMedico) {
+        this.nombreMedico = nombreMedico;
+    }
+
+    public Especialidad getEspecialidad() {
+        return especialidad;
+    }
+
+    public void setEspecialidad(Especialidad especialidad) {
+        this.especialidad = especialidad;
     }
 
     public String getTelefono() {
