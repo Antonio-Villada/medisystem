@@ -11,15 +11,16 @@ public class Formula {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idFormula;
 
-    private int idCita;
-
+    @OneToOne
+    @JoinColumn(name = "id_cita", nullable = false)
+    private Cita cita;
     private LocalDate fecha;
 
     public Formula() {}
 
-    public Formula(int idFormula, int idCita, LocalDate fecha) {
+    public Formula(int idFormula, Cita cita, LocalDate fecha) {
         this.idFormula = idFormula;
-        this.idCita = idCita;
+        this.cita = cita;
         this.fecha = fecha;
     }
 
@@ -31,12 +32,12 @@ public class Formula {
         this.idFormula = idFormula;
     }
 
-    public int getIdCita() {
-        return idCita;
+    public Cita getCita() {
+        return cita;
     }
 
-    public void setIdCita(int idCita) {
-        this.idCita = idCita;
+    public void setCita(Cita cita) {
+        this.cita = cita;
     }
 
     public LocalDate getFecha() {

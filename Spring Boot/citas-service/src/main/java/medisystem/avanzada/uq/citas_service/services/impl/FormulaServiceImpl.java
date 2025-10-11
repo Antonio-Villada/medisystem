@@ -36,7 +36,7 @@ public class FormulaServiceImpl implements FormulaService {
     @Override
     public Formula update(int id, Formula formula) {
         Formula existente = findById(id);
-        existente.setIdCita(formula.getIdCita());
+        existente.setCita(formula.getCita());
         existente.setFecha(formula.getFecha());
         return formulaRepository.save(existente);
     }

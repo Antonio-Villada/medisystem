@@ -2,6 +2,7 @@ package medisystem.avanzada.uq.citas_service.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "citas")
@@ -9,33 +10,43 @@ public class Cita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCita; // int(11)
+    private Integer idCita;
 
     @Column(nullable = false)
-    private LocalDate fecha; // date
+    private LocalDate fecha;
 
-    @Column(length = 20, nullable = false)
-    private String idMedico; // varchar(20)
+    @Column(nullable = false)
+    private LocalTime horaInicio;
 
-    @Column(length = 20, nullable = false)
-    private String idPaciente; // varchar(20)
+    @Column(nullable = false)
+    private LocalTime horaFin;
+
+    @ManyToOne
+    @JoinColumn(name = "id_medico", nullable = false)
+    private Medico medico;
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente", nullable = false)
+    private Paciente paciente;
 
     @Lob
-    private String observaciones; // text
+    private String observaciones;
 
-    @Column(nullable = false)
-    private Integer idFormula; // int(11)
+    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL)
+    private Formula formula;
 
-    public Cita() {
-    }
+    public Cita() {}
 
-    public Cita(Integer idCita, LocalDate fecha, String idMedico, String idPaciente, String observaciones, Integer idFormula) {
+    public Cita(Integer idCita, LocalDate fecha, LocalTime horaInicio,Medico medico, Paciente paciente,
+                String observaciones, Formula formula) {
         this.idCita = idCita;
         this.fecha = fecha;
-        this.idMedico = idMedico;
-        this.idPaciente = idPaciente;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaInicio.plusHours(1);
+        this.medico = medico;
+        this.paciente = paciente;
         this.observaciones = observaciones;
-        this.idFormula = idFormula;
+        this.formula = formula;
     }
 
     public Integer getIdCita() {
@@ -54,20 +65,36 @@ public class Cita {
         this.fecha = fecha;
     }
 
-    public String getIdMedico() {
-        return idMedico;
+    public LocalTime getHoraInicio() {
+        return horaInicio;
     }
 
-    public void setIdMedico(String idMedico) {
-        this.idMedico = idMedico;
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
     }
 
-    public String getIdPaciente() {
-        return idPaciente;
+    public LocalTime getHoraFin() {
+        return horaFin;
     }
 
-    public void setIdPaciente(String idPaciente) {
-        this.idPaciente = idPaciente;
+    public void setHoraFin(LocalTime horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
     public String getObservaciones() {
@@ -78,11 +105,11 @@ public class Cita {
         this.observaciones = observaciones;
     }
 
-    public Integer getIdFormula() {
-        return idFormula;
+    public Formula getFormula() {
+        return formula;
     }
 
-    public void setIdFormula(Integer idFormula) {
-        this.idFormula = idFormula;
+    public void setFormula(Formula formula) {
+        this.formula = formula;
     }
 }

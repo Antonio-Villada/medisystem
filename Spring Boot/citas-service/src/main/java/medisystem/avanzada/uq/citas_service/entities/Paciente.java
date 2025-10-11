@@ -12,11 +12,14 @@ public class Paciente {
     private String nombrePaciente;
     private Integer ciudad;
     private String correo;
-    private Integer eps;
+    @ManyToOne
+    @JoinColumn(name = "id_eps", nullable = false)
+    private Eps eps;
+
     public Paciente() {
     }
 
-    public Paciente(String idPaciente, String nombrePaciente, Integer ciudad, String correo, Integer eps) {
+    public Paciente(String idPaciente, String nombrePaciente, Integer ciudad, String correo, Eps eps) {
         this.idPaciente = idPaciente;
         this.nombrePaciente = nombrePaciente;
         this.ciudad = ciudad;
@@ -56,11 +59,11 @@ public class Paciente {
         this.correo = correo;
     }
 
-    public Integer getEps() {
+    public Eps getEps() {
         return eps;
     }
 
-    public void setEps(Integer eps) {
+    public void setEps(Eps eps) {
         this.eps = eps;
     }
 }
