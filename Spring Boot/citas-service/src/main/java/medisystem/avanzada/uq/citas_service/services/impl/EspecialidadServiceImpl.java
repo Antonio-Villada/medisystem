@@ -53,16 +53,29 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         especialidadRepository.delete(especialidad);
     }
 
-    @Override
-    public Especialidad pachEspecialidad(Long idEspecialidad, Especialidad especialidad) {
+//    @Override
+//    public Especialidad pachEspecialidad(Long idEspecialidad, Especialidad especialidad) {
+//
+//        Especialidad existente = especialidadRepository
+//                .findById(idEspecialidad).orElseThrow(()->
+//                        new EspecialidadNoEncontradaException
+//                                ( "Especialidad por id " + idEspecialidad + "no encontrada" ));
+//        if (especialidad.getNombreEspecialidad() != null) {
+//            existente.setNombreEspecialidad(especialidad.getNombreEspecialidad());
+//        }
+//        return especialidadRepository.save(existente);
+//    }
 
-        Especialidad existente = especialidadRepository
-                .findById(idEspecialidad).orElseThrow(()->
-                        new EspecialidadNoEncontradaException
-                                ( "Especialidad por id " + idEspecialidad + "no encontrada" ));
-        if (especialidad.getNombreEspecialidad() != null) {
-            existente.setNombreEspecialidad(especialidad.getNombreEspecialidad());
+    public Especialidad pachEspecialidad(Long id, Especialidad parcial) {
+        Especialidad existente = especialidadRepository.findById(id)
+                .orElseThrow(() -> new EspecialidadNoEncontradaException("No se encontró especialidad con id " + id));
+
+        // Solo actualizar si el valor no es null
+        if (parcial.getNombreEspecialidad() != null) {
+            existente.setNombreEspecialidad(parcial.getNombreEspecialidad());
         }
+
         return especialidadRepository.save(existente);
     }
+
 }

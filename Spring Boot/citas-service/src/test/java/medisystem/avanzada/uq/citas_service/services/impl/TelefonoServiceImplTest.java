@@ -5,117 +5,214 @@ import medisystem.avanzada.uq.citas_service.exceptions.TelefonoNoEncontradoExcep
 import medisystem.avanzada.uq.citas_service.repositories.TelefonoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@Transactional
+@Rollback
 class TelefonoServiceImplTest {
 
-    @Mock
-    private TelefonoRepository telefonoRepository;
-
-    @InjectMocks
+    @Autowired
     private TelefonoServiceImpl telefonoService;
 
+    @Autowired
+    private TelefonoRepository telefonoRepository;
+
     private Telefono telefono1;
+    private Telefono telefono2;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        telefono1 = new Telefono(1, "3201234567");
+        // Limpiar datos de prueba existentes
+        telefonoRepository.deleteAll();
+
+        // Crear y guardar nuevos teléfonos de prueba
+        telefono1 = new Telefono();
+        telefono1.setTelefono("123456789");
+        telefono1 = telefonoRepository.save(telefono1);
+
+        telefono2 = new Telefono();
+        telefono2.setTelefono("987654321");
+        telefono2 = telefonoRepository.save(telefono2);
     }
 
     @Test
-    void testGetTelefonos() {
-        when(telefonoRepository.findAll()).thenReturn(List.of(telefono1));
+    void getTelefonos_ShouldReturnAllTelefonos() {
+        // When
+        List<Telefono> result = telefonoService.getTelefonos();
 
-        List<Telefono> telefonos = telefonoService.getTelefonos();
-
-        assertEquals(1, telefonos.size());
-        assertEquals("3201234567", telefonos.get(0).getTelefono());
-        verify(telefonoRepository, times(1)).findAll();
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(t -> t.getTelefono().equals("123456789")));
+        assertTrue(result.stream().anyMatch(t -> t.getTelefono().equals("987654321")));
     }
 
     @Test
-    void testGetTelefonoById_Encontrado() {
-        when(telefonoRepository.findById(1)).thenReturn(Optional.of(telefono1));
+    void getTelefonoById_WithValidId_ShouldReturnTelefono() {
+        // When
+        Telefono result = telefonoService.getTelefonoById(telefono1.getIdTelefono());
 
-        Telefono encontrado = telefonoService.getTelefonoById(1);
-
-        assertEquals("3201234567", encontrado.getTelefono());
-        verify(telefonoRepository).findById(1);
+        // Then
+        assertNotNull(result);
+        assertEquals(telefono1.getIdTelefono(), result.getIdTelefono());
+        assertEquals("123456789", result.getTelefono());
     }
 
     @Test
-    void testGetTelefonoById_NoEncontrado() {
-        when(telefonoRepository.findById(99)).thenReturn(Optional.empty());
+    void getTelefonoById_WithInvalidId_ShouldThrowException() {
+        // Given
+        Integer invalidId = 999999; // ID que no existe
 
-        assertThrows(TelefonoNoEncontradoException.class, () -> telefonoService.getTelefonoById(99));
-        verify(telefonoRepository).findById(99);
+        // When & Then
+        assertThrows(TelefonoNoEncontradoException.class,
+                () -> telefonoService.getTelefonoById(invalidId));
     }
 
     @Test
-    void testPostTelefono() {
-        when(telefonoRepository.save(telefono1)).thenReturn(telefono1);
+    void postTelefono_ShouldSaveAndReturnTelefono() {
+        // Given
+        Telefono nuevoTelefono = new Telefono();
+        nuevoTelefono.setTelefono("555555555");
 
-        Telefono nuevo = telefonoService.postTelefono(telefono1);
+        // When
+        Telefono result = telefonoService.postTelefono(nuevoTelefono);
 
-        assertEquals("3201234567", nuevo.getTelefono());
-        verify(telefonoRepository).save(telefono1);
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getIdTelefono());
+        assertEquals("555555555", result.getTelefono());
+
+        // Verificar que se guardó en la base de datos
+        Telefono savedTelefono = telefonoRepository.findById(result.getIdTelefono()).orElse(null);
+        assertNotNull(savedTelefono);
+        assertEquals("555555555", savedTelefono.getTelefono());
     }
 
     @Test
-    void testPutTelefono_Existente() {
-        Telefono actualizado = new Telefono(null, "3109999999");
-        when(telefonoRepository.findById(1)).thenReturn(Optional.of(telefono1));
-        when(telefonoRepository.save(any(Telefono.class))).thenReturn(telefono1);
+    void putTelefono_WithValidId_ShouldUpdateTelefono() {
+        // Given
+        Telefono telefonoActualizado = new Telefono();
+        telefonoActualizado.setTelefono("999999999");
 
-        Telefono resultado = telefonoService.putTelefono(1, actualizado);
+        // When
+        Telefono result = telefonoService.putTelefono(telefono1.getIdTelefono(), telefonoActualizado);
 
-        assertEquals("3109999999", resultado.getTelefono());
-        verify(telefonoRepository).save(telefono1);
+        // Then
+        assertNotNull(result);
+        assertEquals(telefono1.getIdTelefono(), result.getIdTelefono());
+        assertEquals("999999999", result.getTelefono());
+
+        // Verificar que se actualizó en la base de datos
+        Telefono updatedTelefono = telefonoRepository.findById(telefono1.getIdTelefono()).orElse(null);
+        assertNotNull(updatedTelefono);
+        assertEquals("999999999", updatedTelefono.getTelefono());
     }
 
     @Test
-    void testPutTelefono_NoExistente() {
-        when(telefonoRepository.findById(5)).thenReturn(Optional.empty());
+    void putTelefono_WithInvalidId_ShouldThrowException() {
+        // Given
+        Integer invalidId = 999999;
+        Telefono telefonoActualizado = new Telefono();
+        telefonoActualizado.setTelefono("999999999");
 
-        assertThrows(TelefonoNoEncontradoException.class, () -> telefonoService.putTelefono(5, telefono1));
-        verify(telefonoRepository).findById(5);
+        // When & Then
+        assertThrows(TelefonoNoEncontradoException.class,
+                () -> telefonoService.putTelefono(invalidId, telefonoActualizado));
     }
 
     @Test
-    void testDeleteTelefono_Existente() {
-        when(telefonoRepository.findById(1)).thenReturn(Optional.of(telefono1));
+    void deleteTelefono_WithValidId_ShouldDeleteTelefono() {
+        // When
+        telefonoService.deleteTelefono(telefono1.getIdTelefono());
 
-        telefonoService.deleteTelefono(1);
+        // Then
+        assertFalse(telefonoRepository.existsById(telefono1.getIdTelefono()));
 
-        verify(telefonoRepository).delete(telefono1);
+        // Verificar que el otro teléfono sigue existiendo
+        assertTrue(telefonoRepository.existsById(telefono2.getIdTelefono()));
     }
 
     @Test
-    void testDeleteTelefono_NoExistente() {
-        when(telefonoRepository.findById(10)).thenReturn(Optional.empty());
+    void deleteTelefono_WithInvalidId_ShouldThrowException() {
+        // Given
+        Integer invalidId = 999999;
 
-        assertThrows(TelefonoNoEncontradoException.class, () -> telefonoService.deleteTelefono(10));
-        verify(telefonoRepository).findById(10);
+        // When & Then
+        assertThrows(TelefonoNoEncontradoException.class,
+                () -> telefonoService.deleteTelefono(invalidId));
     }
 
     @Test
-    void testPatchTelefono() {
-        Telefono parcial = new Telefono(null, "3115555555");
-        when(telefonoRepository.findById(1)).thenReturn(Optional.of(telefono1));
-        when(telefonoRepository.save(any(Telefono.class))).thenReturn(telefono1);
+    void patchTelefono_WithValidIdAndTelefono_ShouldPartiallyUpdateTelefono() {
+        // Given
+        Telefono telefonoParcial = new Telefono();
+        telefonoParcial.setTelefono("111111111");
 
-        Telefono resultado = telefonoService.patchTelefono(1, parcial);
+        // When
+        Telefono result = telefonoService.patchTelefono(telefono1.getIdTelefono(), telefonoParcial);
 
-        assertEquals("3115555555", resultado.getTelefono());
-        verify(telefonoRepository).save(telefono1);
+        // Then
+        assertNotNull(result);
+        assertEquals(telefono1.getIdTelefono(), result.getIdTelefono());
+        assertEquals("111111111", result.getTelefono());
+
+        // Verificar que se actualizó en la base de datos
+        Telefono updatedTelefono = telefonoRepository.findById(telefono1.getIdTelefono()).orElse(null);
+        assertNotNull(updatedTelefono);
+        assertEquals("111111111", updatedTelefono.getTelefono());
+    }
+
+    @Test
+    void patchTelefono_WithValidIdAndNullTelefono_ShouldNotUpdateTelefono() {
+        // Given
+        Telefono telefonoParcial = new Telefono(); // telefono es null
+
+        // When
+        Telefono result = telefonoService.patchTelefono(telefono1.getIdTelefono(), telefonoParcial);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(telefono1.getIdTelefono(), result.getIdTelefono());
+        assertEquals("123456789", result.getTelefono()); // No debería cambiar
+
+        // Verificar en base de datos
+        Telefono unchangedTelefono = telefonoRepository.findById(telefono1.getIdTelefono()).orElse(null);
+        assertNotNull(unchangedTelefono);
+        assertEquals("123456789", unchangedTelefono.getTelefono());
+    }
+
+    @Test
+    void patchTelefono_WithInvalidId_ShouldThrowException() {
+        // Given
+        Integer invalidId = 999999;
+        Telefono telefonoParcial = new Telefono();
+        telefonoParcial.setTelefono("111111111");
+
+        // When & Then
+        assertThrows(TelefonoNoEncontradoException.class,
+                () -> telefonoService.patchTelefono(invalidId, telefonoParcial));
+    }
+
+    @Test
+    void patchTelefono_WithEmptyTelefono_ShouldUpdateTelefono() {
+        // Given
+        Telefono telefonoParcial = new Telefono();
+        telefonoParcial.setTelefono(""); // String vacío
+
+        // When
+        Telefono result = telefonoService.patchTelefono(telefono1.getIdTelefono(), telefonoParcial);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(telefono1.getIdTelefono(), result.getIdTelefono());
+        assertEquals("", result.getTelefono());
     }
 }
