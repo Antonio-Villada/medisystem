@@ -7,6 +7,7 @@ import medisystem.avanzada.uq.citas_service.services.PacienteService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service("dbPacienteService")
 public class PacienteServiceImpl implements PacienteService {
@@ -32,6 +33,11 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Override
     public Paciente postPaciente(Paciente paciente) {
+        // Si el paciente no tiene ID, se genera uno automáticamente
+        if (paciente.getIdPaciente() == null || paciente.getIdPaciente().isBlank()) {
+            paciente.setIdPaciente(UUID.randomUUID().toString());
+        }
+
         return pacienteRepository.save(paciente);
     }
 

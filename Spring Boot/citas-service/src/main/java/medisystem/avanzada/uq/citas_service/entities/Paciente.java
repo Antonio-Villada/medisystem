@@ -10,7 +10,7 @@ public class Paciente {
     private String idPaciente;
 
     private String nombrePaciente;
-    private Integer ciudad;
+    private String ciudad;
     private String correo;
     @ManyToOne
     @JoinColumn(name = "id_eps", nullable = false)
@@ -19,7 +19,7 @@ public class Paciente {
     public Paciente() {
     }
 
-    public Paciente(String idPaciente, String nombrePaciente, Integer ciudad, String correo, Eps eps) {
+    public Paciente(String idPaciente, String nombrePaciente, String ciudad, String correo, Eps eps) {
         this.idPaciente = idPaciente;
         this.nombrePaciente = nombrePaciente;
         this.ciudad = ciudad;
@@ -43,11 +43,11 @@ public class Paciente {
         this.nombrePaciente = nombrePaciente;
     }
 
-    public Integer getCiudad() {
+    public String getCiudad() {
         return ciudad;
     }
 
-    public void setCiudad(Integer ciudad) {
+    public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
 

@@ -9,16 +9,6 @@ import java.util.List;
 
 public class Medico {
 
-    public Medico() {
-    }
-
-    public Medico(Long idMedico, String nombreMedico, Especialidad especialidad, String telefono, String correo) {
-        this.idMedico = idMedico;
-        this.nombreMedico = nombreMedico;
-        this.especialidad = especialidad;
-        this.telefono = telefono;
-        this.correo = correo;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +21,18 @@ public class Medico {
     private Especialidad especialidad;
     private String telefono;
     private String correo;
+
+
+    public Medico() {
+    }
+
+    public Medico(Long idMedico, String nombreMedico, Especialidad especialidad, String telefono, String correo) {
+        this.idMedico = idMedico;
+        this.nombreMedico = nombreMedico;
+        this.especialidad = especialidad;
+        this.telefono = telefono;
+        this.correo = correo;
+    }
 
     public Long getIdMedico() {
         return idMedico;
