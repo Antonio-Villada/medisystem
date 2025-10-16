@@ -6,25 +6,25 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "eps")
 public class Eps  {
-    private int idEps;
+    private Integer idEps;
     private String nombreEps;
 
 
     public Eps() {
     }
 
-    public Eps(int idEps, String nombreEps) {
+    public Eps(Integer idEps, String nombreEps) {
         this.idEps = idEps;
         this.nombreEps = nombreEps;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getIdEps() {
+    public Integer getIdEps() {
         return idEps;
     }
 
-    public void setIdEps(int idEps) {
+    public void setIdEps(Integer idEps) {
         this.idEps = idEps;
     }
 

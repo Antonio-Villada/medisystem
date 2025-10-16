@@ -1,7 +1,7 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
 import medisystem.avanzada.uq.citas_service.entities.Formula;
-import medisystem.avanzada.uq.citas_service.services.FormulaService;
+import medisystem.avanzada.uq.citas_service.service.FormulaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,0 +1,27 @@
+### 🔹 Pruebas de integración para **EspecialidadServiceImpl**
+
+1. `getEspecialidades_deberiaRetornarListaDeEspecialidades()`
+2. `getEspecialidadById_existente_deberiaRetornarEspecialidad()`
+3. `getEspecialidadById_inexistente_deberiaLanzarExcepcion()`
+4. `postEspecialidad_deberiaGuardarYRetornarEspecialidad()`
+5. `putEspecialidad_existente_deberiaActualizarNombre()`
+6. `putEspecialidad_inexistente_deberiaLanzarExcepcion()`
+7. `deleteEspecialidad_existente_deberiaEliminarEspecialidad()`
+8. `deleteEspecialidad_inexistente_deberiaLanzarExcepcion()`
+9. `patchEspecialidad_existente_deberiaActualizarParcialmente()`
+10. `patchEspecialidad_inexistente_deberiaLanzarExcepcion()`
+
+---
+
+### 🔹 Pruebas de integración para **EspecialidadController**
+
+1. `GET_especialidades_deberiaRetornarLista200OK()`
+2. `GET_especialidadPorId_existente_deberiaRetornar200OK()`
+3. `GET_especialidadPorId_inexistente_deberiaRetornar404NotFound()`
+4. `POST_especialidad_valida_deberiaCrearYRetornar201Created()`
+5. `PUT_especialidad_existente_deberiaActualizarYRetornar200OK()`
+6. `PUT_especialidad_inexistente_deberiaRetornar404NotFound()`
+7. `DELETE_especialidad_existente_deberiaRetornar204NoContent()`
+8. `DELETE_especialidad_inexistente_deberiaRetornar404NotFound()`
+9. `PATCH_especialidad_existente_deberiaActualizarParcialmente200OK()`
+10. `PATCH_especialidad_inexistente_deberiaRetornar404NotFound()`

@@ -1,7 +1,7 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
 import medisystem.avanzada.uq.citas_service.entities.Paciente;
-import medisystem.avanzada.uq.citas_service.services.PacienteService;
+import medisystem.avanzada.uq.citas_service.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
