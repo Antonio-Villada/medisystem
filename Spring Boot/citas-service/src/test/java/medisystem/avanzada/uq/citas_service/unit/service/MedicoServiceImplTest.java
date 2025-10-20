@@ -4,18 +4,23 @@ import medisystem.avanzada.uq.citas_service.entities.Especialidad;
 import medisystem.avanzada.uq.citas_service.entities.Medico;
 import medisystem.avanzada.uq.citas_service.exceptions.MedicoNoEncontradoException;
 import medisystem.avanzada.uq.citas_service.repositories.MedicoRepository;
+import medisystem.avanzada.uq.citas_service.security.TestSecurityConfig;
 import medisystem.avanzada.uq.citas_service.service.impl.MedicoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Transactional
+@Import(TestSecurityConfig.class)
 public class MedicoServiceImplTest {
 
     @Mock

@@ -5,12 +5,15 @@ import medisystem.avanzada.uq.citas_service.entities.Medico;
 import medisystem.avanzada.uq.citas_service.entities.Paciente;
 import medisystem.avanzada.uq.citas_service.exceptions.CitaNoEncontradaException;
 import medisystem.avanzada.uq.citas_service.repositories.CitaRepository;
+import medisystem.avanzada.uq.citas_service.security.TestSecurityConfig;
 import medisystem.avanzada.uq.citas_service.service.impl.CitaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +23,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Transactional
+@Import(TestSecurityConfig.class)
 class CitaServiceImplTest {
 
     @Mock

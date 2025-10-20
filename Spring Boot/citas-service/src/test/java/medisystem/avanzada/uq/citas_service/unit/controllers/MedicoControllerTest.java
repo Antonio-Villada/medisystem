@@ -4,15 +4,18 @@ import medisystem.avanzada.uq.citas_service.controllers.MedicoController;
 import medisystem.avanzada.uq.citas_service.entities.Especialidad;
 import medisystem.avanzada.uq.citas_service.entities.Medico;
 
+import medisystem.avanzada.uq.citas_service.security.TestSecurityConfig;
 import medisystem.avanzada.uq.citas_service.service.MedicoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,6 +24,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Transactional
+@Import(TestSecurityConfig.class)
 class MedicoControllerTest {
 
     @Mock

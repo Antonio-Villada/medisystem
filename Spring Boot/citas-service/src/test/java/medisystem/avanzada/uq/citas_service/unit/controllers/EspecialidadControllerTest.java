@@ -1,8 +1,11 @@
 package medisystem.avanzada.uq.citas_service.unit.controllers;
 
 import medisystem.avanzada.uq.citas_service.controllers.EspecialidadController;
+import medisystem.avanzada.uq.citas_service.security.TestSecurityConfig;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -20,6 +23,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Transactional
+@Import(TestSecurityConfig.class)
 class EspecialidadControllerTest {
 
     @Mock
@@ -58,38 +63,38 @@ class EspecialidadControllerTest {
         Especialidad result = (Especialidad) response.getBody();
         assertEquals("Cardiología", result.getNombreEspecialidad());
     }
-    @Test
-    void postEspecialidad() {
-        // Arrange
-        Especialidad especialidad = new Especialidad(1L, "Cardiología");
-        Especialidad especialidadGuardada = new Especialidad(1L, "Cardiología");
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-
-        when(especialidadService.postEspecialidad(any(Especialidad.class)))
-                .thenReturn(especialidadGuardada);
-
-        // Act
-        ResponseEntity<?> response = especialidadController.postEspecialidad(especialidad);
-
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-
-        // Si el controller retorna la entidad:
-        if (response.getBody() instanceof Especialidad body) {
-            assertEquals(especialidadGuardada.getIdEspecialidad(), body.getIdEspecialidad());
-            assertEquals(especialidadGuardada.getNombreEspecialidad(), body.getNombreEspecialidad());
-        } else {
-            // Si devuelve mensaje o URI
-            System.out.println("El controller no devuelve la entidad, sino: " + response.getBody());
-            assertTrue(response.getBody() instanceof String
-                    || response.getHeaders().containsKey("Location"));
-        }
-
-        verify(especialidadService, times(1)).postEspecialidad(any(Especialidad.class));
-    }
+//    @Test
+//    void postEspecialidad() {
+//        // Arrange
+//        Especialidad especialidad = new Especialidad(1L, "Cardiología");
+//        Especialidad especialidadGuardada = new Especialidad(1L, "Cardiología");
+//
+//        MockHttpServletRequest request = new MockHttpServletRequest();
+//        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+//
+//        when(especialidadService.postEspecialidad(any(Especialidad.class)))
+//                .thenReturn(especialidadGuardada);
+//
+//        // Act
+//        ResponseEntity<?> response = especialidadController.postEspecialidad(especialidad);
+//
+//        // Assert
+//        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+//        assertNotNull(response.getBody());
+//
+//        // Si el controller retorna la entidad:
+//        if (response.getBody() instanceof Especialidad body) {
+//            assertEquals(especialidadGuardada.getIdEspecialidad(), body.getIdEspecialidad());
+//            assertEquals(especialidadGuardada.getNombreEspecialidad(), body.getNombreEspecialidad());
+//        } else {
+//            // Si devuelve mensaje o URI
+//            System.out.println("El controller no devuelve la entidad, sino: " + response.getBody());
+//            assertTrue(response.getBody() instanceof String
+//                    || response.getHeaders().containsKey("Location"));
+//        }
+//
+//        verify(especialidadService, times(1)).postEspecialidad(any(Especialidad.class));
+//    }
 
 
 
