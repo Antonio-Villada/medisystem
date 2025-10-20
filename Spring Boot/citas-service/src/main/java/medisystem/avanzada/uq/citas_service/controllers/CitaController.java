@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/citas")
 public class CitaController {
 
-    @Autowired
+
     @Qualifier("dbCitaService")
-    private CitaService citaService;
+    private final  CitaService citaService;
+
+    public CitaController(CitaService citaService) {
+        this.citaService = citaService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Cita>> getCitas() {

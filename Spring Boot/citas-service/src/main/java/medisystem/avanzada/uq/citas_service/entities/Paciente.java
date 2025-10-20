@@ -9,6 +9,10 @@ public class Paciente {
     @Id
     private String idPaciente;
 
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
     private String nombrePaciente;
     private String ciudad;
     private String correo;

@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/eps")
 public class EpsController {
 
-    @Autowired
+
     @Qualifier("dbEpsService")
-    private EpsService epsService;
+    private final EpsService epsService;
+
+    public EpsController(EpsService epsService) {
+        this.epsService = epsService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getEps() {

@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/detalle-formulas")
 public class DetalleFormulaController {
 
-    @Autowired
+
     @Qualifier("dbDetalleFormulaService")
-    private DetalleFormulaService detalleFormulaService;
+    private final DetalleFormulaService detalleFormulaService;
+
+    public DetalleFormulaController(DetalleFormulaService detalleFormulaService) {
+        this.detalleFormulaService = detalleFormulaService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getDetalleFormulas() {

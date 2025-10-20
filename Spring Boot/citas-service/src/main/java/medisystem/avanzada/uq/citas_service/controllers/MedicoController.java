@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/medicos")
 public class MedicoController {
 
-    @Autowired
+
     @Qualifier("dbMedicoService")
-    private MedicoService medicoService;
+    private final MedicoService medicoService;
+
+    public MedicoController(MedicoService medicoService) {
+        this.medicoService = medicoService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getMedicos() {

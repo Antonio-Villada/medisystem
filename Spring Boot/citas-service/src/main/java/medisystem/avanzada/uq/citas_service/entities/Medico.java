@@ -16,6 +16,10 @@ public class Medico {
 
     private String nombreMedico;
 
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
     @ManyToOne
     @JoinColumn(name = "especialidad_id") // nombre de la FK en la tabla Medico
     private Especialidad especialidad;

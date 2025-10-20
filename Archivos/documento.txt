@@ -1,0 +1,3367 @@
+Objetivo del proyecto:
+
+¿Cuál es el propósito del sistema de citas? (Ej.: “Gestionar citas médicas, fórmulas y especialidades de manera eficiente”)
+R: Gestionar citas médicas, fórmulas y especialidades de manera eficiente
+Tecnologías utilizadas:
+1. Spring Boot Parent
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.5</version>
+    <relativePath/>
+</parent>
+
+
+Base de Spring Boot 3.5.5.
+
+Maneja versiones de dependencias por ti.
+
+2. Dependencias principales
+
+Web y JPA
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+
+Bases de datos
+
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.6.0</version>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+
+
+Nota: tienes PostgreSQL y MySQL juntos. Generalmente solo necesitas uno.
+
+Seguridad
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-crypto</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-config</artifactId>
+</dependency>
+
+
+JWT
+
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.12.6</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+
+
+Thymeleaf
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+
+
+Documentación OpenAPI / Swagger
+
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.8.13</version>
+</dependency>
+
+
+ModelMapper
+
+<dependency>
+    <groupId>org.modelmapper</groupId>
+    <artifactId>modelmapper</artifactId>
+    <version>3.2.0</version>
+</dependency>
+
+
+JUnit & Mockito
+
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>5.10.2</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-junit-jupiter</artifactId>
+    <version>5.13.0</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>5.12.0</version>
+    <scope>test</scope>
+</dependency>
+
+
+Devtools y procesamiento
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <scope>runtime</scope>
+    <optional>true</optional>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+
+
+Actuator
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+3. Plugins importantes
+
+Maven Compiler Plugin con procesadores de Lombok y Spring Boot Configuration.
+
+Spring Boot Maven Plugin.
+
+JaCoCo para reportes de cobertura de pruebas.
+Estructura del proyecto:
+config configurations controllers dto entities exceptions repositories security service
+
+
+Entidades principales:
+
+package medisystem.avanzada.uq.citas_service.entities;
+
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "especialidades")
+
+public class Especialidad {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idEspecialidad;
+
+    private String nombreEspecialidad;
+
+    public Especialidad() {
+    }
+
+    public Especialidad(Long idEspecialidad, String nombreEspecialidad) {
+        this.idEspecialidad = idEspecialidad;
+        this.nombreEspecialidad = nombreEspecialidad;
+    }
+
+    public Long getIdEspecialidad() {
+        return idEspecialidad;
+    }
+
+    public void setIdEspecialidad(Long idEspecialidad) {
+        this.idEspecialidad = idEspecialidad;
+    }
+
+    public String getNombreEspecialidad() {
+        return nombreEspecialidad;
+    }
+
+    public void setNombreEspecialidad(String nombreEspecialidad) {
+        this.nombreEspecialidad = nombreEspecialidad;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "eps")
+public class Eps  {
+    private Integer idEps;
+    private String nombreEps;
+
+
+    public Eps() {
+    }
+
+    public Eps(Integer idEps, String nombreEps) {
+        this.idEps = idEps;
+        this.nombreEps = nombreEps;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getIdEps() {
+        return idEps;
+    }
+
+    public void setIdEps(Integer idEps) {
+        this.idEps = idEps;
+    }
+
+    public String getNombreEps() {
+        return nombreEps;
+    }
+
+    public void setNombreEps(String nombreEps) {
+        this.nombreEps = nombreEps;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "detalle_formula")
+public class DetalleFormula {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idDetalleFormula;
+
+    @ManyToOne
+    @JoinColumn(name = "id_formula", nullable = false)
+    private Formula formula;
+
+    @ManyToOne
+    @JoinColumn(name = "id_medicamento", nullable = false)
+    private Medicamento medicamento;
+
+    private Integer cantidad;
+    private String dosis;
+
+    public DetalleFormula() {
+    }
+
+    public DetalleFormula(Integer idDetalleFormula, Formula formula, Medicamento medicamento, Integer cantidad, String dosis) {
+        this.idDetalleFormula = idDetalleFormula;
+        this.formula = formula;
+        this.medicamento = medicamento;
+        this.cantidad = cantidad;
+        this.dosis = dosis;
+    }
+
+    public Integer getIdDetalleFormula() {
+        return idDetalleFormula;
+    }
+
+    public void setIdDetalleFormula(Integer idDetalleFormula) {
+        this.idDetalleFormula = idDetalleFormula;
+    }
+
+    public Formula getFormula() {
+        return formula;
+    }
+
+    public void setFormula(Formula formula) {
+        this.formula = formula;
+    }
+
+    public Medicamento getMedicamento() {
+        return medicamento;
+    }
+
+    public void setMedicamento(Medicamento medicamento) {
+        this.medicamento = medicamento;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public String getDosis() {
+        return dosis;
+    }
+
+    public void setDosis(String dosis) {
+        this.dosis = dosis;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "citas")
+public class Cita {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idCita;
+
+    @Column(nullable = false)
+    private LocalDate fecha;
+
+    @Column(nullable = false)
+    private LocalTime horaInicio;
+
+    @Column(nullable = false)
+    private LocalTime horaFin;
+
+    @ManyToOne
+    @JoinColumn(name = "id_medico", nullable = false)
+    private Medico medico;
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente", nullable = false)
+    private Paciente paciente;
+
+    @Lob
+    private String observaciones;
+
+    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL)
+    private Formula formula;
+
+    public Cita() {}
+
+    public Cita(Integer idCita, LocalDate fecha, LocalTime horaInicio,Medico medico, Paciente paciente,
+                String observaciones, Formula formula) {
+        this.idCita = idCita;
+        this.fecha = fecha;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaInicio.plusHours(1);
+        this.medico = medico;
+        this.paciente = paciente;
+        this.observaciones = observaciones;
+        this.formula = formula;
+    }
+
+    public Integer getIdCita() {
+        return idCita;
+    }
+
+    public void setIdCita(Integer idCita) {
+        this.idCita = idCita;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public LocalTime getHoraFin() {
+        return horaFin;
+    }
+
+    public void setHoraFin(LocalTime horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Formula getFormula() {
+        return formula;
+    }
+
+    public void setFormula(Formula formula) {
+        this.formula = formula;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "formulas")
+public class Formula {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idFormula;
+
+    @OneToOne
+    @JoinColumn(name = "id_cita", nullable = false)
+    private Cita cita;
+    private LocalDate fecha;
+
+    public Formula() {}
+
+    public Formula(int idFormula, Cita cita, LocalDate fecha) {
+        this.idFormula = idFormula;
+        this.cita = cita;
+        this.fecha = fecha;
+    }
+
+    public int getIdFormula() {
+        return idFormula;
+    }
+
+    public void setIdFormula(int idFormula) {
+        this.idFormula = idFormula;
+    }
+
+    public Cita getCita() {
+        return cita;
+    }
+
+    public void setCita(Cita cita) {
+        this.cita = cita;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "medicamentos")
+public class Medicamento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idMedicamento; // int(11)
+
+    @Column(length = 100, nullable = false)
+    private String nombreMedicamento; // varchar(100)
+
+    @Column(nullable = false)
+    private Integer precio; // int(11)
+
+    public Medicamento() {
+    }
+
+    public Medicamento(Integer idMedicamento, String nombreMedicamento, Integer precio) {
+        this.idMedicamento = idMedicamento;
+        this.nombreMedicamento = nombreMedicamento;
+        this.precio = precio;
+    }
+
+    public Integer getIdMedicamento() {
+        return idMedicamento;
+    }
+
+    public void setIdMedicamento(Integer idMedicamento) {
+        this.idMedicamento = idMedicamento;
+    }
+
+    public String getNombreMedicamento() {
+        return nombreMedicamento;
+    }
+
+    public void setNombreMedicamento(String nombreMedicamento) {
+        this.nombreMedicamento = nombreMedicamento;
+    }
+
+    public Integer getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Integer precio) {
+        this.precio = precio;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+import java.util.List;
+
+@Entity
+@Table(name = "medicos")
+
+public class Medico {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idMedico;
+
+    private String nombreMedico;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "especialidad_id") // nombre de la FK en la tabla Medico
+    private Especialidad especialidad;
+    private String telefono;
+    private String correo;
+
+
+    public Medico() {
+    }
+
+    public Medico(Long idMedico, String nombreMedico, Especialidad especialidad, String telefono, String correo) {
+        this.idMedico = idMedico;
+        this.nombreMedico = nombreMedico;
+        this.especialidad = especialidad;
+        this.telefono = telefono;
+        this.correo = correo;
+    }
+
+    public Long getIdMedico() {
+        return idMedico;
+    }
+
+    public void setIdMedico(Long idMedico) {
+        this.idMedico = idMedico;
+    }
+
+    public String getNombreMedico() {
+        return nombreMedico;
+    }
+
+    public void setNombreMedico(String nombreMedico) {
+        this.nombreMedico = nombreMedico;
+    }
+
+    public Especialidad getEspecialidad() {
+        return especialidad;
+    }
+
+    public void setEspecialidad(Especialidad especialidad) {
+        this.especialidad = especialidad;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+}
+
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "pacientes")
+public class Paciente {
+
+    @Id
+    private String idPaciente;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    private String nombrePaciente;
+    private String ciudad;
+    private String correo;
+    @ManyToOne
+    @JoinColumn(name = "id_eps", nullable = false)
+    private Eps eps;
+
+    public Paciente() {
+    }
+
+    public Paciente(String idPaciente, String nombrePaciente, String ciudad, String correo, Eps eps) {
+        this.idPaciente = idPaciente;
+        this.nombrePaciente = nombrePaciente;
+        this.ciudad = ciudad;
+        this.correo = correo;
+        this.eps = eps;
+    }
+
+    public String getIdPaciente() {
+        return idPaciente;
+    }
+
+    public void setIdPaciente(String idPaciente) {
+        this.idPaciente = idPaciente;
+    }
+
+    public String getNombrePaciente() {
+        return nombrePaciente;
+    }
+
+    public void setNombrePaciente(String nombrePaciente) {
+        this.nombrePaciente = nombrePaciente;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public Eps getEps() {
+        return eps;
+    }
+
+    public void setEps(Eps eps) {
+        this.eps = eps;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "pacientes_telefonos")
+public class PacienteTelefono {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente")
+    private Paciente paciente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_telefono")
+    private Telefono telefono;
+
+
+    public PacienteTelefono() {
+    }
+
+    public PacienteTelefono(Long id, Paciente paciente, Telefono telefono) {
+        this.id = id;
+        this.paciente = paciente;
+        this.telefono = telefono;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public Telefono getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(Telefono telefono) {
+        this.telefono = telefono;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "roles")
+public class Rol {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String nombre;
+
+    public Rol() {}
+
+    public Rol(String nombre) {
+        this.nombre = nombre;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "telefonos")
+public class Telefono {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idTelefono;
+
+
+    private String telefono;
+
+    public Telefono() {
+    }
+
+    public Telefono(Integer idTelefono, String telefono) {
+        this.idTelefono = idTelefono;
+        this.telefono = telefono;
+    }
+
+    public Integer getIdTelefono() {
+        return idTelefono;
+    }
+
+    public void setIdTelefono(Integer idTelefono) {
+        this.idTelefono = idTelefono;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+}
+package medisystem.avanzada.uq.citas_service.entities;
+
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "usuarios_roles",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id")
+    )
+    private Set<Rol> roles = new HashSet<>();
+
+    public Usuario() {}
+
+    public Usuario(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Set<Rol> getRoles() { return roles; }
+    public void setRoles(Set<Rol> roles) { this.roles = roles; }
+}
+
+
+Repositorios:
+
+https://github.com/Antonio-Villada/medisystem.git
+
+Servicios:
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Usuario;
+import medisystem.avanzada.uq.citas_service.repositories.UsuarioRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UserDetailsServiceImpl(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+
+        Set<GrantedAuthority> authorities = usuario.getRoles().stream()
+                .map(rol -> new SimpleGrantedAuthority("ROLE_" + rol.getNombre()))
+                .collect(Collectors.toSet());
+
+        return new User(usuario.getUsername(), usuario.getPassword(), authorities);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Telefono;
+import medisystem.avanzada.uq.citas_service.exceptions.TelefonoNoEncontradoException;
+import medisystem.avanzada.uq.citas_service.repositories.TelefonoRepository;
+import medisystem.avanzada.uq.citas_service.service.TelefonoService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbTelefonoService")
+public class TelefonoServiceImpl implements TelefonoService {
+
+    private final TelefonoRepository telefonoRepository;
+
+    public TelefonoServiceImpl(TelefonoRepository telefonoRepository) {
+        this.telefonoRepository = telefonoRepository;
+    }
+
+    @Override
+    public List<Telefono> getTelefonos() {
+        return telefonoRepository.findAll();
+    }
+
+    @Override
+    public Telefono getTelefonoById(Integer idTelefono) {
+        return telefonoRepository.findById(idTelefono)
+                .orElseThrow(() -> new TelefonoNoEncontradoException(
+                        "Teléfono con id " + idTelefono + " no encontrado"
+                ));
+    }
+
+    @Override
+    public Telefono postTelefono(Telefono telefono) {
+        return telefonoRepository.save(telefono);
+    }
+
+    @Override
+    public Telefono putTelefono(Integer idTelefono, Telefono telefono) {
+        return telefonoRepository.findById(idTelefono)
+                .map(t -> {
+                    t.setTelefono(telefono.getTelefono());
+                    return telefonoRepository.save(t);
+                })
+                .orElseThrow(() -> new TelefonoNoEncontradoException(
+                        "Teléfono con id " + idTelefono + " no encontrado"
+                ));
+    }
+
+    @Override
+    public void deleteTelefono(Integer idTelefono) {
+        Telefono telefono = telefonoRepository.findById(idTelefono)
+                .orElseThrow(() -> new TelefonoNoEncontradoException(
+                        "Teléfono con id " + idTelefono + " no encontrado"
+                ));
+        telefonoRepository.delete(telefono);
+    }
+
+    @Override
+    public Telefono patchTelefono(Integer idTelefono, Telefono telefono) {
+        Telefono existente = telefonoRepository.findById(idTelefono)
+                .orElseThrow(() -> new TelefonoNoEncontradoException(
+                        "Teléfono con id " + idTelefono + " no encontrado"
+                ));
+        if (telefono.getTelefono() != null) {
+            existente.setTelefono(telefono.getTelefono());
+        }
+        return telefonoRepository.save(existente);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Paciente;
+import medisystem.avanzada.uq.citas_service.exceptions.PacienteNoEncontradoException;
+import medisystem.avanzada.uq.citas_service.repositories.PacienteRepository;
+import medisystem.avanzada.uq.citas_service.service.PacienteService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service("dbPacienteService")
+public class PacienteServiceImpl implements PacienteService {
+
+    private final PacienteRepository pacienteRepository;
+
+    public PacienteServiceImpl(PacienteRepository pacienteRepository) {
+        this.pacienteRepository = pacienteRepository;
+    }
+
+    @Override
+    public List<Paciente> getPacientes() {
+        return pacienteRepository.findAll();
+    }
+
+    @Override
+    public Paciente getPacienteById(String idPaciente) {
+        return pacienteRepository.findById(idPaciente)
+                .orElseThrow(() -> new PacienteNoEncontradoException(
+                        "Paciente con id " + idPaciente + " no encontrado"
+                ));
+    }
+
+    @Override
+    public Paciente postPaciente(Paciente paciente) {
+        // Si el paciente no tiene ID, se genera uno automáticamente
+        if (paciente.getIdPaciente() == null || paciente.getIdPaciente().isBlank()) {
+            paciente.setIdPaciente(UUID.randomUUID().toString());
+        }
+
+        return pacienteRepository.save(paciente);
+    }
+
+    @Override
+    public Paciente putPaciente(String idPaciente, Paciente paciente) {
+        return pacienteRepository.findById(idPaciente)
+                .map(p -> {
+                    p.setNombrePaciente(paciente.getNombrePaciente());
+                    p.setCiudad(paciente.getCiudad());
+                    p.setCorreo(paciente.getCorreo());
+                    p.setEps(paciente.getEps());
+                    return pacienteRepository.save(p);
+                })
+                .orElseThrow(() -> new PacienteNoEncontradoException(
+                        "Paciente con id " + idPaciente + " no encontrado"
+                ));
+    }
+
+    @Override
+    public void deletePaciente(String idPaciente) {
+        Paciente paciente = pacienteRepository.findById(idPaciente)
+                .orElseThrow(() -> new PacienteNoEncontradoException(
+                        "Paciente con id " + idPaciente + " no encontrado"
+                ));
+        pacienteRepository.delete(paciente);
+    }
+
+    @Override
+    public Paciente patchPaciente(String idPaciente, Paciente paciente) {
+        Paciente existente = pacienteRepository.findById(idPaciente)
+                .orElseThrow(() -> new PacienteNoEncontradoException(
+                        "Paciente con id " + idPaciente + " no encontrado"
+                ));
+
+        if (paciente.getNombrePaciente() != null) {
+            existente.setNombrePaciente(paciente.getNombrePaciente());
+        }
+        if (paciente.getCiudad() != null) {
+            existente.setCiudad(paciente.getCiudad());
+        }
+        if (paciente.getCorreo() != null) {
+            existente.setCorreo(paciente.getCorreo());
+        }
+        if (paciente.getEps() != null) {
+            existente.setEps(paciente.getEps());
+        }
+
+        return pacienteRepository.save(existente);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Medico;
+import medisystem.avanzada.uq.citas_service.exceptions.MedicoNoEncontradoException;
+import medisystem.avanzada.uq.citas_service.repositories.MedicoRepository;
+import medisystem.avanzada.uq.citas_service.service.MedicoService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbMedicoService")
+public class MedicoServiceImpl implements MedicoService {
+
+    private final MedicoRepository medicoRepository;
+
+    public MedicoServiceImpl(MedicoRepository medicoRepository) {
+        this.medicoRepository = medicoRepository;
+    }
+
+    @Override
+    public List<Medico> getMedicos() {
+        return medicoRepository.findAll();
+    }
+
+    @Override
+    public Medico getMedicoById(Long idMedico) {
+        return medicoRepository.findById(idMedico)
+                .orElseThrow(() -> new MedicoNoEncontradoException(
+                        "Médico con id " + idMedico + " no encontrado en BD"
+                ));
+    }
+
+    @Override
+    public Medico postMedico(Medico medico) {
+        return medicoRepository.save(medico);
+    }
+
+    @Override
+    public Medico putMedico(Long idMedico, Medico medico) {
+        return medicoRepository.findById(idMedico)
+                .map(m -> {
+                    m.setEspecialidad(medico.getEspecialidad());
+                    m.setNombreMedico(medico.getNombreMedico());
+                    m.setCorreo(medico.getCorreo());
+                    return medicoRepository.save(m);
+                })
+                .orElseThrow(() -> new MedicoNoEncontradoException(
+                        "Médico con id " + idMedico + " no encontrado"
+                ));
+    }
+
+
+    @Override
+    public void deleteMedico(Long idMedico) {
+        Medico medico = medicoRepository.findById(idMedico)
+                .orElseThrow(() -> new MedicoNoEncontradoException
+                        ("Medico con ID " + idMedico + " no encontrado"));
+        medicoRepository.delete(medico);
+    }
+
+
+    @Override
+    public Medico patchMedico(Long idMedico, Medico medico) {
+        Medico existente = medicoRepository.findById(idMedico)
+                .orElseThrow(() -> new RuntimeException("Medico no encontrado con id: " + idMedico));
+
+        // Actualizar solo los campos que recibes en el JSON
+        if (medico.getNombreMedico() != null) {
+            existente.setNombreMedico(medico.getNombreMedico());
+        }
+        if (medico.getTelefono() != null) {
+            existente.setTelefono(medico.getTelefono());
+        }
+        if(medico.getCorreo() != null){
+            existente.setCorreo(medico.getCorreo());
+        }
+        if(medico.getEspecialidad() != null){
+            existente.setEspecialidad(medico.getEspecialidad());
+        }
+        return medicoRepository.save(existente);
+    }
+}package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import medisystem.avanzada.uq.citas_service.exceptions.MedicamentoNoEncontradoException;
+import medisystem.avanzada.uq.citas_service.repositories.MedicamentoRepository;
+import medisystem.avanzada.uq.citas_service.service.MedicamentoService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbMedicamentoService")
+public class MedicamentoServiceImpl implements MedicamentoService {
+
+    private final MedicamentoRepository medicamentoRepository;
+
+    public MedicamentoServiceImpl(MedicamentoRepository medicamentoRepository) {
+        this.medicamentoRepository = medicamentoRepository;
+    }
+
+    @Override
+    public List<Medicamento> getMedicamentos() {
+        return medicamentoRepository.findAll();
+    }
+
+    @Override
+    public Medicamento getMedicamentoById(Integer idMedicamento) {
+        return medicamentoRepository.findById(idMedicamento)
+                .orElseThrow(() -> new MedicamentoNoEncontradoException("Medicamento con id " + idMedicamento + " no encontrado"));
+    }
+
+    @Override
+    public Medicamento postMedicamento(Medicamento medicamento) {
+        return medicamentoRepository.save(medicamento);
+    }
+
+    @Override
+    public Medicamento putMedicamento(Integer idMedicamento, Medicamento medicamento) {
+        return medicamentoRepository.findById(idMedicamento)
+                .map(m -> {
+                    m.setNombreMedicamento(medicamento.getNombreMedicamento());
+                    m.setPrecio(medicamento.getPrecio());
+                    return medicamentoRepository.save(m);
+                })
+                .orElseThrow(() -> new MedicamentoNoEncontradoException("Medicamento con id " + idMedicamento + " no encontrado"));
+    }
+
+    @Override
+    public void deleteMedicamento(Integer idMedicamento) {
+        Medicamento medicamento = medicamentoRepository.findById(idMedicamento)
+                .orElseThrow(() -> new MedicamentoNoEncontradoException("Medicamento con id " + idMedicamento + " no encontrado"));
+        medicamentoRepository.delete(medicamento);
+    }
+
+    @Override
+    public Medicamento patchMedicamento(Integer idMedicamento, Medicamento medicamento) {
+        Medicamento existente = medicamentoRepository.findById(idMedicamento)
+                .orElseThrow(() -> new MedicamentoNoEncontradoException("Medicamento con id " + idMedicamento + " no encontrado"));
+
+        if (medicamento.getNombreMedicamento() != null) {
+            existente.setNombreMedicamento(medicamento.getNombreMedicamento());
+        }
+        if (medicamento.getPrecio() != null) {
+            existente.setPrecio(medicamento.getPrecio());
+        }
+
+        return medicamentoRepository.save(existente);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Formula;
+import medisystem.avanzada.uq.citas_service.exceptions.FormulaNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.repositories.FormulaRepository;
+import medisystem.avanzada.uq.citas_service.service.FormulaService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class FormulaServiceImpl implements FormulaService {
+
+    private final FormulaRepository formulaRepository;
+
+    public FormulaServiceImpl(FormulaRepository formulaRepository) {
+        this.formulaRepository = formulaRepository;
+    }
+
+    @Override
+    public List<Formula> findAll() {
+        return formulaRepository.findAll();
+    }
+
+    @Override
+    public Formula findById(int id) {
+        return formulaRepository.findById(id)
+                .orElseThrow(() -> new FormulaNoEncontradaException("La fórmula con ID " + id + " no existe"));
+    }
+
+    @Override
+    public Formula save(Formula formula) {
+        return formulaRepository.save(formula);
+    }
+
+    @Override
+    public Formula update(int id, Formula formula) {
+        Formula existente = findById(id);
+        existente.setCita(formula.getCita());
+        existente.setFecha(formula.getFecha());
+        return formulaRepository.save(existente);
+    }
+
+    @Override
+    public void delete(int id) {
+        if (!formulaRepository.existsById(id)) {
+            throw new FormulaNoEncontradaException("La fórmula con ID " + id + " no existe");
+        }
+        formulaRepository.deleteById(id);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Especialidad;
+import medisystem.avanzada.uq.citas_service.exceptions.EspecialidadNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.repositories.EspecialidadRepository;
+import medisystem.avanzada.uq.citas_service.service.EspecialidadService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbEspecialidadService")
+public class EspecialidadServiceImpl implements EspecialidadService {
+
+    private final EspecialidadRepository especialidadRepository;
+
+    public EspecialidadServiceImpl(EspecialidadRepository especialidadRepository) {
+        this.especialidadRepository = especialidadRepository;
+    }
+
+    @Override
+    public List<Especialidad> getEspecialidades() {
+        return especialidadRepository.findAll();
+    }
+
+    @Override
+    public Especialidad getEspecialidadByid(Long idEspecialidad) {
+        return especialidadRepository
+                .findById(idEspecialidad)
+                .orElseThrow(() -> new EspecialidadNoEncontradaException(
+                        "Especialidad con id " + idEspecialidad + "no encontrada en la BD"
+                ));
+    }
+
+    @Override
+    public Especialidad postEspecialidad(Especialidad especialidad) {
+        return especialidadRepository.save(especialidad);
+    }
+
+    @Override
+    public Especialidad putEspecialidad(Long idEspecialidad, Especialidad especialidad) {
+        return especialidadRepository.findById((idEspecialidad))
+                .map( m -> {
+                    m.setNombreEspecialidad(especialidad.getNombreEspecialidad());
+                    return especialidadRepository.save(m);
+                })
+                .orElseThrow(()-> new EspecialidadNoEncontradaException
+                        ("Especialidad con id" + idEspecialidad + " no encontrada en la Bd"));
+    }
+
+    @Override
+    public void deleteEspecialidad(Long idEspecialidad) {
+        Especialidad especialidad = especialidadRepository.findById(idEspecialidad).orElseThrow(()->new EspecialidadNoEncontradaException("Especialidad por id " + idEspecialidad + "no encontrada en la BD"));
+        especialidadRepository.delete(especialidad);
+    }
+
+    @Override
+    public Especialidad pachEspecialidad(Long idEspecialidad, Especialidad especialidad) {
+
+        Especialidad existente = especialidadRepository
+                .findById(idEspecialidad).orElseThrow(()->
+                        new EspecialidadNoEncontradaException
+                                ( "Especialidad por id " + idEspecialidad + "no encontrada" ));
+        if (especialidad.getNombreEspecialidad() != null) {
+            existente.setNombreEspecialidad(especialidad.getNombreEspecialidad());
+        }
+        return especialidadRepository.save(existente);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Eps;
+import medisystem.avanzada.uq.citas_service.exceptions.EpsNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.repositories.EpsRepository;
+import medisystem.avanzada.uq.citas_service.service.EpsService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbEpsService")
+public class EpsServiceImpl implements EpsService {
+
+    private final EpsRepository epsRepository;
+
+    public EpsServiceImpl(EpsRepository epsRepository) {
+        this.epsRepository = epsRepository;
+    }
+
+
+    @Override
+    public List<Eps> getEps() {
+        return epsRepository.findAll();
+    }
+
+    @Override
+    public Eps getEpsById(int idEps) {
+        return epsRepository.findById(idEps)
+                .orElseThrow(()->new EpsNoEncontradaException(
+                "Eps con id "+ idEps+ " no encontrada"));
+    }
+
+    @Override
+    public Eps postEps(Eps eps) {
+        return epsRepository.save(eps);
+    }
+
+    @Override
+    public Eps putEps(int idEps, Eps eps) {
+        return epsRepository.findById(idEps)
+                .map(m-> {
+                    m.setNombreEps(eps.getNombreEps());
+                    return epsRepository.save(m);
+                })
+                .orElseThrow(()->new EpsNoEncontradaException
+                        ("Eps con id " +idEps+ " no encontrada"
+                ));
+    }
+
+    @Override
+    public void deleteEps(int idEps) {
+        Eps eps1 = epsRepository.findById(idEps).orElseThrow(()->new EpsNoEncontradaException
+                ("Eps con id " +idEps+ " no encontrada"
+                ));
+        epsRepository.delete(eps1);
+    }
+
+    @Override
+    public Eps patchEps(int idEps, Eps eps) {
+        Eps existente = epsRepository.findById(idEps).orElseThrow(()->new EpsNoEncontradaException
+                ("Eps con id " +idEps+ " no encontrada"
+                ));
+        if (eps.getNombreEps() != null){
+            existente.setNombreEps(eps.getNombreEps());
+        }
+        return epsRepository.save(existente);
+    }
+
+
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
+import medisystem.avanzada.uq.citas_service.exceptions.DetalleFormulaNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.repositories.DetalleFormulaRepository;
+import medisystem.avanzada.uq.citas_service.service.DetalleFormulaService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("dbDetalleFormulaService")
+public class DetalleFormulaServiceImpl implements DetalleFormulaService {
+
+    private final DetalleFormulaRepository detalleFormulaRepository;
+
+    public DetalleFormulaServiceImpl(DetalleFormulaRepository detalleFormulaRepository) {
+        this.detalleFormulaRepository = detalleFormulaRepository;
+    }
+
+    @Override
+    public List<DetalleFormula> getDetalleFormulas() {
+        return detalleFormulaRepository.findAll();
+    }
+
+    @Override
+    public DetalleFormula getDetalleFormulaById(Integer idDetalleFormula) {
+        return detalleFormulaRepository.findById(idDetalleFormula)
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException("DetalleFormula con id " + idDetalleFormula + " no encontrada"));
+    }
+
+    @Override
+    public DetalleFormula postDetalleFormula(DetalleFormula detalleFormula) {
+        return detalleFormulaRepository.save(detalleFormula);
+    }
+
+    @Override
+    public DetalleFormula putDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula) {
+        return detalleFormulaRepository.findById(idDetalleFormula)
+                .map(df -> {
+                    df.setFormula(detalleFormula.getFormula());
+                    df.setMedicamento(detalleFormula.getMedicamento());
+                    df.setCantidad(detalleFormula.getCantidad());
+                    df.setDosis(detalleFormula.getDosis());
+                    return detalleFormulaRepository.save(df);
+                })
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException("DetalleFormula con id " + idDetalleFormula + " no encontrada"));
+    }
+
+    @Override
+    public void deleteDetalleFormula(Integer idDetalleFormula) {
+        DetalleFormula df = detalleFormulaRepository.findById(idDetalleFormula)
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException("DetalleFormula con id " + idDetalleFormula + " no encontrada"));
+        detalleFormulaRepository.delete(df);
+    }
+
+    @Override
+    public DetalleFormula patchDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula) {
+        DetalleFormula existente = detalleFormulaRepository.findById(idDetalleFormula)
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException("DetalleFormula con id " + idDetalleFormula + " no encontrada"));
+
+        if (detalleFormula.getFormula() != null) {
+            existente.setFormula(detalleFormula.getFormula());
+        }
+        if (detalleFormula.getMedicamento() != null) {
+            existente.setMedicamento(detalleFormula.getMedicamento());
+        }
+        if (detalleFormula.getCantidad() != null) {
+            existente.setCantidad(detalleFormula.getCantidad());
+        }
+        if (detalleFormula.getDosis() != null) {
+            existente.setDosis(detalleFormula.getDosis());
+        }
+        return detalleFormulaRepository.save(existente);
+    }
+}
+package medisystem.avanzada.uq.citas_service.service.impl;
+
+import medisystem.avanzada.uq.citas_service.entities.Cita;
+import medisystem.avanzada.uq.citas_service.exceptions.CitaNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.repositories.CitaRepository;
+import medisystem.avanzada.uq.citas_service.service.CitaService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.time.LocalDate;
+
+
+@Service("dbCitaService")
+public class CitaServiceImpl implements CitaService {
+
+    private final CitaRepository citaRepository;
+
+    public CitaServiceImpl(CitaRepository citaRepository) {
+        this.citaRepository = citaRepository;
+    }
+
+    @Override
+    public List<Cita> getCitas() {
+        return citaRepository.findAll();
+    }
+
+    @Override
+    public Cita getCitaById(Integer idCita) {
+        return citaRepository.findById(idCita)
+                .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+    }
+
+    @Override
+    public Cita putCita(Integer idCita, Cita cita) {
+        //Buscar la cita existente
+        Cita citaExistente = citaRepository.findById(idCita)
+                .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+
+        //Validar conflicto de horario (el médico no puede tener dos citas a la misma hora)
+        boolean conflicto = citaRepository.existsByMedicoAndFechaAndHoraInicio(
+                cita.getMedico(),
+                cita.getFecha(),
+                cita.getHoraInicio()
+        );
+
+        if (conflicto && !citaExistente.getIdCita().equals(cita.getIdCita())) {
+            throw new IllegalArgumentException("El médico ya tiene una cita programada en ese horario.");
+        }
+
+        //Actualizar los campos permitidos
+        citaExistente.setFecha(cita.getFecha());
+        citaExistente.setHoraInicio(cita.getHoraInicio());
+        citaExistente.setHoraFin(cita.getHoraInicio().plusHours(1));
+        citaExistente.setMedico(cita.getMedico());
+        citaExistente.setPaciente(cita.getPaciente());
+        citaExistente.setObservaciones(cita.getObservaciones());
+        citaExistente.setFormula(cita.getFormula());
+
+        //Guardar y retornar la cita actualizada
+        return citaRepository.save(citaExistente);
+    }
+
+
+    @Override
+    public void deleteCita(Integer idCita) {
+        Cita cita = citaRepository.findById(idCita)
+                .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+
+        if (!cita.getFecha().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Solo puede cancelar citas con al menos un día de anticipación.");
+        }
+
+        citaRepository.delete(cita);
+    }
+
+
+
+    @Override
+    public Cita patchCita(Integer idCita, Cita cita) {
+        Cita existente = citaRepository.findById(idCita)
+                .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+
+        if (cita.getFecha() != null) {
+            existente.setFecha(cita.getFecha());
+        }
+        if (cita.getMedico() != null) {
+            existente.setMedico(cita.getMedico());
+        }
+        if (cita.getPaciente() != null) {
+            existente.setPaciente(cita.getPaciente());
+        }
+        if (cita.getObservaciones() != null) {
+            existente.setObservaciones(cita.getObservaciones());
+        }
+        if (cita.getFormula() != null) {
+            existente.setFormula(cita.getFormula());
+        }
+
+        return citaRepository.save(existente);
+    }
+
+
+    @Override
+    public Cita postCita(Cita cita) {
+
+        //  Validar horario permitido (8:00 a.m. - 6:00 p.m.)
+        if (cita.getHoraInicio() == null) {
+            throw new IllegalArgumentException("Debe especificar la hora de inicio de la cita.");
+        }
+
+        LocalTime horaInicio = cita.getHoraInicio();
+        LocalTime horaFin = cita.getHoraFin() != null ? cita.getHoraFin() : horaInicio.plusHours(1);
+
+        if (horaInicio.isBefore(LocalTime.of(8, 0)) || horaFin.isAfter(LocalTime.of(18, 0))) {
+            throw new IllegalArgumentException("Las citas solo pueden programarse entre 8:00 a.m. y 6:00 p.m.");
+        }
+
+        //Validar duración aproximada de una hora
+        if (!horaFin.equals(horaInicio.plusHours(1))) {
+            throw new IllegalArgumentException("Cada cita debe tener una duración de una hora.");
+        }
+
+        //Validar fecha permitida (hoy y los próximos 6 días)
+        LocalDate hoy = LocalDate.now();
+        if (cita.getFecha().isBefore(hoy) || cita.getFecha().isAfter(hoy.plusDays(6))) {
+            throw new IllegalArgumentException("Solo se pueden agendar citas para los próximos 6 días.");
+        }
+
+        // Validar máximo 10 citas por médico al día
+        int citasMedicoDia = citaRepository.countByMedicoAndFecha(cita.getMedico(), cita.getFecha());
+        if (citasMedicoDia >= 10) {
+            throw new IllegalArgumentException("El médico ya tiene el máximo de 10 citas para este día.");
+        }
+
+        // Validar que no exista otra cita del mismo médico en la misma fecha y hora
+        boolean ocupado = citaRepository.existsByMedicoAndFechaAndHoraInicio(
+                cita.getMedico(),
+                cita.getFecha(),
+                cita.getHoraInicio()
+        );
+
+        if (ocupado) {
+            throw new IllegalArgumentException("El médico ya tiene una cita programada en ese horario.");
+        }
+
+        // si todo esta bien garda la cita
+        cita.setHoraFin(horaFin);
+        return citaRepository.save(cita);
+    }
+}
+
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Telefono;
+import java.util.List;
+
+public interface TelefonoService {
+    List<Telefono> getTelefonos();
+    Telefono getTelefonoById(Integer idTelefono);
+    Telefono postTelefono(Telefono telefono);
+    Telefono putTelefono(Integer idTelefono, Telefono telefono);
+    void deleteTelefono(Integer idTelefono);
+    Telefono patchTelefono(Integer idTelefono, Telefono telefono);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Paciente;
+import java.util.List;
+
+public interface PacienteService {
+    List<Paciente> getPacientes();
+    Paciente getPacienteById(String idPaciente);
+    Paciente postPaciente(Paciente paciente);
+    Paciente putPaciente(String idPaciente, Paciente paciente);
+    void deletePaciente(String idPaciente);
+    Paciente patchPaciente(String idPaciente, Paciente paciente);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Medico;
+
+import java.util.List;
+
+public interface MedicoService {
+    List<Medico> getMedicos();
+    Medico getMedicoById(Long idMedico);
+    Medico postMedico(Medico medico);
+    Medico putMedico(Long idMedico, Medico medico);
+    void deleteMedico(Long idMedico);
+    Medico patchMedico(Long idMedico, Medico medico);
+}
+  package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import java.util.List;
+
+public interface MedicamentoService {
+    List<Medicamento> getMedicamentos();
+    Medicamento getMedicamentoById(Integer idMedicamento);
+    Medicamento postMedicamento(Medicamento medicamento);
+    Medicamento putMedicamento(Integer idMedicamento, Medicamento medicamento);
+    void deleteMedicamento(Integer idMedicamento);
+    Medicamento patchMedicamento(Integer idMedicamento, Medicamento medicamento);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Formula;
+import java.util.List;
+
+public interface FormulaService {
+    List<Formula> findAll();
+    Formula findById(int id);
+    Formula save(Formula formula);
+    Formula update(int id, Formula formula);
+    void delete(int id);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Especialidad;
+
+import java.util.List;
+
+public interface EspecialidadService {
+    List<Especialidad> getEspecialidades();
+    Especialidad getEspecialidadByid(Long idEspecialidad);
+    Especialidad postEspecialidad (Especialidad especialidad);
+    Especialidad putEspecialidad (Long idEspecialidad,Especialidad especialidad);
+    void deleteEspecialidad (Long idEspecialidad);
+    Especialidad pachEspecialidad (Long idEspecialidad, Especialidad especialidad);
+
+
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Eps;
+
+import java.util.List;
+
+public interface EpsService {
+    List<Eps> getEps();
+    Eps getEpsById(int idEps);
+    Eps postEps(Eps eps);
+    Eps putEps(int idEps, Eps eps);
+    void deleteEps(int idEps);
+    Eps patchEps(int idEps, Eps eps);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
+
+import java.util.List;
+
+public interface DetalleFormulaService {
+    List<DetalleFormula> getDetalleFormulas();
+    DetalleFormula getDetalleFormulaById(Integer idDetalleFormula);
+    DetalleFormula postDetalleFormula(DetalleFormula detalleFormula);
+    DetalleFormula putDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula);
+    void deleteDetalleFormula(Integer idDetalleFormula);
+    DetalleFormula patchDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula);
+}
+package medisystem.avanzada.uq.citas_service.service;
+
+import medisystem.avanzada.uq.citas_service.entities.Cita;
+import java.util.List;
+
+public interface CitaService {
+    List<Cita> getCitas();
+    Cita getCitaById(Integer idCita);
+    Cita postCita(Cita cita);
+    Cita putCita(Integer idCita, Cita cita);
+    void deleteCita(Integer idCita);
+    Cita patchCita(Integer idCita, Cita cita);
+}
+
+
+
+Controladores:
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Telefono;
+import medisystem.avanzada.uq.citas_service.service.TelefonoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/telefonos")
+public class TelefonoController {
+
+
+    @Qualifier("dbTelefonoService")
+    private final TelefonoService telefonoService;
+
+    public TelefonoController(TelefonoService telefonoService) {
+        this.telefonoService = telefonoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Telefono>> getTelefonos() {
+        return ResponseEntity.ok(telefonoService.getTelefonos());
+    }
+
+    @GetMapping("/{idTelefono}")
+    public ResponseEntity<Telefono> getTelefonoById(@PathVariable Integer idTelefono) {
+        return ResponseEntity.ok(telefonoService.getTelefonoById(idTelefono));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> postTelefono(@RequestBody Telefono telefono) {
+        Telefono nuevo = telefonoService.postTelefono(telefono);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{idTelefono}")
+                .buildAndExpand(nuevo.getIdTelefono())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idTelefono}")
+    public ResponseEntity<Telefono> putTelefono(@PathVariable Integer idTelefono,
+                                                @RequestBody Telefono telefono) {
+        return ResponseEntity.ok(telefonoService.putTelefono(idTelefono, telefono));
+    }
+
+    @DeleteMapping("/{idTelefono}")
+    public ResponseEntity<Void> deleteTelefono(@PathVariable Integer idTelefono) {
+        telefonoService.deleteTelefono(idTelefono);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idTelefono}")
+    public ResponseEntity<Telefono> patchTelefono(@PathVariable Integer idTelefono,
+                                                  @RequestBody Telefono telefono) {
+        return ResponseEntity.ok(telefonoService.patchTelefono(idTelefono, telefono));
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class SwaggerRedirectController {
+
+    @GetMapping("/swagger-ui.html")
+    public String redirectToSwagger() {
+        return "redirect:/swagger-ui/index.html";
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Paciente;
+import medisystem.avanzada.uq.citas_service.service.PacienteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/pacientes")
+public class PacienteController {
+
+
+    @Qualifier("dbPacienteService")
+    private final PacienteService pacienteService;
+
+    public PacienteController(PacienteService pacienteService) {
+        this.pacienteService = pacienteService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Paciente>> getPacientes() {
+        return ResponseEntity.ok(pacienteService.getPacientes());
+    }
+
+    @GetMapping("/{idPaciente}")
+    public ResponseEntity<Paciente> getPacienteById(@PathVariable String idPaciente) {
+        return ResponseEntity.ok(pacienteService.getPacienteById(idPaciente));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> postPaciente(@RequestBody Paciente paciente) {
+        Paciente nuevo = pacienteService.postPaciente(paciente);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{idPaciente}")
+                .buildAndExpand(nuevo.getIdPaciente())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idPaciente}")
+    public ResponseEntity<Paciente> putPaciente(@PathVariable String idPaciente,
+                                                @RequestBody Paciente paciente) {
+        return ResponseEntity.ok(pacienteService.putPaciente(idPaciente, paciente));
+    }
+
+    @DeleteMapping("/{idPaciente}")
+    public ResponseEntity<Void> deletePaciente(@PathVariable String idPaciente) {
+        pacienteService.deletePaciente(idPaciente);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idPaciente}")
+    public ResponseEntity<Paciente> patchPaciente(@PathVariable String idPaciente,
+                                                  @RequestBody Paciente paciente) {
+        return ResponseEntity.ok(pacienteService.patchPaciente(idPaciente, paciente));
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Medico;
+import medisystem.avanzada.uq.citas_service.service.MedicoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/medicos")
+public class MedicoController {
+
+
+    @Qualifier("dbMedicoService")
+    private final MedicoService medicoService;
+
+    public MedicoController(MedicoService medicoService) {
+        this.medicoService = medicoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getMedicos() {
+        List<Medico> medicos = medicoService.getMedicos();
+        return ResponseEntity.ok(medicos);
+    }
+
+    @GetMapping("/{idMedico}")
+    public ResponseEntity<?> getMedicoById(@PathVariable Long idMedico) {
+        Medico medico = medicoService.getMedicoById(idMedico);
+        return ResponseEntity.ok(medico);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postMedico(@RequestBody Medico medico){
+        Medico medico1 = medicoService.postMedico(medico);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{idMedico}")
+                .buildAndExpand(medico1.getIdMedico())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idMedico}")
+    public ResponseEntity<?> putMedico(@PathVariable long idMedico, @RequestBody Medico medico){
+        Medico actualizado =medicoService.putMedico(idMedico,medico);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{idMedico}")
+    public ResponseEntity<Void> deleteMedico(@PathVariable Long idMedico) {
+        medicoService.deleteMedico(idMedico);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idMedico}")
+    public ResponseEntity<Medico> patchMedico(@PathVariable Long idMedico, @RequestBody Medico medico) {
+        Medico actualizado = medicoService.patchMedico(idMedico, medico);
+        return ResponseEntity.ok(actualizado);
+    }
+
+
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import medisystem.avanzada.uq.citas_service.service.MedicamentoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/medicamentos")
+public class MedicamentoController {
+
+
+    @Qualifier("dbMedicamentoService")
+    private final MedicamentoService medicamentoService;
+
+    public MedicamentoController(MedicamentoService medicamentoService) {
+        this.medicamentoService = medicamentoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Medicamento>> getMedicamentos() {
+        return ResponseEntity.ok(medicamentoService.getMedicamentos());
+    }
+
+    @GetMapping("/{idMedicamento}")
+    public ResponseEntity<Medicamento> getMedicamentoById(@PathVariable Integer idMedicamento) {
+        return ResponseEntity.ok(medicamentoService.getMedicamentoById(idMedicamento));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> postMedicamento(@RequestBody Medicamento medicamento) {
+        Medicamento nuevo = medicamentoService.postMedicamento(medicamento);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{idMedicamento}")
+                .buildAndExpand(nuevo.getIdMedicamento())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idMedicamento}")
+    public ResponseEntity<Medicamento> putMedicamento(@PathVariable Integer idMedicamento, @RequestBody Medicamento medicamento) {
+        return ResponseEntity.ok(medicamentoService.putMedicamento(idMedicamento, medicamento));
+    }
+
+    @DeleteMapping("/{idMedicamento}")
+    public ResponseEntity<Void> deleteMedicamento(@PathVariable Integer idMedicamento) {
+        medicamentoService.deleteMedicamento(idMedicamento);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idMedicamento}")
+    public ResponseEntity<Medicamento> patchMedicamento(@PathVariable Integer idMedicamento, @RequestBody Medicamento medicamento) {
+        return ResponseEntity.ok(medicamentoService.patchMedicamento(idMedicamento, medicamento));
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Formula;
+import medisystem.avanzada.uq.citas_service.service.FormulaService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/formulas")
+public class FormulaController {
+
+    private final FormulaService formulaService;
+
+    public FormulaController(FormulaService formulaService) {
+        this.formulaService = formulaService;
+    }
+
+    @GetMapping
+    public List<Formula> getAll() {
+        return formulaService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Formula getById(@PathVariable int id) {
+        return formulaService.findById(id);
+    }
+
+    @PostMapping
+    public Formula create(@RequestBody Formula formula) {
+        return formulaService.save(formula);
+    }
+
+    @PutMapping("/{id}")
+    public Formula update(@PathVariable int id, @RequestBody Formula formula) {
+        return formulaService.update(id, formula);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id) {
+        formulaService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Especialidad;
+import medisystem.avanzada.uq.citas_service.service.EspecialidadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/Especialidad")
+public class EspecialidadController {
+
+
+
+    @Qualifier("dbEspecialidadService")
+    private final EspecialidadService especialidadService;
+
+    public EspecialidadController(EspecialidadService especialidadService) {
+        this.especialidadService = especialidadService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getEspecialidad(){
+        List<Especialidad> especialidades = especialidadService.getEspecialidades();
+        return ResponseEntity.ok(especialidades);
+    }
+
+    @GetMapping("/{idEspecialidad}")
+    public ResponseEntity<?>getEspecialidadById(@PathVariable Long idEspecialidad){
+        Especialidad especialidad = especialidadService.getEspecialidadByid(idEspecialidad);
+        return ResponseEntity.ok(especialidad);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postEspecialidad(@RequestBody Especialidad especialidad){
+        Especialidad especialidad1 = especialidadService.postEspecialidad(especialidad);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{idEspecialidad}")
+                .buildAndExpand(especialidad1.getIdEspecialidad())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idEspecialidad}")
+    public ResponseEntity<?> putEspecialidad(@PathVariable Long idEspecialidad,@RequestBody Especialidad especialidad){
+        Especialidad actualizado = especialidadService.putEspecialidad(idEspecialidad,especialidad);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{idEspecialidad}")
+    public ResponseEntity<Void> deleteEspecialidad(@PathVariable Long idEspecialidad){
+        especialidadService.deleteEspecialidad(idEspecialidad);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idEspecialidad}")
+    public ResponseEntity<Especialidad> patchEspecialidad(@PathVariable Long idEspecialidad,@RequestBody Especialidad especialidad){
+        Especialidad actualizado = especialidadService.pachEspecialidad(idEspecialidad ,especialidad);
+        return ResponseEntity.ok(actualizado);
+    }
+
+}
+
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Eps;
+import medisystem.avanzada.uq.citas_service.service.EpsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/eps")
+public class EpsController {
+
+
+    @Qualifier("dbEpsService")
+    private final EpsService epsService;
+
+    public EpsController(EpsService epsService) {
+        this.epsService = epsService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getEps() {
+        List<Eps> eps = epsService.getEps();
+        return ResponseEntity.ok(eps);
+    }
+
+    @GetMapping("/{idEps}")
+    public ResponseEntity<?> getEpsById(@PathVariable int idEps) {
+        Eps eps = epsService.getEpsById(idEps);
+        return ResponseEntity.ok(eps);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postEps(@RequestBody Eps eps){
+        Eps eps1 = epsService.postEps(eps);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{idEps}")
+                .buildAndExpand(eps1.getIdEps())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idEps}")
+    public ResponseEntity<?> putEps(@PathVariable int idEps, @RequestBody Eps eps){
+        Eps actualizado =epsService.putEps(idEps,eps);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{idEps}")
+    public ResponseEntity<Void> deleteEps(@PathVariable int idEps) {
+        epsService.deleteEps(idEps);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idEps}")
+    public ResponseEntity<Eps> patchEps(@PathVariable int idEps, @RequestBody Eps eps) {
+        Eps actualizado = epsService.patchEps(idEps, eps);
+        return ResponseEntity.ok(actualizado);
+    }
+
+
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Eps;
+import medisystem.avanzada.uq.citas_service.service.EpsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/eps")
+public class EpsController {
+
+
+    @Qualifier("dbEpsService")
+    private final EpsService epsService;
+
+    public EpsController(EpsService epsService) {
+        this.epsService = epsService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getEps() {
+        List<Eps> eps = epsService.getEps();
+        return ResponseEntity.ok(eps);
+    }
+
+    @GetMapping("/{idEps}")
+    public ResponseEntity<?> getEpsById(@PathVariable int idEps) {
+        Eps eps = epsService.getEpsById(idEps);
+        return ResponseEntity.ok(eps);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postEps(@RequestBody Eps eps){
+        Eps eps1 = epsService.postEps(eps);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{idEps}")
+                .buildAndExpand(eps1.getIdEps())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idEps}")
+    public ResponseEntity<?> putEps(@PathVariable int idEps, @RequestBody Eps eps){
+        Eps actualizado =epsService.putEps(idEps,eps);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{idEps}")
+    public ResponseEntity<Void> deleteEps(@PathVariable int idEps) {
+        epsService.deleteEps(idEps);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idEps}")
+    public ResponseEntity<Eps> patchEps(@PathVariable int idEps, @RequestBody Eps eps) {
+        Eps actualizado = epsService.patchEps(idEps, eps);
+        return ResponseEntity.ok(actualizado);
+    }
+
+
+}package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Cita;
+import medisystem.avanzada.uq.citas_service.service.CitaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/citas")
+public class CitaController {
+
+
+    @Qualifier("dbCitaService")
+    private final  CitaService citaService;
+
+    public CitaController(CitaService citaService) {
+        this.citaService = citaService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Cita>> getCitas() {
+        return ResponseEntity.ok(citaService.getCitas());
+    }
+
+    @GetMapping("/{idCita}")
+    public ResponseEntity<Cita> getCitaById(@PathVariable Integer idCita) {
+        return ResponseEntity.ok(citaService.getCitaById(idCita));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> postCita(@RequestBody Cita cita) {
+        Cita nueva = citaService.postCita(cita);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{idCita}")
+                .buildAndExpand(nueva.getIdCita())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{idCita}")
+    public ResponseEntity<Cita> putCita(@PathVariable Integer idCita, @RequestBody Cita cita) {
+        return ResponseEntity.ok(citaService.putCita(idCita, cita));
+    }
+
+    @DeleteMapping("/{idCita}")
+    public ResponseEntity<Void> deleteCita(@PathVariable Integer idCita) {
+        citaService.deleteCita(idCita);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{idCita}")
+    public ResponseEntity<Cita> patchCita(@PathVariable Integer idCita, @RequestBody Cita cita) {
+        return ResponseEntity.ok(citaService.patchCita(idCita, cita));
+    }
+}
+package medisystem.avanzada.uq.citas_service.controllers;
+
+import medisystem.avanzada.uq.citas_service.entities.Usuario;
+import medisystem.avanzada.uq.citas_service.repositories.UsuarioRepository;
+import medisystem.avanzada.uq.citas_service.security.jwt.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    
+    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestBody Usuario usuario) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        usuarioRepository.save(usuario);
+        return "Usuario registrado con éxito: " + usuario.getUsername();
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Usuario usuario) {
+        Optional<Usuario> usuarioDB = usuarioRepository.findByUsername(usuario.getUsername());
+
+        if (usuarioDB.isEmpty()) {
+            return "Usuario no encontrado";
+        }
+
+        if (!passwordEncoder.matches(usuario.getPassword(), usuarioDB.get().getPassword())) {
+            return "Contraseña incorrecta";
+        }
+
+        String token = jwtTokenProvider.generarToken(usuario.getUsername());
+        return "Token JWT: " + token;
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Funciona sin autenticación!";
+    }
+}
+
+
+Seguridad:
+package medisystem.avanzada.uq.citas_service.security.jwt;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+import java.util.Collections;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String header = request.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+
+            if (jwtTokenProvider.validarToken(token)) {
+                String username = jwtTokenProvider.obtenerUsername(token);
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                new User(username, "", Collections.emptyList()),
+                                null,
+                                Collections.emptyList());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}
+package medisystem.avanzada.uq.citas_service.security.jwt;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
+import javax.crypto.SecretKey;
+import org.springframework.stereotype.Component;
+import java.util.Date;
+
+@Component
+public class JwtTokenProvider {
+
+    private final SecretKey secretKey = Keys.hmacShaKeyFor("clave-super-segura-de-256-bits-para-el-jwt-medissystem-123456".getBytes());
+    private final long expirationTime = 86400000; // 24 horas
+
+    public String generarToken(String username) {
+        Date ahora = new Date();
+        Date expiracion = new Date(ahora.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(ahora)
+                .expiration(expiracion)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String obtenerUsername(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.getSubject();
+    }
+
+    public boolean validarToken(String token) {
+        try {
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+package medisystem.avanzada.uq.citas_service.security;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import medisystem.avanzada.uq.citas_service.entities.Rol;
+import medisystem.avanzada.uq.citas_service.entities.Usuario;
+import medisystem.avanzada.uq.citas_service.repositories.RolRepository;
+import medisystem.avanzada.uq.citas_service.repositories.UsuarioRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.util.List;
+
+@Component("dataInitializerSecurity")
+public class DataInitializer {
+
+    @Bean
+    CommandLineRunner initData(UsuarioRepository usuarioRepository,
+                               RolRepository rolRepository,
+                               PasswordEncoder passwordEncoder) {
+        return args -> {
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<List<UsuarioJson>> typeRef = new TypeReference<>() {};
+
+            try (InputStream inputStream = getClass().getResourceAsStream("/data/usuarios.json")) {
+                if (inputStream == null) {
+                    System.err.println(" No se encontró el archivo usuarios.json");
+                    return;
+                }
+
+                List<UsuarioJson> usuariosJson = mapper.readValue(inputStream, typeRef);
+
+                for (UsuarioJson u : usuariosJson) {
+                    if (usuarioRepository.existsByUsername(u.getUsername())) continue;
+
+                    Usuario usuario = new Usuario();
+                    usuario.setUsername(u.getUsername());
+                    usuario.setPassword(passwordEncoder.encode(u.getPassword()));
+
+                    for (String rolNombre : u.getRoles()) {
+                        Rol rol = rolRepository.findByNombre(rolNombre)
+                                .orElseGet(() -> rolRepository.save(new Rol(rolNombre)));
+                        usuario.getRoles().add(rol);
+                    }
+
+                    usuarioRepository.save(usuario);
+                    System.out.println("✅ Usuario creado: " + u.getUsername());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+}
+package medisystem.avanzada.uq.citas_service.security;
+
+import medisystem.avanzada.uq.citas_service.security.jwt.JwtAuthenticationFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        // 🔓 Desbloquear Swagger UI y OpenAPI
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/v3/api-docs.json"
+                        ).permitAll()
+                        // 🔓 Mantener libre el login y registro
+                        .requestMatchers("/auth/**").permitAll()
+                        // 🔒 Proteger el resto
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+package medisystem.avanzada.uq.citas_service.security;
+
+import java.util.List;
+
+public class UsuarioJson {
+    private String username;
+    private String password;
+    private List<String> roles;
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public List<String> getRoles() {
+        return roles;
+    }
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+}
+
+Swagger / Documentación API:
+
+MediSystem 
+ 0.0.1-SNAPSHOT 
+OAS 3.1
+/sistema/api/v1/v3/api-docs
+Aplicación web desarrollada en Java Spring Boot para la gestión de citas médicas. Permite a los pacientes agendar, modificar y cancelar citas, mientras los médicos administran horarios y especialidades. Incluye panel de administración y base de datos para un control seguro y eficiente.
+
+Servers
+
+http://localhost:8080/sistema/api/v1 - Generated server url
+telefono-controller
+
+
+GET
+/telefonos/{idTelefono}
+
+Parameters
+Try it out
+Name	Description
+idTelefono *
+integer($int32)
+(path)
+idTelefono
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+No links
+
+PUT
+/telefonos/{idTelefono}
+
+Parameters
+Try it out
+Name	Description
+idTelefono *
+integer($int32)
+(path)
+idTelefono
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+No links
+
+DELETE
+/telefonos/{idTelefono}
+
+Parameters
+Try it out
+Name	Description
+idTelefono *
+integer($int32)
+(path)
+idTelefono
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PATCH
+/telefonos/{idTelefono}
+
+Parameters
+Try it out
+Name	Description
+idTelefono *
+integer($int32)
+(path)
+idTelefono
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+No links
+
+GET
+/telefonos
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "idTelefono": 0,
+    "telefono": "string"
+  }
+]
+No links
+
+POST
+/telefonos
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "idTelefono": 0,
+  "telefono": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+paciente-controller
+
+
+GET
+/pacientes/{idPaciente}
+
+Parameters
+Try it out
+Name	Description
+idPaciente *
+string
+(path)
+idPaciente
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "idPaciente": "string",
+  "nombrePaciente": "string",
+  "ciudad": "string",
+  "correo": "string",
+  "eps": {
+    "idEps": 0,
+    "nombreEps": "string"
+  }
+}
+No links
+
+PUT
+/pacientes/{idPaciente}
+
+Parameters
+Try it out
+Name	Description
+idPaciente *
+string
+(path)
+idPaciente
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "idPaciente": "string",
+  "nombrePaciente": "string",
+  "ciudad": "string",
+  "correo": "string",
+  "eps": {
+    "idEps": 0,
+    "nombreEps": "string"
+  }
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "idPaciente": "string",
+  "nombrePaciente": "string",
+  "ciudad": "string",
+  "correo": "string",
+  "eps": {
+    "idEps": 0,
+    "nombreEps": "string"
+  }
+}
+No links
+
+DELETE
+/pacientes/{idPaciente}
+
+
+PATCH
+/pacientes/{idPaciente}
+
+
+GET
+/pacientes
+
+
+POST
+/pacientes
+
+medico-controller
+
+
+GET
+/medicos/{idMedico}
+
+
+PUT
+/medicos/{idMedico}
+
+
+DELETE
+/medicos/{idMedico}
+
+
+PATCH
+/medicos/{idMedico}
+
+
+GET
+/medicos
+
+
+POST
+/medicos
+
+medicamento-controller
+
+
+GET
+/medicamentos/{idMedicamento}
+
+
+PUT
+/medicamentos/{idMedicamento}
+
+
+DELETE
+/medicamentos/{idMedicamento}
+
+
+PATCH
+/medicamentos/{idMedicamento}
+
+
+GET
+/medicamentos
+
+
+POST
+/medicamentos
+
+eps-controller
+
+
+GET
+/eps/{idEps}
+
+
+PUT
+/eps/{idEps}
+
+
+DELETE
+/eps/{idEps}
+
+
+PATCH
+/eps/{idEps}
+
+
+GET
+/eps
+
+
+POST
+/eps
+
+detalle-formula-controller
+
+
+GET
+/detalle-formulas/{idDetalleFormula}
+
+
+PUT
+/detalle-formulas/{idDetalleFormula}
+
+
+DELETE
+/detalle-formulas/{idDetalleFormula}
+
+
+PATCH
+/detalle-formulas/{idDetalleFormula}
+
+
+GET
+/detalle-formulas
+
+
+POST
+/detalle-formulas
+
+cita-controller
+
+
+GET
+/citas/{idCita}
+
+
+PUT
+/citas/{idCita}
+
+
+DELETE
+/citas/{idCita}
+
+
+PATCH
+/citas/{idCita}
+
+
+GET
+/citas
+
+
+POST
+/citas
+
+formula-controller
+
+
+GET
+/api/formulas/{id}
+
+
+PUT
+/api/formulas/{id}
+
+
+DELETE
+/api/formulas/{id}
+
+
+GET
+/api/formulas
+
+
+POST
+/api/formulas
+
+especialidad-controller
+
+
+GET
+/Especialidad/{idEspecialidad}
+
+
+PUT
+/Especialidad/{idEspecialidad}
+
+
+DELETE
+/Especialidad/{idEspecialidad}
+
+
+PATCH
+/Especialidad/{idEspecialidad}
+
+
+GET
+/Especialidad
+
+
+POST
+/Especialidad
+
+auth-controller
+
+
+POST
+/auth/register
+
+
+POST
+/auth/login
+
+
+GET
+/auth/test
+
+
+Schemas
+TelefonoExpand allobject
+EpsExpand allobject
+PacienteExpand allobject
+EspecialidadExpand allobject
+MedicoExpand allobject
+MedicamentoExpand allobject
+CitaExpand allobject
+DetalleFormulaExpand allobject
+FormulaExpand allobject
+RolExpand allobject
+UsuarioExpand allobject
+
+URL de Swagger
+http://localhost:8080/sistema/api/v1/swagger-ui/index.html#/paciente-controller/putPaciente
+Configuración principal
+spring.application.name=citas-service
+server.servlet.context-path=/sistema/api/v1
+
+# ===============================
+# Configuracion de la base de datos MySQL (Docker)
+# ===============================
+##spring.datasource.url=jdbc:mysql://127.0.0.1:3306/CitasService?useSSL=false&serverTimezone=UTC
+#spring.datasource.url=jdbc:mysql://127.0.0.1:3306/CitasService?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+##spring.datasource.url=jdbc:mysql://mysql:3306/CitasService?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#spring.datasource.username=User1
+#spring.datasource.password=123456
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+#
+
+# Ejecutar DataInitializer siempre al iniciar
+spring.sql.init.mode=never
+
+
+# Evita error por nombres automáticos en PostgreSQL y MySQL
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+
+spring.datasource.url=jdbc:postgresql://dpg-d3o5rmre5dus73af4vj0-a.oregon-postgres.render.com:5432/citas_service
+spring.datasource.username=citas_service_user
+spring.datasource.password=pbytJ0ziisDSurrafS9EZXkWONlVP40C
+#spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# ===============================
+# Configuracion de JPA / Hibernate
+# ===============================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+
+
+springdoc.swagger-ui.enabled=true
+springdoc.swagger-ui.path=/doc
+springdoc.pathsToMatch=/**
+
+
+# informacion y estadode la aplicacion
+management.endpoints.web.exposure.include=*
+management.info.env.enabled=true
+management.endpoint.health.show-details=always
+
+#management.endpoints.web.exposure.exclude=info
+
+#spring.security.user.name=Admin
+#spring.security.user.password=123456
+
+
+
+info.app.name=MediSystem
+info.app.descripcion=Aplicacion para gestion de citas medicas 
+info.app.version=1.0.0
+
+
+
+Otros puntos importantes:
+Perfecto 😎. Te hago un **mapa conceptual de tu API** basado en tu `application.properties` y configuración actual de Spring Boot, incluyendo rutas, contexto, Swagger y DB.
+
+---
+
+## 1️⃣ Contexto general de la API
+
+* **Context path:** `/sistema/api/v1`
+* Todas las rutas de tus controladores estarán bajo este prefijo.
+
+**Ejemplo:**
+
+```text
+GET /sistema/api/v1/especialidades
+POST /sistema/api/v1/citas
+```
+
+---
+
+## 2️⃣ Swagger / OpenAPI
+
+* **Swagger UI:** `/sistema/api/v1/doc`
+* Documenta todas las rutas gracias a:
+
+```properties
+springdoc.pathsToMatch=/**
+```
+
+* Te permite probar endpoints directamente desde el navegador.
+
+**Visualización:**
+
+```
+http://localhost:8080/sistema/api/v1/doc
+```
+
+---
+
+## 3️⃣ Rutas típicas y endpoints (según tu contexto)
+
+| Recurso        | Método | Ruta completa                         | Descripción                            |
+| -------------- | ------ | ------------------------------------- | -------------------------------------- |
+| Especialidades | GET    | `/sistema/api/v1/especialidades`      | Obtener todas las especialidades       |
+| Especialidad   | GET    | `/sistema/api/v1/especialidades/{id}` | Obtener una especialidad por ID        |
+| Citas          | GET    | `/sistema/api/v1/citas`               | Listar todas las citas                 |
+| Cita           | POST   | `/sistema/api/v1/citas`               | Crear nueva cita                       |
+| Cita           | GET    | `/sistema/api/v1/citas/{id}`          | Obtener cita por ID                    |
+| Usuarios       | POST   | `/sistema/api/v1/usuarios`            | Registrar usuario                      |
+| Auth / Login   | POST   | `/sistema/api/v1/auth/login`          | Autenticación JWT                      |
+| Otros          | ...    | `/sistema/api/v1/...`                 | Dependiendo de tus otros controladores |
+
+> Recuerda que `@RequestMapping("/especialidades")` en tu controlador hará que todas las rutas queden bajo `/sistema/api/v1/especialidades`.
+
+---
+
+## 4️⃣ Base de datos
+
+* **Tipo:** PostgreSQL (Render)
+* **URL:**
+
+```text
+jdbc:postgresql://dpg-d3o5rmre5dus73af4vj0-a.oregon-postgres.render.com:5432/citas_service
+```
+
+* **Usuario:** `citas_service_user`
+* **Password:** `pbytJ0ziisDSurrafS9EZXkWONlVP40C`
+* Hibernate auto-crea y actualiza tablas gracias a:
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+---
+
+## 5️⃣ Actuator / Monitoring
+
+* **Todos los endpoints expuestos:** `/actuator/**`
+* Puedes consultar:
+
+  * `/actuator/health` → estado de la aplicación
+  * `/actuator/info` → información de la app
+  * `/actuator/env` → variables de entorno
+  * `/actuator/metrics` → métricas de la app
+
+---
+
+## 6️⃣ Problemas comunes y tips
+
+1. **Error `Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'`**
+
+   * Suele pasar si se pasa algo como `index.html` en vez de un número en `@PathVariable`.
+   * Asegúrate de que las rutas Swagger no mezclen endpoints REST con recursos estáticos.
+
+2. **Pruebas de Swagger**
+
+   * Antes de probar, asegúrate que el `context-path` coincide (`/sistema/api/v1/doc`).
+   * Todas las rutas visibles serán relativas a ese prefijo.
+
+3. **Conexion a Render (PostgreSQL)**
+
+   * Si falla la conexión desde tu máquina local, revisa que tu IP esté autorizada en Render.
+   * Usa siempre la URL completa, con puerto y nombre de DB.
+
+---
+
+Si quieres, puedo dibujarte **un diagrama visual tipo “mapa de rutas + DB + Swagger”** que muestre todos los endpoints, el `context-path`, Swagger y Actuator de forma gráfica para que lo tengas listo en documentación. Esto es muy útil para presentaciones o para tu README.
+
+
+Errores que solucionaste y cómo
+Errores en Swagger y rutas de API
+
+Algunos endpoints fallaban al mostrar documentación o al recibir parámetros (String en lugar de Long).
+
+Solución: Se ajustó el contexto de la aplicación (server.servlet.context-path) y los @RequestMapping de los controladores, corrigiendo la interpretación de parámetros y asegurando la compatibilidad con Swagger.
+
+Inyección de dependencias
+
+Uso excesivo de @Autowired generaba dependencias implícitas y complicaba las pruebas.
+
+Solución: Se implementó inyección por constructor, eliminando @Autowired en atributos y mejorando la claridad y testabilidad del código.
+
+Errores de entidades transitorias y relaciones JPA
+
+Persistencia de entidades relacionadas (Cita, Formula, Usuario) generaba errores por entidades no gestionadas.
+
+Solución: Se revisaron y ajustaron relaciones @OneToOne y @ManyToOne, garantizando que todas las entidades relacionadas se gestionaran correctamente antes de guardarlas.
+
+Generación automática de usernames
+
+La lógica inicial fallaba con nombres cortos o sin apellido.
+
+Solución: Se implementó un método robusto para generar usernames a partir del nombre completo, limitando longitud y manejando nombres incompletos.
+
+Conexión a bases de datos
+
+Fallas al conectar con MySQL en Docker y PostgreSQL en Render debido a URLs mal formadas o parámetros faltantes.
+
+Solución: Se corrigieron las URLs JDBC, incluyendo parámetros como useSSL=false, allowPublicKeyRetrieval=true y serverTimezone=UTC, y se verificaron credenciales.
+
+Seguridad y JWT
+
+Errores en la validación de tokens y configuración de filtros de seguridad (SecurityFilterChain).
+
+Solución: Se ajustó la configuración de Spring Security y JWT, asegurando correcta creación, validación y uso de tokens, compatible con la versión de Spring Boot utilizada.
+
+Errores menores y ajustes de compatibilidad
+
+Problemas en la interfaz de Swagger, errores 404/500 en rutas, y conflictos de dependencias en Maven.
+
+Solución: Se centralizó la configuración de rutas, se actualizó el pom.xml para asegurar compatibilidad de dependencias y se verificó que todos los endpoints funcionaran correctamente.
+
+Validaciones y lógica de negocio
+
+Algunos métodos de servicios no validaban correctamente entradas o relaciones de entidades.
+
+Solución: Se implementaron validaciones adicionales, manejo de excepciones y verificaciones previas a la persistencia de datos para evitar inconsistencias.
+
+Conexión con la base de datos:
+
+ ===============================
+# Configuracion de la base de datos MySQL (Docker) base de pruebas 
+# ===============================
+##spring.datasource.url=jdbc:mysql://127.0.0.1:3306/CitasService?useSSL=false&serverTimezone=UTC
+#spring.datasource.url=jdbc:mysql://127.0.0.1:3306/CitasService?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+##spring.datasource.url=jdbc:mysql://mysql:3306/CitasService?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#spring.datasource.username=User1
+#spring.datasource.password=123456
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+#
+
+base principal 
+
+spring.datasource.url=jdbc:postgresql://dpg-d3o5rmre5dus73af4vj0-a.oregon-postgres.render.com:5432/citas_service
+spring.datasource.username=citas_service_user
+spring.datasource.password=pbytJ0ziisDSurrafS9EZXkWONlVP40C
+#spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+

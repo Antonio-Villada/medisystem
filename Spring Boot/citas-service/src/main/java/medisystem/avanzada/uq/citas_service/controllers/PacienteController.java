@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/pacientes")
 public class PacienteController {
 
-    @Autowired
+
     @Qualifier("dbPacienteService")
-    private PacienteService pacienteService;
+    private final PacienteService pacienteService;
+
+    public PacienteController(PacienteService pacienteService) {
+        this.pacienteService = pacienteService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Paciente>> getPacientes() {

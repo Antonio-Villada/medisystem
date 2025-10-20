@@ -13,13 +13,17 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/{Especialidad}")
+@RequestMapping("/Especialidad")
 public class EspecialidadController {
 
 
-    @Autowired
+
     @Qualifier("dbEspecialidadService")
-    private EspecialidadService especialidadService;
+    private final EspecialidadService especialidadService;
+
+    public EspecialidadController(EspecialidadService especialidadService) {
+        this.especialidadService = especialidadService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getEspecialidad(){
@@ -61,27 +65,5 @@ public class EspecialidadController {
         Especialidad actualizado = especialidadService.pachEspecialidad(idEspecialidad ,especialidad);
         return ResponseEntity.ok(actualizado);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

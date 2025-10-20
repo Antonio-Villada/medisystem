@@ -7,16 +7,16 @@
   {
     "username": "ivan",
     "password": "1234",
-    "roles": ["USER"]
+    "roles": ["ADMIN", "USER"]
   },
   {
     "username": "cristian",
     "password": "1234",
-    "roles": ["USER"]
+    "roles": ["ADMIN", "USER"]
   },
   {
     "username": "jorge",
     "password": "1234",
-    "roles": ["USER"]
+    "roles": ["ADMIN", "USER"]
   }
 ]

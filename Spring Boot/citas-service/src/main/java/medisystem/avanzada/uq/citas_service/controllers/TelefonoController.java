@@ -15,9 +15,13 @@ import java.util.List;
 @RequestMapping("/telefonos")
 public class TelefonoController {
 
-    @Autowired
+
     @Qualifier("dbTelefonoService")
-    private TelefonoService telefonoService;
+    private final TelefonoService telefonoService;
+
+    public TelefonoController(TelefonoService telefonoService) {
+        this.telefonoService = telefonoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Telefono>> getTelefonos() {
