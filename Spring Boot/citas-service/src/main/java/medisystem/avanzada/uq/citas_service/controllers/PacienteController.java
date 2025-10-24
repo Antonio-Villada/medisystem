@@ -1,9 +1,11 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
+import medisystem.avanzada.uq.citas_service.dtos.paciente.PacienteRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.paciente.PacienteResponseDTO;
 import medisystem.avanzada.uq.citas_service.entities.Paciente;
 import medisystem.avanzada.uq.citas_service.service.PacienteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,7 +17,6 @@ import java.util.List;
 @RequestMapping("/pacientes")
 public class PacienteController {
 
-
     @Qualifier("dbPacienteService")
     private final PacienteService pacienteService;
 
@@ -23,6 +24,9 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
 
+    // ===============================================
+    // ENDPOINTS EXISTENTES (SIN MODIFICAR)
+    // ===============================================
     @GetMapping
     public ResponseEntity<List<Paciente>> getPacientes() {
         return ResponseEntity.ok(pacienteService.getPacientes());
@@ -59,5 +63,14 @@ public class PacienteController {
     public ResponseEntity<Paciente> patchPaciente(@PathVariable String idPaciente,
                                                   @RequestBody Paciente paciente) {
         return ResponseEntity.ok(pacienteService.patchPaciente(idPaciente, paciente));
+    }
+
+    // ===============================================
+    // NUEVO ENDPOINT USANDO DTOs (ENTRADA/SALIDA)
+    // ===============================================
+    @PostMapping("/dto")
+    public ResponseEntity<PacienteResponseDTO> registrarPacienteConDTO(@RequestBody PacienteRequestDTO dto) {
+        PacienteResponseDTO response = pacienteService.registrarPaciente(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

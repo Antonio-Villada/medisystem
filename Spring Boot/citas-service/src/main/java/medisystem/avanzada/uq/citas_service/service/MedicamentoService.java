@@ -1,13 +1,15 @@
 package medisystem.avanzada.uq.citas_service.service;
 
-import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import medisystem.avanzada.uq.citas_service.dtos.medicamento.MedicamentoRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.medicamento.MedicamentoResponseDTO;
 import java.util.List;
 
 public interface MedicamentoService {
-    List<Medicamento> getMedicamentos();
-    Medicamento getMedicamentoById(Integer idMedicamento);
-    Medicamento postMedicamento(Medicamento medicamento);
-    Medicamento putMedicamento(Integer idMedicamento, Medicamento medicamento);
+
+    List<MedicamentoResponseDTO> getMedicamentos();
+    MedicamentoResponseDTO getMedicamentoById(Integer idMedicamento);
+    MedicamentoResponseDTO postMedicamento(MedicamentoRequestDTO medicamentoDTO);
+    MedicamentoResponseDTO putMedicamento(Integer idMedicamento, MedicamentoRequestDTO medicamentoDTO);
     void deleteMedicamento(Integer idMedicamento);
-    Medicamento patchMedicamento(Integer idMedicamento, Medicamento medicamento);
+    MedicamentoResponseDTO patchMedicamento(Integer idMedicamento, MedicamentoRequestDTO medicamentoDTO);
 }

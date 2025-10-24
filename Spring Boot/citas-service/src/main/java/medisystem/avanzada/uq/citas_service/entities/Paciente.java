@@ -23,8 +23,9 @@ public class Paciente {
     public Paciente() {
     }
 
-    public Paciente(String idPaciente, String nombrePaciente, String ciudad, String correo, Eps eps) {
+    public Paciente(String idPaciente, Usuario usuario, String nombrePaciente, String ciudad, String correo, Eps eps) {
         this.idPaciente = idPaciente;
+        this.usuario = usuario;
         this.nombrePaciente = nombrePaciente;
         this.ciudad = ciudad;
         this.correo = correo;
@@ -37,6 +38,14 @@ public class Paciente {
 
     public void setIdPaciente(String idPaciente) {
         this.idPaciente = idPaciente;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getNombrePaciente() {
@@ -55,19 +64,19 @@ public class Paciente {
         this.ciudad = ciudad;
     }
 
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
     public Eps getEps() {
         return eps;
     }
 
     public void setEps(Eps eps) {
         this.eps = eps;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }

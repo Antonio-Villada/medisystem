@@ -7,6 +7,7 @@ import medisystem.avanzada.uq.citas_service.service.MedicoService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service("dbMedicoService")
 public class MedicoServiceImpl implements MedicoService {
@@ -49,15 +50,13 @@ public class MedicoServiceImpl implements MedicoService {
                 ));
     }
 
-
     @Override
     public void deleteMedico(Long idMedico) {
         Medico medico = medicoRepository.findById(idMedico)
-                .orElseThrow(() -> new MedicoNoEncontradoException
-                        ("Medico con ID " + idMedico + " no encontrado"));
+                .orElseThrow(() -> new MedicoNoEncontradoException(
+                        "Medico con ID " + idMedico + " no encontrado"));
         medicoRepository.delete(medico);
     }
-
 
     @Override
     public Medico patchMedico(Long idMedico, Medico medico) {
@@ -71,12 +70,45 @@ public class MedicoServiceImpl implements MedicoService {
         if (medico.getTelefono() != null) {
             existente.setTelefono(medico.getTelefono());
         }
-        if(medico.getCorreo() != null){
+        if (medico.getCorreo() != null) {
             existente.setCorreo(medico.getCorreo());
         }
-        if(medico.getEspecialidad() != null){
+        if (medico.getEspecialidad() != null) {
             existente.setEspecialidad(medico.getEspecialidad());
         }
         return medicoRepository.save(existente);
+    }
+
+    // ==========================
+    // NUEVOS MÉTODOS AGREGADOS
+    // ==========================
+
+    @Override
+    public Optional<Medico> getMedicoByNombre(String nombreMedico) {
+        return medicoRepository.findAll()
+                .stream()
+                .filter(m -> m.getNombreMedico().equalsIgnoreCase(nombreMedico))
+                .findFirst();
+    }
+
+    @Override
+    public List<Medico> getMedicosByEspecialidad(Long idEspecialidad) {
+        return medicoRepository.findAll()
+                .stream()
+                .filter(m -> m.getEspecialidad() != null &&
+                        m.getEspecialidad().getIdEspecialidad().equals(idEspecialidad))
+                .toList();
+    }
+
+    @Override
+    public boolean existsByCorreo(String correo) {
+        return medicoRepository.findAll()
+                .stream()
+                .anyMatch(m -> m.getCorreo() != null && m.getCorreo().equalsIgnoreCase(correo));
+    }
+
+    @Override
+    public long countMedicos() {
+        return medicoRepository.count();
     }
 }

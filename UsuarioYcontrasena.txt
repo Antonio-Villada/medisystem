@@ -1,0 +1,3 @@
+    "username": "jorge",
+    "password": "1234",
+    "roles": ["ADMIN", "USER"]

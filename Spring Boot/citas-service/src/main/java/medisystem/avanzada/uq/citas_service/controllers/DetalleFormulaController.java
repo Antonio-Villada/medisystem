@@ -1,8 +1,8 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
-import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaResponseDTO;
 import medisystem.avanzada.uq.citas_service.service.DetalleFormulaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,40 +15,52 @@ import java.util.List;
 @RequestMapping("/detalle-formulas")
 public class DetalleFormulaController {
 
-
-    @Qualifier("dbDetalleFormulaService")
     private final DetalleFormulaService detalleFormulaService;
 
-    public DetalleFormulaController(DetalleFormulaService detalleFormulaService) {
+    public DetalleFormulaController(@Qualifier("dbDetalleFormulaService") DetalleFormulaService detalleFormulaService) {
         this.detalleFormulaService = detalleFormulaService;
     }
 
     @GetMapping
-    public ResponseEntity<?> getDetalleFormulas() {
-        List<DetalleFormula> detalleFormulas = detalleFormulaService.getDetalleFormulas();
+    public ResponseEntity<List<DetalleFormulaResponseDTO>> getDetalleFormulas() {
+        List<DetalleFormulaResponseDTO> detalleFormulas = detalleFormulaService.getDetalleFormulas();
         return ResponseEntity.ok(detalleFormulas);
     }
 
     @GetMapping("/{idDetalleFormula}")
-    public ResponseEntity<?> getDetalleFormulaById(@PathVariable Integer idDetalleFormula) {
-        DetalleFormula detalleFormula = detalleFormulaService.getDetalleFormulaById(idDetalleFormula);
+    public ResponseEntity<DetalleFormulaResponseDTO> getDetalleFormulaById(@PathVariable Integer idDetalleFormula) {
+        DetalleFormulaResponseDTO detalleFormula = detalleFormulaService.getDetalleFormulaById(idDetalleFormula);
         return ResponseEntity.ok(detalleFormula);
     }
 
     @PostMapping
-    public ResponseEntity<?> postDetalleFormula(@RequestBody DetalleFormula detalleFormula) {
-        DetalleFormula df = detalleFormulaService.postDetalleFormula(detalleFormula);
+    public ResponseEntity<Void> postDetalleFormula(@RequestBody DetalleFormulaRequestDTO detalleFormulaDTO) {
+        DetalleFormulaResponseDTO creado = detalleFormulaService.postDetalleFormula(detalleFormulaDTO);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{idDetalleFormula}")
-                .buildAndExpand(df.getIdDetalleFormula())
+                .buildAndExpand(creado.getIdDetalleFormula())
                 .toUri();
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{idDetalleFormula}")
-    public ResponseEntity<?> putDetalleFormula(@PathVariable Integer idDetalleFormula, @RequestBody DetalleFormula detalleFormula) {
-        DetalleFormula actualizado = detalleFormulaService.putDetalleFormula(idDetalleFormula, detalleFormula);
+    public ResponseEntity<DetalleFormulaResponseDTO> putDetalleFormula(
+            @PathVariable Integer idDetalleFormula,
+            @RequestBody DetalleFormulaRequestDTO detalleFormulaDTO) {
+
+        DetalleFormulaResponseDTO actualizado =
+                detalleFormulaService.putDetalleFormula(idDetalleFormula, detalleFormulaDTO);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @PatchMapping("/{idDetalleFormula}")
+    public ResponseEntity<DetalleFormulaResponseDTO> patchDetalleFormula(
+            @PathVariable Integer idDetalleFormula,
+            @RequestBody DetalleFormulaRequestDTO detalleFormulaDTO) {
+
+        DetalleFormulaResponseDTO actualizado =
+                detalleFormulaService.patchDetalleFormula(idDetalleFormula, detalleFormulaDTO);
         return ResponseEntity.ok(actualizado);
     }
 
@@ -56,11 +68,5 @@ public class DetalleFormulaController {
     public ResponseEntity<Void> deleteDetalleFormula(@PathVariable Integer idDetalleFormula) {
         detalleFormulaService.deleteDetalleFormula(idDetalleFormula);
         return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{idDetalleFormula}")
-    public ResponseEntity<DetalleFormula> patchDetalleFormula(@PathVariable Integer idDetalleFormula, @RequestBody DetalleFormula detalleFormula) {
-        DetalleFormula actualizado = detalleFormulaService.patchDetalleFormula(idDetalleFormula, detalleFormula);
-        return ResponseEntity.ok(actualizado);
     }
 }

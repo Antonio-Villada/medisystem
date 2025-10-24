@@ -30,13 +30,15 @@ public class Medico {
     public Medico() {
     }
 
-    public Medico(Long idMedico, String nombreMedico, Especialidad especialidad, String telefono, String correo) {
+    public Medico(Long idMedico, String nombreMedico, Usuario usuario, Especialidad especialidad, String telefono, String correo) {
         this.idMedico = idMedico;
         this.nombreMedico = nombreMedico;
+        this.usuario = usuario;
         this.especialidad = especialidad;
         this.telefono = telefono;
         this.correo = correo;
     }
+
 
     public Long getIdMedico() {
         return idMedico;
@@ -52,6 +54,14 @@ public class Medico {
 
     public void setNombreMedico(String nombreMedico) {
         this.nombreMedico = nombreMedico;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Especialidad getEspecialidad() {

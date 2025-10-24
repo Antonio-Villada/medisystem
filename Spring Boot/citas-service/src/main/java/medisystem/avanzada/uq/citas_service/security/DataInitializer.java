@@ -3,6 +3,7 @@ package medisystem.avanzada.uq.citas_service.security;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import medisystem.avanzada.uq.citas_service.entities.Rol;
+import medisystem.avanzada.uq.citas_service.entities.RolNombre;
 import medisystem.avanzada.uq.citas_service.entities.Usuario;
 import medisystem.avanzada.uq.citas_service.repositories.RolRepository;
 import medisystem.avanzada.uq.citas_service.repositories.UsuarioRepository;
@@ -28,7 +29,7 @@ public class DataInitializer {
 
             try (InputStream inputStream = getClass().getResourceAsStream("/data/usuarios.json")) {
                 if (inputStream == null) {
-                    System.err.println(" No se encontró el archivo usuarios.json");
+                    System.err.println(" ❌ No se encontró el archivo usuarios.json");
                     return;
                 }
 
@@ -41,10 +42,16 @@ public class DataInitializer {
                     usuario.setUsername(u.getUsername());
                     usuario.setPassword(passwordEncoder.encode(u.getPassword()));
 
-                    for (String rolNombre : u.getRoles()) {
-                        Rol rol = rolRepository.findByNombre(rolNombre)
-                                .orElseGet(() -> rolRepository.save(new Rol(rolNombre)));
-                        usuario.getRoles().add(rol);
+                    for (String rolNombreStr : u.getRoles()) {
+                        try {
+                            // Convertir el texto del JSON al enum correspondiente
+                            RolNombre rolNombre = RolNombre.valueOf(rolNombreStr.toUpperCase());
+                            Rol rol = rolRepository.findByNombre(rolNombre)
+                                    .orElseGet(() -> rolRepository.save(new Rol(rolNombre)));
+                            usuario.getRoles().add(rol);
+                        } catch (IllegalArgumentException ex) {
+                            System.err.println(" ⚠️ Rol no válido en JSON: " + rolNombreStr);
+                        }
                     }
 
                     usuarioRepository.save(usuario);

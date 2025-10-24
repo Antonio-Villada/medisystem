@@ -1,5 +1,7 @@
 package medisystem.avanzada.uq.citas_service.service;
 
+import medisystem.avanzada.uq.citas_service.dtos.paciente.PacienteRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.paciente.PacienteResponseDTO;
 import medisystem.avanzada.uq.citas_service.entities.Paciente;
 import java.util.List;
 
@@ -10,4 +12,5 @@ public interface PacienteService {
     Paciente putPaciente(String idPaciente, Paciente paciente);
     void deletePaciente(String idPaciente);
     Paciente patchPaciente(String idPaciente, Paciente paciente);
+    PacienteResponseDTO registrarPaciente(PacienteRequestDTO dto);
 }

@@ -1,14 +1,16 @@
 package medisystem.avanzada.uq.citas_service.service;
 
-import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaResponseDTO;
 
 import java.util.List;
 
 public interface DetalleFormulaService {
-    List<DetalleFormula> getDetalleFormulas();
-    DetalleFormula getDetalleFormulaById(Integer idDetalleFormula);
-    DetalleFormula postDetalleFormula(DetalleFormula detalleFormula);
-    DetalleFormula putDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula);
+
+    List<DetalleFormulaResponseDTO> getDetalleFormulas();
+    DetalleFormulaResponseDTO getDetalleFormulaById(Integer idDetalleFormula);
+    DetalleFormulaResponseDTO postDetalleFormula(DetalleFormulaRequestDTO detalleFormulaDTO);
+    DetalleFormulaResponseDTO putDetalleFormula(Integer idDetalleFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
     void deleteDetalleFormula(Integer idDetalleFormula);
-    DetalleFormula patchDetalleFormula(Integer idDetalleFormula, DetalleFormula detalleFormula);
+    DetalleFormulaResponseDTO patchDetalleFormula(Integer idDetalleFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
 }

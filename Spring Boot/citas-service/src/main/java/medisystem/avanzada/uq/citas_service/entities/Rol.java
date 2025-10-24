@@ -10,12 +10,13 @@ public class Rol {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)  // <-- guarda el nombre del enum como texto (MEDICO, PACIENTE, ADMINISTRADOR)
     @Column(unique = true, nullable = false)
-    private String nombre;
+    private RolNombre nombre;
 
     public Rol() {}
 
-    public Rol(String nombre) {
+    public Rol(RolNombre nombre) {
         this.nombre = nombre;
     }
 
@@ -23,6 +24,6 @@ public class Rol {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public RolNombre getNombre() { return nombre; }
+    public void setNombre(RolNombre nombre) { this.nombre = nombre; }
 }

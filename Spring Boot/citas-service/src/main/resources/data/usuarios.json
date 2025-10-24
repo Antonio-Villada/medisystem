@@ -2,21 +2,21 @@
   {
     "username": "antonio",
     "password": "1234",
-    "roles": ["ADMIN", "USER"]
+    "roles": ["ADMINISTRADOR"]
   },
   {
     "username": "ivan",
     "password": "1234",
-    "roles": ["ADMIN", "USER"]
+    "roles": ["MEDICO"]
   },
   {
     "username": "cristian",
     "password": "1234",
-    "roles": ["ADMIN", "USER"]
+    "roles": ["PACIENTE"]
   },
   {
     "username": "jorge",
     "password": "1234",
-    "roles": ["ADMIN", "USER"]
+    "roles": ["MEDICO"]
   }
 ]

@@ -2,7 +2,6 @@ package medisystem.avanzada.uq.citas_service.controllers;
 
 import medisystem.avanzada.uq.citas_service.entities.Medico;
 import medisystem.avanzada.uq.citas_service.service.MedicoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/medicos")
 public class MedicoController {
-
 
     @Qualifier("dbMedicoService")
     private final MedicoService medicoService;
@@ -48,7 +46,7 @@ public class MedicoController {
 
     @PutMapping("/{idMedico}")
     public ResponseEntity<?> putMedico(@PathVariable long idMedico, @RequestBody Medico medico){
-        Medico actualizado =medicoService.putMedico(idMedico,medico);
+        Medico actualizado = medicoService.putMedico(idMedico, medico);
         return ResponseEntity.ok(actualizado);
     }
 
@@ -64,5 +62,31 @@ public class MedicoController {
         return ResponseEntity.ok(actualizado);
     }
 
+    // ==============================
+    // NUEVOS ENDPOINTS OPCIONALES
+    // ==============================
 
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<?> getMedicoByNombre(@PathVariable String nombre) {
+        return medicoService.getMedicoByNombre(nombre)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/especialidad/{idEspecialidad}")
+    public ResponseEntity<List<Medico>> getMedicosByEspecialidad(@PathVariable Long idEspecialidad) {
+        List<Medico> medicos = medicoService.getMedicosByEspecialidad(idEspecialidad);
+        return ResponseEntity.ok(medicos);
+    }
+
+    @GetMapping("/existe-correo")
+    public ResponseEntity<Boolean> existsByCorreo(@RequestParam String correo) {
+        boolean existe = medicoService.existsByCorreo(correo);
+        return ResponseEntity.ok(existe);
+    }
+
+    @GetMapping("/conteo")
+    public ResponseEntity<Long> countMedicos() {
+        return ResponseEntity.ok(medicoService.countMedicos());
+    }
 }
