@@ -42,7 +42,13 @@ public class AuthController {
             return "Contraseña incorrecta";
         }
 
-        String token = jwtTokenProvider.generarToken(usuario.getUsername());
+        String token = jwtTokenProvider.generarToken(
+                usuario.getUsername(),
+                usuarioDB.get().getRoles().stream()
+                        .map(r -> r.getNombre().name())
+                        .toList()
+        );
+
         return "Token JWT: " + token;
     }
 

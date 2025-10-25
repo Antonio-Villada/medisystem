@@ -1,6 +1,9 @@
 package medisystem.avanzada.uq.citas_service.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "pacientes")
@@ -16,9 +19,25 @@ public class Paciente {
     private String nombrePaciente;
     private String ciudad;
     private String correo;
+
     @ManyToOne
     @JoinColumn(name = "id_eps", nullable = false)
     private Eps eps;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<PacienteTelefono> telefonos;
+
+    public List<String> getTelefonos() {
+        if (telefonos == null) return List.of();
+        return telefonos.stream()
+                .map(pt -> pt.getTelefono().getTelefono()) // ajustado según tu entidad Telefono
+                .collect(Collectors.toList());
+    }
+
+    public void setTelefonos(List<PacienteTelefono> telefonos) {
+        this.telefonos = telefonos;
+    }
 
     public Paciente() {
     }

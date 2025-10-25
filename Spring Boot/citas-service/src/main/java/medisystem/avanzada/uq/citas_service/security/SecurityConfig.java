@@ -3,6 +3,7 @@ package medisystem.avanzada.uq.citas_service.security;
 import medisystem.avanzada.uq.citas_service.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Desbloquear Swagger UI y OpenAPI
+                        // 🔓 Swagger y documentación
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -35,9 +36,17 @@ public class SecurityConfig {
                                 "/v3/api-docs.yaml",
                                 "/v3/api-docs.json"
                         ).permitAll()
-                        // 🔓 Mantener libre el login y registro
+
+                        // 🔓 Autenticación pública
                         .requestMatchers("/auth/**").permitAll()
-                        // 🔒 Proteger el resto
+
+                        // 🔒 Reglas específicas por rol
+                        .requestMatchers("/medicos/**", "/pacientes/**", "/telefonos/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers("/eps/**", "/Especialidad/**", "/medicamentos/**").hasAnyRole("MEDICO", "ADMINISTRADOR")
+                        .requestMatchers("/citas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
+                        .requestMatchers("/formulas/**", "/detalle-formulas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
+
+                        // 🔒 Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

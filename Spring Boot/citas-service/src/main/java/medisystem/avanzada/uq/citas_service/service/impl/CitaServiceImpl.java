@@ -15,6 +15,9 @@ import medisystem.avanzada.uq.citas_service.repositories.CitaRepository;
 import medisystem.avanzada.uq.citas_service.repositories.MedicoRepository;
 import medisystem.avanzada.uq.citas_service.repositories.PacienteRepository;
 import medisystem.avanzada.uq.citas_service.service.CitaService;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,10 +49,45 @@ public class CitaServiceImpl implements CitaService {
         this.pacienteMapper = pacienteMapper;
     }
 
+    // ==========================================================
+    // Obtener usuario autenticado
+    // ==========================================================
+    private String getAuthenticatedUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : null;
+    }
+
+    // ==========================================================
+    // Validar si el usuario puede acceder a la cita
+    // ==========================================================
+    private void verificarAcceso(Cita cita) {
+        String username = getAuthenticatedUsername();
+        if (username == null) return;
+
+        boolean esPaciente = cita.getPaciente().getUsuario().getUsername().equals(username);
+        boolean esMedico = cita.getMedico().getUsuario().getUsername().equals(username);
+
+        // Si no es ni el paciente ni el médico, lanza error
+        if (!esPaciente && !esMedico) {
+            throw new AccessDeniedException("No tienes permiso para acceder a esta cita.");
+        }
+    }
+
     @Override
     public List<CitaResponseDTO> getCitas() {
-        return citaRepository.findAll()
-                .stream()
+        String username = getAuthenticatedUsername();
+        List<Cita> citas = citaRepository.findAll();
+
+        // Filtra citas según el rol (paciente o médico)
+        List<Cita> filtradas = citas.stream()
+                .filter(c -> {
+                    boolean esPaciente = c.getPaciente().getUsuario().getUsername().equals(username);
+                    boolean esMedico = c.getMedico().getUsuario().getUsername().equals(username);
+                    return esPaciente || esMedico; // ADMIN ya ve todas desde SecurityConfig
+                })
+                .collect(Collectors.toList());
+
+        return filtradas.stream()
                 .map(cita -> {
                     MedicoResponseDTO medicoDTO = medicoMapper.toResponseDTO(cita.getMedico());
                     PacienteResponseDTO pacienteDTO = pacienteMapper.toDTO(cita.getPaciente(), null);
@@ -62,6 +100,7 @@ public class CitaServiceImpl implements CitaService {
     public CitaResponseDTO getCitaById(Integer idCita) {
         Cita cita = citaRepository.findById(idCita)
                 .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+        verificarAcceso(cita); // 👈 Verifica permisos
         MedicoResponseDTO medicoDTO = medicoMapper.toResponseDTO(cita.getMedico());
         PacienteResponseDTO pacienteDTO = pacienteMapper.toDTO(cita.getPaciente(), null);
         return citaMapper.toResponseDTO(cita, medicoDTO, pacienteDTO);
@@ -69,14 +108,20 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public CitaResponseDTO postCita(CitaRequestDTO dto) {
-        Medico medico = medicoRepository.findById(dto.getIdMedico())
-                .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
+        // Solo PACIENTE puede agendar su propia cita (validación)
+        String username = getAuthenticatedUsername();
         Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
+        if (!paciente.getUsuario().getUsername().equals(username)) {
+            throw new AccessDeniedException("Solo puedes agendar tus propias citas.");
+        }
+
+        Medico medico = medicoRepository.findById(dto.getIdMedico())
+                .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
 
         Cita cita = citaMapper.toEntity(dto, medico, paciente);
 
-        // ---- VALIDACIONES ORIGINALES ----
+        // Validaciones originales ↓
         if (cita.getHoraInicio() == null) {
             throw new IllegalArgumentException("Debe especificar la hora de inicio de la cita.");
         }
@@ -103,13 +148,11 @@ public class CitaServiceImpl implements CitaService {
         }
 
         boolean ocupado = citaRepository.existsByMedicoAndFechaAndHoraInicio(
-                cita.getMedico(), cita.getFecha(), cita.getHoraInicio()
-        );
+                cita.getMedico(), cita.getFecha(), cita.getHoraInicio());
         if (ocupado) {
             throw new IllegalArgumentException("El médico ya tiene una cita programada en ese horario.");
         }
 
-        // ---- GUARDAR Y RETORNAR ----
         cita.setHoraFin(horaFin);
         Cita guardada = citaRepository.save(cita);
 
@@ -118,16 +161,18 @@ public class CitaServiceImpl implements CitaService {
         return citaMapper.toResponseDTO(guardada, medicoDTO, pacienteDTO);
     }
 
-    // ------------------ MÉTODOS ORIGINALES SIN CAMBIOS ------------------
     @Override
     public Cita putCita(Integer idCita, Cita cita) {
         Cita citaExistente = citaRepository.findById(idCita)
                 .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+        verificarAcceso(citaExistente); // 👈 Verifica permisos antes de editar
+
         boolean conflicto = citaRepository.existsByMedicoAndFechaAndHoraInicio(
                 cita.getMedico(), cita.getFecha(), cita.getHoraInicio());
         if (conflicto && !citaExistente.getIdCita().equals(cita.getIdCita())) {
             throw new IllegalArgumentException("El médico ya tiene una cita programada en ese horario.");
         }
+
         citaExistente.setFecha(cita.getFecha());
         citaExistente.setHoraInicio(cita.getHoraInicio());
         citaExistente.setHoraFin(cita.getHoraInicio().plusHours(1));
@@ -142,6 +187,8 @@ public class CitaServiceImpl implements CitaService {
     public void deleteCita(Integer idCita) {
         Cita cita = citaRepository.findById(idCita)
                 .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+        verificarAcceso(cita); // 👈 Verifica permisos antes de eliminar
+
         if (!cita.getFecha().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Solo puede cancelar citas con al menos un día de anticipación.");
         }
@@ -152,6 +199,8 @@ public class CitaServiceImpl implements CitaService {
     public Cita patchCita(Integer idCita, Cita cita) {
         Cita existente = citaRepository.findById(idCita)
                 .orElseThrow(() -> new CitaNoEncontradaException("Cita con id " + idCita + " no encontrada"));
+        verificarAcceso(existente); // 👈 Verifica permisos
+
         if (cita.getFecha() != null) existente.setFecha(cita.getFecha());
         if (cita.getMedico() != null) existente.setMedico(cita.getMedico());
         if (cita.getPaciente() != null) existente.setPaciente(cita.getPaciente());
