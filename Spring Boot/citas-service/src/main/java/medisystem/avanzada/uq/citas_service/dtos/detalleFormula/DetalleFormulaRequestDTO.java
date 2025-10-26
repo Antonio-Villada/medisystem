@@ -1,43 +1,20 @@
 package medisystem.avanzada.uq.citas_service.dtos.detalleFormula;
 
+import jakarta.validation.constraints.*;
+import lombok.Data;
+
+@Data
 public class DetalleFormulaRequestDTO {
 
-    private Integer idFormula;
-    private Integer idMedicamento;
+    @NotNull(message = "El ID del medicamento es obligatorio.")
+    private Long idMedicamento; // CAMBIADO: Integer -> Long
+
+    @NotNull(message = "La cantidad es obligatoria.")
+    @Min(value = 1, message = "La cantidad debe ser al menos 1.")
     private Integer cantidad;
+
+    @NotBlank(message = "La dosis no puede estar vacía.")
+    @Size(max = 255, message = "La dosis es demasiado larga.")
     private String dosis;
 
-    public DetalleFormulaRequestDTO() {}
-
-    public Integer getIdFormula() {
-        return idFormula;
-    }
-
-    public void setIdFormula(Integer idFormula) {
-        this.idFormula = idFormula;
-    }
-
-    public Integer getIdMedicamento() {
-        return idMedicamento;
-    }
-
-    public void setIdMedicamento(Integer idMedicamento) {
-        this.idMedicamento = idMedicamento;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getDosis() {
-        return dosis;
-    }
-
-    public void setDosis(String dosis) {
-        this.dosis = dosis;
-    }
 }

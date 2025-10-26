@@ -1,78 +1,40 @@
 package medisystem.avanzada.uq.citas_service.dtos.paciente;
 
+import jakarta.validation.constraints.*;
+import lombok.Data;
 import java.util.Set;
 
+
+@Data
 public class PacienteRequestDTO {
+
+    @NotBlank(message = "La identificación (idPaciente) no puede estar vacía.")
+    @Size(min = 5, max = 20, message = "La identificación debe tener entre 5 y 20 caracteres.")
     private String idPaciente;
+
+    @NotBlank(message = "El nombre no puede estar vacío.")
     private String nombrePaciente;
+
+    @NotBlank(message = "La ciudad no puede estar vacía.")
     private String ciudad;
+
+    @NotBlank(message = "El correo no puede estar vacío.")
+    @Email(message = "Debe ser una dirección de correo válida.")
     private String correo;
-    private Integer idEps;
+
+    @NotNull(message = "El id de la EPS no puede ser nulo.")
+    private Long idEps; // CAMBIADO: Integer -> Long (para coincidir con la Entidad)
+
+    @NotBlank(message = "El nombre de usuario no puede estar vacío.")
+    @Size(min = 4, message = "El nombre de usuario debe tener al menos 4 caracteres.")
     private String username;
+
+    @NotBlank(message = "La contraseña no puede estar vacía.")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres.")
     private String password;
+
+    @NotEmpty(message = "Debe proporcionar al menos un número de teléfono.")
     private Set<String> telefonos;
 
-    public String getIdPaciente() {
-        return idPaciente;
-    }
 
-    public void setIdPaciente(String idPaciente) {
-        this.idPaciente = idPaciente;
-    }
-
-    public String getNombrePaciente() {
-        return nombrePaciente;
-    }
-
-    public void setNombrePaciente(String nombrePaciente) {
-        this.nombrePaciente = nombrePaciente;
-    }
-
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public Integer getIdEps() {
-        return idEps;
-    }
-
-    public void setIdEps(Integer idEps) {
-        this.idEps = idEps;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<String> getTelefonos() {
-        return telefonos;
-    }
-
-    public void setTelefonos(Set<String> telefonos) {
-        this.telefonos = telefonos;
-    }
 }

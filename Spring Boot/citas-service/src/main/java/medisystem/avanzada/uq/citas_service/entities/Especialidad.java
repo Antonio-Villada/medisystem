@@ -1,40 +1,28 @@
 package medisystem.avanzada.uq.citas_service.entities;
 
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "especialidades")
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "nombreEspecialidad")
 public class Especialidad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_especialidad")
     private Long idEspecialidad;
 
+    @Column(name = "nombre_especialidad", nullable = false, unique = true, length = 100)
     private String nombreEspecialidad;
 
-    public Especialidad() {
-    }
 
-    public Especialidad(Long idEspecialidad, String nombreEspecialidad) {
-        this.idEspecialidad = idEspecialidad;
-        this.nombreEspecialidad = nombreEspecialidad;
-    }
-
-    public Long getIdEspecialidad() {
-        return idEspecialidad;
-    }
-
-    public void setIdEspecialidad(Long idEspecialidad) {
-        this.idEspecialidad = idEspecialidad;
-    }
-
-    public String getNombreEspecialidad() {
-        return nombreEspecialidad;
-    }
-
-    public void setNombreEspecialidad(String nombreEspecialidad) {
-        this.nombreEspecialidad = nombreEspecialidad;
-    }
 }

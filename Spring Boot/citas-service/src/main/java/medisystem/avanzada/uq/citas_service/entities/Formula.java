@@ -2,49 +2,31 @@ package medisystem.avanzada.uq.citas_service.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List; // Importar List
+import lombok.*;
 
 @Entity
 @Table(name = "formulas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "idFormula")
 public class Formula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idFormula;
+    @Column(name = "id_formula")
+    private Long idFormula;
 
-    @OneToOne
-    @JoinColumn(name = "id_cita", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cita", nullable = false, unique = true)
     private Cita cita;
+
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    public Formula() {}
-
-    public Formula(int idFormula, Cita cita, LocalDate fecha) {
-        this.idFormula = idFormula;
-        this.cita = cita;
-        this.fecha = fecha;
-    }
-
-    public int getIdFormula() {
-        return idFormula;
-    }
-
-    public void setIdFormula(int idFormula) {
-        this.idFormula = idFormula;
-    }
-
-    public Cita getCita() {
-        return cita;
-    }
-
-    public void setCita(Cita cita) {
-        this.cita = cita;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
+    // AÑADIDO: Relación con DetalleFormula
+    @OneToMany(mappedBy = "formula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleFormula> detalles; // <-- Ahora la propiedad "detalles" existe en la Entidad
 }

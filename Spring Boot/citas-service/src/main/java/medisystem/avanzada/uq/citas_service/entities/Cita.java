@@ -3,113 +3,58 @@ package medisystem.avanzada.uq.citas_service.entities;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "citas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "idCita") // Basado en el ID
 public class Cita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCita;
+    @Column(name = "id_cita")
+    private Long idCita;
 
-    @Column(nullable = false)
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    @Column(nullable = false)
+    @Column(name = "hora_inicio", nullable = false)
     private LocalTime horaInicio;
 
-    @Column(nullable = false)
+    @Column(name = "hora_fin", nullable = false)
     private LocalTime horaFin;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_medico", nullable = false)
     private Medico medico;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
 
-    @Lob
+    @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
-    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL)
+    @Column(name = "estado", columnDefinition = "TEXT")
+    private String estado;
+
+    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true) // AÑADIDO: LAZY y orphanRemoval
     private Formula formula;
 
-    public Cita() {}
-
-    public Cita(Integer idCita, LocalDate fecha, LocalTime horaInicio,Medico medico, Paciente paciente,
-                String observaciones, Formula formula) {
-        this.idCita = idCita;
-        this.fecha = fecha;
-        this.horaInicio = horaInicio;
-        this.horaFin = horaInicio.plusHours(1);
-        this.medico = medico;
-        this.paciente = paciente;
-        this.observaciones = observaciones;
-        this.formula = formula;
+    @PrePersist
+    @PreUpdate
+    private void calcularHoraFin() {
+        if (this.horaInicio != null) {
+            this.horaFin = this.horaInicio.plusHours(1);
+        }
     }
 
-    public Integer getIdCita() {
-        return idCita;
-    }
-
-    public void setIdCita(Integer idCita) {
-        this.idCita = idCita;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public LocalTime getHoraInicio() {
-        return horaInicio;
-    }
-
-    public void setHoraInicio(LocalTime horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public LocalTime getHoraFin() {
-        return horaFin;
-    }
-
-    public void setHoraFin(LocalTime horaFin) {
-        this.horaFin = horaFin;
-    }
-
-    public Medico getMedico() {
-        return medico;
-    }
-
-    public void setMedico(Medico medico) {
-        this.medico = medico;
-    }
-
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public Formula getFormula() {
-        return formula;
-    }
-
-    public void setFormula(Formula formula) {
-        this.formula = formula;
-    }
 }

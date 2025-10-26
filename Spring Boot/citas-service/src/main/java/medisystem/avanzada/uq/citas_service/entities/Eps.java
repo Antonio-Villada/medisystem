@@ -1,38 +1,27 @@
 package medisystem.avanzada.uq.citas_service.entities;
 
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "eps")
-public class Eps  {
-    private Integer idEps;
-    private String nombreEps;
-
-
-    public Eps() {
-    }
-
-    public Eps(Integer idEps, String nombreEps) {
-        this.idEps = idEps;
-        this.nombreEps = nombreEps;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "nombreEps")
+public class Eps {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getIdEps() {
-        return idEps;
-    }
+    @Column(name = "id_eps")
+    private Long idEps;
 
-    public void setIdEps(Integer idEps) {
-        this.idEps = idEps;
-    }
+    @Column(name = "nombre_eps", nullable = false, unique = true, length = 100)
+    private String nombreEps;
 
-    public String getNombreEps() {
-        return nombreEps;
-    }
-
-    public void setNombreEps(String nombreEps) {
-        this.nombreEps = nombreEps;
-    }
 }

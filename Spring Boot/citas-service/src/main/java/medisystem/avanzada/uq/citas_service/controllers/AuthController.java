@@ -1,59 +1,73 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
-import medisystem.avanzada.uq.citas_service.entities.Usuario;
-import medisystem.avanzada.uq.citas_service.repositories.UsuarioRepository;
+import medisystem.avanzada.uq.citas_service.dtos.auth.LoginRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.auth.LoginResponseDTO; // Asumido
 import medisystem.avanzada.uq.citas_service.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
+    // Cambiamos la inyección para usar el AuthenticationManager estándar
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    
-    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtTokenProvider jwtTokenProvider) {
+        this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping("/register")
-    public String register(@RequestBody Usuario usuario) {
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuarioRepository.save(usuario);
-        return "Usuario registrado con éxito: " + usuario.getUsername();
-    }
+    // ==========================================================
+    // POST /auth/login : Inicio de sesión y generación de token
+    // ==========================================================
 
     @PostMapping("/login")
-    public String login(@RequestBody Usuario usuario) {
-        Optional<Usuario> usuarioDB = usuarioRepository.findByUsername(usuario.getUsername());
+    // Usamos el DTO de entrada y devolvemos el DTO de respuesta estándar
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
 
-        if (usuarioDB.isEmpty()) {
-            return "Usuario no encontrado";
+        try {
+            // 1. Intentar autenticar las credenciales (lanza excepción si falla)
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+
+            // 2. Obtener los detalles del usuario autenticado
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // 3. Obtener roles en formato String para el token
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", ""))
+                    .collect(Collectors.toList());
+
+            // 4. Generar el token JWT
+            String jwt = jwtTokenProvider.generarToken(userDetails.getUsername(), roles);
+
+            // 5. Devolver la respuesta con el token
+            LoginResponseDTO response = new LoginResponseDTO(jwt);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception ex) {
+            // Si la autenticación falla (ej: BadCredentialsException), se captura y se devuelve 401 Unauthorized.
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "Credenciales inválidas o usuario no encontrado.");
         }
-
-        if (!passwordEncoder.matches(usuario.getPassword(), usuarioDB.get().getPassword())) {
-            return "Contraseña incorrecta";
-        }
-
-        String token = jwtTokenProvider.generarToken(
-                usuario.getUsername(),
-                usuarioDB.get().getRoles().stream()
-                        .map(r -> r.getNombre().name())
-                        .toList()
-        );
-
-        return "Token JWT: " + token;
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Funciona sin autenticación!";
-    }
+    // NOTA: El registro es manejado por MedicoController y PacienteController
+    // El endpoint /test se elimina o se mueve a un Controller de testing
+
 }

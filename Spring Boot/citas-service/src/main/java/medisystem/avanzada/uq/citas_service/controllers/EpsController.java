@@ -1,10 +1,12 @@
 package medisystem.avanzada.uq.citas_service.controllers;
 
-import medisystem.avanzada.uq.citas_service.entities.Eps;
-import medisystem.avanzada.uq.citas_service.service.EpsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import medisystem.avanzada.uq.citas_service.dtos.eps.EpsRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.eps.EpsResponseDTO;
+import medisystem.avanzada.uq.citas_service.services.EpsService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -12,57 +14,110 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/eps")
+@RequestMapping("/eps") // Cambiado a /api/eps por convención
 public class EpsController {
 
-
-    @Qualifier("dbEpsService")
     private final EpsService epsService;
 
     public EpsController(EpsService epsService) {
         this.epsService = epsService;
     }
 
+    // ==========================================================
+    // GET /api/eps : Listar todas las EPS
+    // ==========================================================
+
+    /**
+     * Permite a todos los roles consultar las EPS (necesario para el registro de Pacientes).
+     */
     @GetMapping
-    public ResponseEntity<?> getEps() {
-        List<Eps> eps = epsService.getEps();
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
+    public ResponseEntity<List<EpsResponseDTO>> getAllEps() {
+        List<EpsResponseDTO> eps = epsService.getAllEps();
         return ResponseEntity.ok(eps);
     }
 
+    // ==========================================================
+    // GET /api/eps/{idEps} : Obtener EPS por ID
+    // ==========================================================
+
+    /**
+     * Permite a todos consultar una EPS específica.
+     */
     @GetMapping("/{idEps}")
-    public ResponseEntity<?> getEpsById(@PathVariable int idEps) {
-        Eps eps = epsService.getEpsById(idEps);
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
+    // CORREGIDO: int -> Long
+    public ResponseEntity<EpsResponseDTO> getEpsById(@PathVariable Long idEps) {
+        EpsResponseDTO eps = epsService.getEpsById(idEps);
         return ResponseEntity.ok(eps);
     }
 
+    // ==========================================================
+    // POST /api/eps : Crear nueva EPS
+    // ==========================================================
+
+    /**
+     * Permite solo al ADMINISTRADOR crear una nueva EPS.
+     */
     @PostMapping
-    public ResponseEntity<?> postEps(@RequestBody Eps eps){
-        Eps eps1 = epsService.postEps(eps);
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    // CORREGIDO: Eps -> EpsRequestDTO y devuelve EpsResponseDTO
+    public ResponseEntity<EpsResponseDTO> postEps(@Valid @RequestBody EpsRequestDTO dto){
+        EpsResponseDTO nuevaEps = epsService.postEps(dto);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{idEps}")
-                .buildAndExpand(eps1.getIdEps())
+                .buildAndExpand(nuevaEps.getIdEps())
                 .toUri();
-        return ResponseEntity.created(location).build();
+
+        return ResponseEntity.created(location).body(nuevaEps); // Devuelve el DTO
     }
 
+    // ==========================================================
+    // PUT /api/eps/{idEps} : Actualización total
+    // ==========================================================
+
+    /**
+     * Permite solo al ADMINISTRADOR actualizar totalmente una EPS.
+     */
     @PutMapping("/{idEps}")
-    public ResponseEntity<?> putEps(@PathVariable int idEps, @RequestBody Eps eps){
-        Eps actualizado =epsService.putEps(idEps,eps);
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    // CORREGIDO: int -> Long, Eps -> EpsRequestDTO y devuelve EpsResponseDTO
+    public ResponseEntity<EpsResponseDTO> putEps(@PathVariable Long idEps,
+                                                 @Valid @RequestBody EpsRequestDTO dto){
+        EpsResponseDTO actualizado = epsService.putEps(idEps, dto);
         return ResponseEntity.ok(actualizado);
     }
 
+    // ==========================================================
+    // DELETE /api/eps/{idEps} : Eliminación
+    // ==========================================================
+
+    /**
+     * Permite solo al ADMINISTRADOR eliminar una EPS.
+     */
     @DeleteMapping("/{idEps}")
-    public ResponseEntity<Void> deleteEps(@PathVariable int idEps) {
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    // CORREGIDO: int -> Long
+    public ResponseEntity<Void> deleteEps(@PathVariable Long idEps) {
         epsService.deleteEps(idEps);
         return ResponseEntity.noContent().build();
     }
 
+    // ==========================================================
+    // PATCH /api/eps/{idEps} : Actualización parcial
+    // ==========================================================
+
+    /**
+     * Permite solo al ADMINISTRADOR actualizar parcialmente una EPS.
+     */
     @PatchMapping("/{idEps}")
-    public ResponseEntity<Eps> patchEps(@PathVariable int idEps, @RequestBody Eps eps) {
-        Eps actualizado = epsService.patchEps(idEps, eps);
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    // CORREGIDO: int -> Long, Eps -> EpsRequestDTO y devuelve EpsResponseDTO
+    public ResponseEntity<EpsResponseDTO> patchEps(@PathVariable Long idEps,
+                                                   @RequestBody EpsRequestDTO dto) {
+        EpsResponseDTO actualizado = epsService.patchEps(idEps, dto);
         return ResponseEntity.ok(actualizado);
     }
-
-
 }

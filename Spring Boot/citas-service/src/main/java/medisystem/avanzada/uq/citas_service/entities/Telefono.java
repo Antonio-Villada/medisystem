@@ -1,39 +1,28 @@
 package medisystem.avanzada.uq.citas_service.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "telefonos")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "telefono")
 public class Telefono {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idTelefono;
+    @Column(name = "id_telefono")
+    private Long idTelefono;
 
 
+    @Column(name = "telefono", nullable = false, unique = true, length = 10)
     private String telefono;
 
-    public Telefono() {
-    }
-
-    public Telefono(Integer idTelefono, String telefono) {
-        this.idTelefono = idTelefono;
-        this.telefono = telefono;
-    }
-
-    public Integer getIdTelefono() {
-        return idTelefono;
-    }
-
-    public void setIdTelefono(Integer idTelefono) {
-        this.idTelefono = idTelefono;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
 }

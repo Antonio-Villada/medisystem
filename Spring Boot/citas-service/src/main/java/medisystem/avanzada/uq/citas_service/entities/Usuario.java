@@ -3,46 +3,41 @@ package medisystem.avanzada.uq.citas_service.entities;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "usuarios")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "username")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY) // CAMBIADO: EAGER -> LAZY
     @JoinTable(
             name = "usuarios_roles",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id")
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_rol")
     )
     private Set<Rol> roles = new HashSet<>();
-
-    public Usuario() {}
 
     public Usuario(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public Set<Rol> getRoles() { return roles; }
-    public void setRoles(Set<Rol> roles) { this.roles = roles; }
 }

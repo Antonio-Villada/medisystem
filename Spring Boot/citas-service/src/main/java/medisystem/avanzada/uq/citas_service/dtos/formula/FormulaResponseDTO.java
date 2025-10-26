@@ -1,36 +1,27 @@
 package medisystem.avanzada.uq.citas_service.dtos.formula;
 
-import medisystem.avanzada.uq.citas_service.dtos.cita.CitaResponseDTO;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaResponseDTO;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FormulaResponseDTO {
 
-    private Integer idFormula;
-    private String fecha; // formato: "yyyy-MM-dd"
-    private CitaResponseDTO cita;
+    private Long idFormula; // CAMBIADO: Integer -> Long
 
-    public FormulaResponseDTO() {}
+    // CAMBIO 1: Usamos LocalDate para que Jackson lo serialice correctamente
+    private LocalDate fecha;
 
-    public Integer getIdFormula() {
-        return idFormula;
-    }
+    // CAMBIO 2: Evitamos el bucle infinito. Solo incluimos el ID de la cita.
+    private Long idCita;
 
-    public void setIdFormula(Integer idFormula) {
-        this.idFormula = idFormula;
-    }
+    // CAMBIO 3: Incluimos el contenido de la fórmula (la lista de medicamentos)
+    private List<DetalleFormulaResponseDTO> detalles;
 
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public CitaResponseDTO getCita() {
-        return cita;
-    }
-
-    public void setCita(CitaResponseDTO cita) {
-        this.cita = cita;
-    }
+    // ¡Se eliminaron todos los getters, setters y constructores manuales!
 }

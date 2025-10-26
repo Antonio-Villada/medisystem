@@ -1,56 +1,24 @@
 package medisystem.avanzada.uq.citas_service.dtos.detalleFormula;
 
-
-import medisystem.avanzada.uq.citas_service.dtos.formula.FormulaResponseDTO;
 import medisystem.avanzada.uq.citas_service.dtos.medicamento.MedicamentoResponseDTO;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Data // Incluye @Getter, @Setter, @ToString, etc.
+@NoArgsConstructor
+@AllArgsConstructor
 public class DetalleFormulaResponseDTO {
 
-    private Integer idDetalleFormula;
+    private Long idDetalleFormula; // CAMBIADO: Integer -> Long
     private Integer cantidad;
     private String dosis;
-    private FormulaResponseDTO formula;
+
+    // CAMBIO 1: ELIMINADO FormulaResponseDTO formula; para evitar el bucle infinito.
+    // La fórmula contenedora ya lo sabe.
+
+    // Mantenemos el medicamento anidado (lo cual es bueno).
     private MedicamentoResponseDTO medicamento;
 
-    public DetalleFormulaResponseDTO() {}
-
-    public Integer getIdDetalleFormula() {
-        return idDetalleFormula;
-    }
-
-    public void setIdDetalleFormula(Integer idDetalleFormula) {
-        this.idDetalleFormula = idDetalleFormula;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getDosis() {
-        return dosis;
-    }
-
-    public void setDosis(String dosis) {
-        this.dosis = dosis;
-    }
-
-    public FormulaResponseDTO getFormula() {
-        return formula;
-    }
-
-    public void setFormula(FormulaResponseDTO formula) {
-        this.formula = formula;
-    }
-
-    public MedicamentoResponseDTO getMedicamento() {
-        return medicamento;
-    }
-
-    public void setMedicamento(MedicamentoResponseDTO medicamento) {
-        this.medicamento = medicamento;
-    }
+    // ¡Se eliminaron todos los getters, setters y constructores manuales!
 }

@@ -1,91 +1,44 @@
 package medisystem.avanzada.uq.citas_service.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import medisystem.avanzada.uq.citas_service.entities.Especialidad;
+import medisystem.avanzada.uq.citas_service.entities.Usuario;
 
-import java.util.List;
 
 @Entity
 @Table(name = "medicos")
-
+@Getter
+@Setter
+@NoArgsConstructor // Genera el constructor vacío
+@AllArgsConstructor // Genera el constructor con todos los argumentos
+@EqualsAndHashCode(of = "correo") // Implementa equals y hashCode basado en 'correo'
 public class Medico {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_medico")
     private Long idMedico;
 
+    @Column(name = "nombre_medico", nullable = false)
     private String nombreMedico;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "especialidad_id") // nombre de la FK en la tabla Medico
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_especialidad", nullable = false)
     private Especialidad especialidad;
+
+    @Column(name = "telefono", nullable = false)
     private String telefono;
+
+    @Column(name = "correo", nullable = false, unique = true)
     private String correo;
 
-
-    public Medico() {
-    }
-
-    public Medico(Long idMedico, String nombreMedico, Usuario usuario, Especialidad especialidad, String telefono, String correo) {
-        this.idMedico = idMedico;
-        this.nombreMedico = nombreMedico;
-        this.usuario = usuario;
-        this.especialidad = especialidad;
-        this.telefono = telefono;
-        this.correo = correo;
-    }
-
-
-    public Long getIdMedico() {
-        return idMedico;
-    }
-
-    public void setIdMedico(Long idMedico) {
-        this.idMedico = idMedico;
-    }
-
-    public String getNombreMedico() {
-        return nombreMedico;
-    }
-
-    public void setNombreMedico(String nombreMedico) {
-        this.nombreMedico = nombreMedico;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
 }
-

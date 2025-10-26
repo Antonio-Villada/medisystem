@@ -1,52 +1,27 @@
 package medisystem.avanzada.uq.citas_service.dtos.cita;
 
+import jakarta.validation.constraints.*;
+import lombok.Data;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Data
 public class CitaRequestDTO {
 
-    private String fecha;       // formato: "yyyy-MM-dd"
-    private String horaInicio;  // formato: "HH:mm"
+    @NotNull(message = "La fecha no puede ser nula.")
+    private LocalDate fecha;       // CAMBIADO: String -> LocalDate
+
+    @NotNull(message = "La hora de inicio no puede ser nula.")
+    private LocalTime horaInicio;  // CAMBIADO: String -> LocalTime
+
+    @Size(max = 500, message = "Las observaciones no deben exceder los 500 caracteres.")
     private String observaciones;
+
+    @NotNull(message = "El ID del médico es obligatorio.")
     private Long idMedico;
+
+    @NotBlank(message = "El ID del paciente es obligatorio.")
     private String idPaciente;
 
-    public CitaRequestDTO() {}
 
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getHoraInicio() {
-        return horaInicio;
-    }
-
-    public void setHoraInicio(String horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public Long getIdMedico() {
-        return idMedico;
-    }
-
-    public void setIdMedico(Long idMedico) {
-        this.idMedico = idMedico;
-    }
-
-    public String getIdPaciente() {
-        return idPaciente;
-    }
-
-    public void setIdPaciente(String idPaciente) {
-        this.idPaciente = idPaciente;
-    }
 }

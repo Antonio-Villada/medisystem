@@ -1,29 +1,39 @@
 package medisystem.avanzada.uq.citas_service.security.jwt;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
-import javax.crypto.SecretKey;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException; // Necesaria para el manejo de excepciones
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class JwtTokenProvider {
 
-    private final SecretKey secretKey = Keys.hmacShaKeyFor(
-            "clave-super-segura-de-256-bits-para-el-jwt-medissystem-123456".getBytes()
-    );
-    private final long expirationTime = 86400000; // 24 horas
+    private final String secretString;
+    private final SecretKey secretKey;
+    private final long expirationTime = 86400000; // 24 horas en milisegundos
+
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretString) {
+        // La clave debe tener al menos 256 bits (32 caracteres)
+        this.secretString = secretString;
+        this.secretKey = Keys.hmacShaKeyFor(secretString.getBytes());
+    }
 
     public SecretKey getSecretKey() {
         return secretKey;
     }
 
     // ==========================================================
-    // Generar token con username y roles
+    // Generar token
     // ==========================================================
     public String generarToken(String username, List<String> roles) {
         Date ahora = new Date();
@@ -31,7 +41,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .subject(username)
-                .claim("roles", roles) // 👈 Se agregan los roles al token
+                .claim("roles", roles)
                 .issuedAt(ahora)
                 .expiration(expiracion)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -39,20 +49,13 @@ public class JwtTokenProvider {
     }
 
     // ==========================================================
-    // Obtener el username del token
+    // Validación del token (MÉTODO FALTANTE CORREGIDO)
     // ==========================================================
-    public String obtenerUsername(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return claims.getSubject();
-    }
-
-    // ==========================================================
-    // Validar si el token es correcto y no expiró
-    // ==========================================================
+    /**
+     * Valida la firma y la fecha de expiración del token.
+     * @param token El JWT a validar.
+     * @return true si el token es válido, false en caso contrario.
+     */
     public boolean validarToken(String token) {
         try {
             Jwts.parser()
@@ -60,8 +63,22 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (Exception e) {
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException |
+                 UnsupportedJwtException | IllegalArgumentException e) {
+            // Manejo de errores de validación de firma o expiración.
             return false;
         }
+    }
+
+    // ==========================================================
+    // Obtener Claims
+    // ==========================================================
+    public String obtenerUsernameDelToken(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 }

@@ -1,0 +1,152 @@
+package medisystem.avanzada.uq.citas_service.services.impl;
+
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaRequestDTO;
+import medisystem.avanzada.uq.citas_service.dtos.detalleFormula.DetalleFormulaResponseDTO;
+import medisystem.avanzada.uq.citas_service.entities.DetalleFormula;
+import medisystem.avanzada.uq.citas_service.entities.Formula;
+import medisystem.avanzada.uq.citas_service.entities.Medicamento;
+import medisystem.avanzada.uq.citas_service.exceptions.DetalleFormulaNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.exceptions.FormulaNoEncontradaException;
+import medisystem.avanzada.uq.citas_service.exceptions.MedicamentoNoEncontradoException;
+import medisystem.avanzada.uq.citas_service.mappers.DetalleFormulaMapper;
+import medisystem.avanzada.uq.citas_service.repositories.DetalleFormulaRepository;
+import medisystem.avanzada.uq.citas_service.repositories.FormulaRepository;
+import medisystem.avanzada.uq.citas_service.repositories.MedicamentoRepository;
+import medisystem.avanzada.uq.citas_service.services.DetalleFormulaService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service("dbDetalleFormulaService")
+@Transactional
+public class DetalleFormulaServiceImpl implements DetalleFormulaService {
+
+    private final DetalleFormulaRepository detalleFormulaRepository;
+    private final FormulaRepository formulaRepository;
+    private final MedicamentoRepository medicamentoRepository;
+    private final DetalleFormulaMapper detalleFormulaMapper;
+
+    public DetalleFormulaServiceImpl(DetalleFormulaRepository detalleFormulaRepository,
+                                     FormulaRepository formulaRepository,
+                                     MedicamentoRepository medicamentoRepository,
+                                     DetalleFormulaMapper detalleFormulaMapper) {
+        this.detalleFormulaRepository = detalleFormulaRepository;
+        this.formulaRepository = formulaRepository;
+        this.medicamentoRepository = medicamentoRepository;
+        this.detalleFormulaMapper = detalleFormulaMapper;
+    }
+
+    // ========================================================
+    // LECTURA (GET) - Corregido para usar Long
+    // ========================================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetalleFormulaResponseDTO> getDetalleFormulas() {
+        return detalleFormulaRepository.findAll()
+                .stream()
+                .map(detalleFormulaMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    // CORREGIDO: Integer -> Long
+    public DetalleFormulaResponseDTO getDetalleFormulaById(Long idDetalleFormula) {
+        DetalleFormula entity = detalleFormulaRepository.findById(idDetalleFormula)
+                // Uso de la excepción con Long
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException(idDetalleFormula));
+
+        return detalleFormulaMapper.toResponseDTO(entity);
+    }
+
+    // ========================================================
+    // MÉTODOS DE SOPORTE (Uso interno por FormulaService)
+    // Estos métodos deberían ser llamados por FormulaService
+    // ========================================================
+
+    /**
+     * Crea y asocia un DetalleFormula a una Formula existente.
+     * Este método es llamado por FormulaServiceImpl.
+     * @param idFormula ID de la fórmula contenedora.
+     * @param dto Datos del medicamento.
+     * @return DetalleFormulaResponseDTO
+     */
+    public DetalleFormulaResponseDTO createDetalleForFormula(Long idFormula, DetalleFormulaRequestDTO dto) {
+        // 1. Buscar Fórmula
+        Formula formula = formulaRepository.findById(idFormula)
+                .orElseThrow(() -> new FormulaNoEncontradaException(idFormula));
+
+        // 2. Buscar Medicamento
+        Medicamento medicamento = medicamentoRepository.findById(dto.getIdMedicamento())
+                .orElseThrow(() -> new MedicamentoNoEncontradoException(dto.getIdMedicamento()));
+
+        // 3. Mapear y Guardar
+        DetalleFormula entity = detalleFormulaMapper.toEntity(dto, formula, medicamento);
+        DetalleFormula saved = detalleFormulaRepository.save(entity);
+
+        return detalleFormulaMapper.toResponseDTO(saved);
+    }
+
+    // ========================================================
+    // ACTUALIZACIÓN (PUT/PATCH/DELETE) - Basados en la interfaz original
+    // ========================================================
+
+    // NOTA: POST y PUT directo del DetalleFormula no tiene sentido de negocio,
+    // pero los mantenemos para el contrato de la interfaz.
+
+    @Override
+    public DetalleFormulaResponseDTO postDetalleFormula(DetalleFormulaRequestDTO dto) {
+        // Asumiendo que esta llamada viene de un contexto donde el ID de la fórmula
+        // se maneja externamente o se pasa implícitamente.
+        throw new UnsupportedOperationException("El método POST directo de DetalleFormula está deshabilitado. Use el servicio de Fórmula.");
+    }
+
+    @Override
+    public DetalleFormulaResponseDTO putDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO dto) {
+        // Lógica de PUT simplificada
+        DetalleFormula existente = detalleFormulaRepository.findById(idDetalleFormula)
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException(idDetalleFormula));
+
+        // NOTA: Se evita buscar Formula y Medicamento aquí, ya que el put/patch de detalle
+        // no debería ser la vía principal para cambiar el medicamento asociado.
+
+        if (dto.getCantidad() != null) {
+            existente.setCantidad(dto.getCantidad());
+        }
+        if (dto.getDosis() != null) {
+            existente.setDosis(dto.getDosis());
+        }
+
+        DetalleFormula updated = detalleFormulaRepository.save(existente);
+        return detalleFormulaMapper.toResponseDTO(updated);
+    }
+
+    @Override
+    public void deleteDetalleFormula(Long idDetalleFormula) {
+        if (!detalleFormulaRepository.existsById(idDetalleFormula)) {
+            throw new DetalleFormulaNoEncontradaException(idDetalleFormula);
+        }
+        detalleFormulaRepository.deleteById(idDetalleFormula);
+    }
+
+    @Override
+    public DetalleFormulaResponseDTO patchDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO dto) {
+        // Lógica de PATCH simplificada
+        DetalleFormula existente = detalleFormulaRepository.findById(idDetalleFormula)
+                .orElseThrow(() -> new DetalleFormulaNoEncontradaException(idDetalleFormula));
+
+        if (dto.getCantidad() != null) {
+            existente.setCantidad(dto.getCantidad());
+        }
+        if (dto.getDosis() != null) {
+            existente.setDosis(dto.getDosis());
+        }
+
+        DetalleFormula updated = detalleFormulaRepository.save(existente);
+        return detalleFormulaMapper.toResponseDTO(updated);
+    }
+}

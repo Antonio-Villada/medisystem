@@ -1,0 +1,522 @@
+-- Inserción de EPS
+INSERT INTO eps (nombre_eps) VALUES
+('SURA'),
+('Nueva EPS'),
+('Salud Total'),
+('Compensar'),
+('Medimás'),
+('Famisanar'),
+('Coomeva'),
+('Sanitas'),
+('Aliansalud'),
+('Nueva Alianza');
+
+-- Inserción de Especialidades
+INSERT INTO especialidades (nombre_especialidad) VALUES
+('Medicina General'),
+('Cardiología'),
+('Pediatría'),
+('Ginecología'),
+('Oftalmología'),
+('Dermatología'),
+('Traumatología'),
+('Neurología'),
+('Psiquiatría'),
+('Urología');
+
+-- INSERCIÓN  NUEVOS USUARIOS MÉDICOS
+INSERT INTO usuarios (username, password) VALUES
+('doc_sanchez', '1234'),
+('doc_ramirez', '1234'),
+('doc_gomez', '1234'),
+('doc_rojas', '1234'),
+('doc_cruz', '1234'),
+('doc_perez', '1234'),
+('doc_arias', '1234'),
+('doc_mora', '1234');
+
+
+--  INSERCIÓN NUEVOS USUARIOS PACIENTES
+INSERT INTO usuarios (username, password) VALUES
+('pac_diaz', '1234'), -- ID 13
+('pac_garcia', '1234'),
+('pac_lopez', '1234'),
+('pac_fernandez', '1234'),
+('pac_martinez', '1234'),
+('pac_hernandez', '1234'),
+('pac_gonzalez', '1234'),
+('pac_alvarez', '1234'),
+('pac_romero', '1234'),
+('pac_ruiz', '1234'),
+('pac_torres', '1234'),
+('pac_flores', '1234'),
+('pac_rivera', '1234'),
+('pac_castro', '1234'),
+('pac_silva', '1234'),
+('pac_vargas', '1234'),
+('pac_mendez', '1234'),
+('pac_nuñez', '1234'),
+('pac_ortiz', '1234'),
+('pac_ramos', '1234'),
+('pac_soto', '1234'),
+('pac_vega', '1234'),
+('pac_cortez', '1234'),
+('pac_benitez', '1234'),
+('pac_marquez', '1234'),
+('pac_guerrero', '1234'),
+('pac_quintero', '1234'),
+('pac_navarro', '1234'),
+('pac_rios', '1234'),
+('pac_zuniga', '1234');
+
+-- Asocia a los 8 nuevos médicos (IDs 5 a 12) al rol MEDICO (ID 2)
+INSERT INTO usuarios_roles (id_usuario, id_rol)
+SELECT id_usuario, (SELECT id_rol FROM roles WHERE nombre = 'MEDICO')
+FROM usuarios
+WHERE id_usuario BETWEEN 5 AND 12;
+
+-- Asocia a los 30 nuevos pacientes (IDs 13 a 42) al rol PACIENTE (ID 3)
+INSERT INTO usuarios_roles (id_usuario, id_rol)
+SELECT id_usuario, (SELECT id_rol FROM roles WHERE nombre = 'PACIENTE')
+FROM usuarios
+WHERE id_usuario BETWEEN 13 AND 42;
+
+-- Ivan Bañol (ID_USUARIO = 2) - Asignado a Pediatría
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'ivan'), -- id_medico (PK y FK a usuarios)
+    'Dr. Ivan Bañol',
+    'ivan.banol@medisystem.com',
+    '3101230002',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Pediatría'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'ivan')
+);
+
+-- Jorge Quintero (ID_USUARIO = 4) - Asignado a Cardiología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'jorge'),
+    'Dr. Jorge Quintero',
+    'jorge.quintero@medisystem.com',
+    '3204560004',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Cardiología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'jorge')
+);
+
+-- NOTA: Se asume que la columna FK a usuarios es 'id_usuario', y la PK es 'id_medico'.
+-- Se usa la columna 'nombre_especialidad' en la tabla 'especialidades'.
+
+-- 3. doc_sanchez (ID 5) - Oftalmología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_sanchez'),
+    'Dra. Sofía Sánchez',
+    'sofia.sanchez@medisystem.com',
+    '3157890005',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Oftalmología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_sanchez')
+);
+
+-- 4. doc_ramirez (ID 6) - Dermatología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_ramirez'),
+    'Dr. Ricardo Ramírez',
+    'ricardo.ramirez@medisystem.com',
+    '3001120006',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Dermatología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_ramirez')
+);
+
+-- 5. doc_gomez (ID 7) - Traumatología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_gomez'),
+    'Dra. Gabriela Gómez',
+    'gabriela.gomez@medisystem.com',
+    '3104450007',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Traumatología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_gomez')
+);
+
+-- 6. doc_rojas (ID 8) - Neurología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_rojas'),
+    'Dr. Roberto Rojas',
+    'roberto.rojas@medisystem.com',
+    '3017780008',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Neurología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_rojas')
+);
+
+-- 7. doc_cruz (ID 9) - Psiquiatría
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_cruz'),
+    'Dra. Camila Cruz',
+    'camila.cruz@medisystem.com',
+    '3120010009',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Psiquiatría'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_cruz')
+);
+
+-- 8. doc_perez (ID 10) - Urología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_perez'),
+    'Dra. Patricia Pérez',
+    'patricia.perez@medisystem.com',
+    '3183340010',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Urología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_perez')
+);
+
+-- 9. doc_arias (ID 11) - Medicina General
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_arias'),
+    'Dr. Andrés Arias',
+    'andres.arias@medisystem.com',
+    '3166670011',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Medicina General'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_arias')
+);
+
+-- 10. doc_mora (ID 12) - Ginecología
+INSERT INTO medicos (id_medico, nombre_medico, correo, telefono, id_especialidad, id_usuario)
+VALUES (
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_mora'),
+    'Dr. Marcelo Mora',
+    'marcelo.mora@medisystem.com',
+    '3149900012',
+    (SELECT id_especialidad FROM especialidades WHERE nombre_especialidad = 'Ginecología'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'doc_mora')
+);
+
+
+
+-- 1. Cristian (ID_USUARIO = 3)
+INSERT INTO pacientes (id_paciente, nombre_paciente, correo, ciudad, id_eps, id_usuario)
+VALUES (
+    '1000000003', -- Identificación/Cédula
+    'Cristian Castaño',
+    'cristian.Castano@mail.com',
+    'Armenia',
+    (SELECT id_eps FROM eps WHERE nombre_eps  = 'SURA'),
+    (SELECT id_usuario FROM usuarios WHERE username = 'cristian')
+);
+
+-- 2. Nuevos Pacientes (IDs de Usuario 13 a 42)
+INSERT INTO pacientes (id_paciente, nombre_paciente, correo, ciudad, id_eps, id_usuario)
+VALUES
+-- Bloque 1 (Usuarios 13-22)
+( '1000000013', 'Diego Díaz', 'p13@mail.com', 'Cali', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva EPS'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_diaz') ),
+( '1000000014', 'Laura García', 'p14@mail.com', 'Cali', (SELECT id_eps FROM eps WHERE nombre_eps = 'Salud Total'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_garcia') ),
+( '1000000015', 'Carlos López', 'p15@mail.com', 'Pereira', (SELECT id_eps FROM eps WHERE nombre_eps = 'Compensar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_lopez') ),
+( '1000000016', 'Ana Fernández', 'p16@mail.com', 'Pereira', (SELECT id_eps FROM eps WHERE nombre_eps = 'Medimás'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_fernandez') ),
+( '1000000017', 'Luis Martínez', 'p17@mail.com', 'Manizales', (SELECT id_eps FROM eps WHERE nombre_eps = 'Famisanar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_martinez') ),
+( '1000000018', 'Sara Hernández', 'p18@mail.com', 'Manizales', (SELECT id_eps FROM eps WHERE nombre_eps = 'Coomeva'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_hernandez') ),
+( '1000000019', 'Pedro González', 'p19@mail.com', 'Bogotá', (SELECT id_eps FROM eps WHERE nombre_eps = 'Sanitas'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_gonzalez') ),
+( '1000000020', 'Marta Álvarez', 'p20@mail.com', 'Bogotá', (SELECT id_eps FROM eps WHERE nombre_eps = 'Aliansalud'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_alvarez') ),
+( '1000000021', 'Javier Romero', 'p21@mail.com', 'Medellín', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva Alianza'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_romero') ),
+( '1000000022', 'Elena Ruiz', 'p22@mail.com', 'Medellín', (SELECT id_eps FROM eps WHERE nombre_eps = 'SURA'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_ruiz') ),
+
+-- Bloque 2 (Usuarios 23-32)
+( '1000000023', 'Andrés Torres', 'p23@mail.com', 'Bucaramanga', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva EPS'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_torres') ),
+( '1000000024', 'Sofía Flores', 'p24@mail.com', 'Bucaramanga', (SELECT id_eps FROM eps WHERE nombre_eps = 'Salud Total'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_flores') ),
+( '1000000025', 'Ricardo Rivera', 'p25@mail.com', 'Cartagena', (SELECT id_eps FROM eps WHERE nombre_eps = 'Compensar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_rivera') ),
+( '1000000026', 'Valeria Castro', 'p26@mail.com', 'Cartagena', (SELECT id_eps FROM eps WHERE nombre_eps = 'Medimás'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_castro') ),
+( '1000000027', 'Felipe Silva', 'p27@mail.com', 'Barranquilla', (SELECT id_eps FROM eps WHERE nombre_eps = 'Famisanar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_silva') ),
+( '1000000028', 'Catalina Vargas', 'p28@mail.com', 'Barranquilla', (SELECT id_eps FROM eps WHERE nombre_eps = 'Coomeva'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_vargas') ),
+( '1000000029', 'Gabriel Méndez', 'p29@mail.com', 'Cúcuta', (SELECT id_eps FROM eps WHERE nombre_eps = 'Sanitas'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_mendez') ),
+( '1000000030', 'Isabella Núñez', 'p30@mail.com', 'Cúcuta', (SELECT id_eps FROM eps WHERE nombre_eps = 'Aliansalud'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_nuñez') ),
+( '1000000031', 'Omar Ortiz', 'p31@mail.com', 'Ibagué', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva Alianza'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_ortiz') ),
+( '1000000032', 'Natalia Ramos', 'p32@mail.com', 'Ibagué', (SELECT id_eps FROM eps WHERE nombre_eps = 'SURA'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_ramos') ),
+
+-- Bloque 3 (Usuarios 33-42)
+( '1000000033', 'Pablo Soto', 'p33@mail.com', 'Pasto', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva EPS'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_soto') ),
+( '1000000034', 'Juliana Vega', 'p34@mail.com', 'Pasto', (SELECT id_eps FROM eps WHERE nombre_eps = 'Salud Total'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_vega') ),
+( '1000000035', 'Esteban Cortez', 'p35@mail.com', 'Neiva', (SELECT id_eps FROM eps WHERE nombre_eps = 'Compensar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_cortez') ),
+( '1000000036', 'Daniela Benítez', 'p36@mail.com', 'Neiva', (SELECT id_eps FROM eps WHERE nombre_eps = 'Medimás'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_benitez') ),
+( '1000000037', 'Camilo Márquez', 'p37@mail.com', 'Villavicencio', (SELECT id_eps FROM eps WHERE nombre_eps = 'Famisanar'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_marquez') ),
+( '1000000038', 'Alejandra Guerrero', 'p38@mail.com', 'Villavicencio', (SELECT id_eps FROM eps WHERE nombre_eps = 'Coomeva'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_guerrero') ),
+( '1000000039', 'Miguel Quintero', 'p39@mail.com', 'Popayán', (SELECT id_eps FROM eps WHERE nombre_eps = 'Sanitas'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_quintero') ),
+( '1000000040', 'Vanessa Navarro', 'p40@mail.com', 'Popayán', (SELECT id_eps FROM eps WHERE nombre_eps = 'Aliansalud'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_navarro') ),
+( '1000000041', 'Hector Ríos', 'p41@mail.com', 'Tunja', (SELECT id_eps FROM eps WHERE nombre_eps = 'Nueva Alianza'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_rios') ),
+( '1000000042', 'Jessica Zúñiga', 'p42@mail.com', 'Tunja', (SELECT id_eps FROM eps WHERE nombre_eps = 'SURA'), (SELECT id_usuario FROM usuarios WHERE username = 'pac_zuniga') );
+
+
+INSERT INTO medicamentos (nombre_medicamento, precio) VALUES
+('Acetaminofén 500mg', 2800.00),
+('Ibuprofeno 400mg', 4500.00),
+('Diclofenaco Sódico 75mg', 8000.00),
+('Naproxeno 500mg', 12000.00),
+('Tramadol 50mg', 25000.00),
+('Metamizol Sódico 500mg', 6000.00),
+('Celecoxib 200mg', 48000.00),
+('Ketorolaco 10mg', 15000.00),
+('Paracetamol Jarabe', 18000.00),
+('Meloxicam 15mg', 22000.00), -- Fin Analgésicos/Antiinflamatorios (1-10)
+
+('Amoxicilina 500mg', 18000.00),
+('Ciprofloxacino 500mg', 35000.00),
+('Azitromicina 500mg', 55000.00),
+('Clindamicina 300mg', 42000.00),
+('Metronidazol 500mg', 20000.00),
+('Fluconazol 150mg', 48000.00),
+('Cefalexina 500mg', 30000.00),
+('Doxiciclina 100mg', 24000.00),
+('Penicilina Benzatínica', 75000.00),
+('Levofloxacino 750mg', 60000.00), -- Fin Antibióticos (11-20)
+
+('Omeprazol 20mg', 23000.00),
+('Lansoprazol 30mg', 28000.00),
+('Ranitidina 150mg', 15000.00),
+('Loperamida 2mg', 14000.00),
+('Buscapina Compuesta', 20000.00),
+('Domperidona 10mg', 17000.00),
+('Lactulosa Jarabe', 40000.00),
+('Esomeprazol 40mg', 45000.00),
+('Metoclopramida 10mg', 13000.00),
+('Sales de Rehidratación Oral', 9000.00), -- Fin Gastrointestinales (21-30)
+
+('Loratadina 10mg', 10000.00),
+('Cetirizina 10mg', 12000.00),
+('Dexametasona 4mg', 15000.00),
+('Salbutamol Inhalador', 65000.00),
+('Montelukast 10mg', 50000.00),
+('Ambroxol Jarabe', 22000.00),
+('Pseudoefedrina 60mg', 18000.00),
+('Fluticasona Nasal Spray', 55000.00),
+('Budesonida Suspensión', 45000.00),
+('Codeína 10mg', 28000.00), -- Fin Respiratorios (31-40)
+
+('Losartán 50mg', 32000.00),
+('Amlodipino 5mg', 30000.00),
+('Metformina 850mg', 25000.00),
+('Atorvastatina 20mg', 40000.00),
+('Captopril 25mg', 15000.00),
+('Clopidogrel 75mg', 60000.00),
+('Simvastatina 40mg', 35000.00),
+('Furosemida 40mg', 14000.00),
+('Insulina NPH', 120000.00),
+('Warfarina 5mg', 50000.00); -- Fin Cardiovasculares (41-50)
+
+
+-- 1. INSERCIÓN DE 50 NÚMEROS DE TELÉFONO DE 10 DÍGITOS
+INSERT INTO telefonos (telefono) VALUES
+('3000000001'), ('3000000002'), ('3000000003'), ('3000000004'), ('3000000005'),
+('3000000006'), ('3000000007'), ('3000000008'), ('3000000009'), ('3000000010'),
+('3000000011'), ('3000000012'), ('3000000013'), ('3000000014'), ('3000000015'),
+('3000000016'), ('3000000017'), ('3000000018'), ('3000000019'), ('3000000020'),
+('3000000021'), ('3000000022'), ('3000000023'), ('3000000024'), ('3000000025'),
+('3000000026'), ('3000000027'), ('3000000028'), ('3000000029'), ('3000000030'),
+('3000000031'), ('3000000032'), ('3000000033'), ('3000000034'), ('3000000035'),
+('3000000036'), ('3000000037'), ('3000000038'), ('3000000039'), ('3000000040'),
+('3000000041'), ('3000000042'), ('3000000043'), ('3000000044'), ('3000000045'),
+('3000000046'), ('3000000047'), ('3000000048'), ('3000000049'), ('3000000050');
+
+
+
+-- *** 3. REASIGNACIÓN DE TELÉFONOS (31 base + 17 adicionales) ***
+INSERT INTO pacientes_telefonos (id_telefono, id_paciente) VALUES
+-- Asignación base (31 registros)
+( 1, '1000000003'), ( 2, '1000000013'), ( 3, '1000000014'), ( 4, '1000000015'), ( 5, '1000000016'),
+( 6, '1000000017'), ( 7, '1000000018'), ( 8, '1000000019'), ( 9, '1000000020'), ( 10, '1000000021'),
+( 11, '1000000022'), ( 12, '1000000023'), ( 13, '1000000024'), ( 14, '1000000025'), ( 15, '1000000026'),
+( 16, '1000000027'), ( 17, '1000000028'), ( 18, '1000000029'), ( 19, '1000000030'), ( 20, '1000000031'),
+( 21, '1000000032'), ( 22, '1000000033'), ( 23, '1000000034'), ( 24, '1000000035'), ( 25, '1000000036'),
+( 26, '1000000037'), ( 27, '1000000038'), ( 28, '1000000039'), ( 29, '1000000040'), ( 30, '1000000041'),
+( 31, '1000000042'),
+
+-- Asignación de teléfonos adicionales (17 registros)
+( 32, '1000000003' ), ( 33, '1000000003' ),
+( 34, '1000000013' ),
+( 35, '1000000014' ), ( 36, '1000000014' ),
+( 37, '1000000015' ),
+( 38, '1000000016' ), ( 39, '1000000016' ),
+( 40, '1000000017' ),
+( 41, '1000000018' ), ( 42, '1000000018' ),
+( 43, '1000000019' ),
+( 44, '1000000020' ), ( 45, '1000000020' ),
+( 46, '1000000021' ),
+( 47, '1000000022' ), ( 48, '1000000022' );
+
+
+
+
+
+INSERT INTO citas (fecha, hora_inicio, hora_fin, observaciones, estado, id_paciente, id_medico)
+VALUES
+-- 1. Pasada (FINALIZADA) - Cristian Castaño
+('2025-10-15', '10:00:00', '10:30:00', 'Revisión pediátrica, 24 horas después de vacuna.', 'FINALIZADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Cristian Castaño'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Ivan Bañol')),
+
+-- 2. Presente (AGENDADA) - Diego Díaz
+('2025-10-16', '14:00:00', '14:30:00', 'Control de tensión arterial. Cita vespertina de hoy.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Diego Díaz'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Jorge Quintero')),
+
+-- 3. Pasada (FINALIZADA) - Laura García
+('2025-10-10', '09:30:00', '10:00:00', 'Consulta por dolor de espalda. Se recomienda fisioterapia.', 'FINALIZADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Laura García'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dra. Sofía Sánchez')),
+
+-- 4. Futura (AGENDADA) - Carlos López
+('2025-10-17', '11:00:00', '11:30:00', 'Chequeo general de rutina. Mañana a primera hora.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Carlos López'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Ricardo Ramírez')),
+
+-- 5. Futura (AGENDADA) - Ana Fernández
+('2025-10-25', '08:30:00', '09:00:00', 'Revisión de glucosa. Cita de final de mes.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Ana Fernández'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dra. Gabriela Gómez')),
+
+-- 6. Pasada (FINALIZADA) - Luis Martínez
+('2025-10-14', '16:00:00', '16:30:00', 'Consulta por vértigo. Se emite fórmula.', 'FINALIZADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Luis Martínez'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Roberto Rojas')),
+
+-- 7. Presente (AGENDADA) - Sara Hernández
+('2025-10-16', '17:00:00', '17:30:00', 'Examen de la vista. Cita de la tarde.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Sara Hernández'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dra. Camila Cruz')),
+
+-- 8. Futura (AGENDADA) - Pedro González
+('2025-11-01', '16:30:00', '17:00:00', 'Control trimestral de ácido úrico.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Pedro González'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dra. Patricia Pérez')),
+
+-- 9. Pasada (FINALIZADA) - Marta Álvarez
+('2025-10-05', '11:30:00', '12:00:00', 'Evaluación de depresión. Ajuste de dosis.', 'FINALIZADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Marta Álvarez'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Andrés Arias')),
+
+-- 10. Futura (AGENDADA) - Javier Romero
+('2025-10-18', '10:00:00', '10:30:00', 'Consulta preventiva. Sábado en la mañana.', 'AGENDADA',
+ (SELECT id_paciente FROM pacientes WHERE nombre_paciente = 'Javier Romero'),
+ (SELECT id_medico FROM medicos WHERE nombre_medico = 'Dr. Marcelo Mora'));
+
+
+ -- *** 2. INSERCIÓN DE 8 FÓRMULAS MÉDICAS (SIN OBSERVACIONES) ***
+
+ INSERT INTO formulas (id_cita, fecha)
+ VALUES
+ -- FÓRMULA 1 (Cita ID 1: 2025-10-15 - Cristian Castaño)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000003' AND fecha = '2025-10-15'), '2025-10-15' ),
+
+ -- FÓRMULA 2 (Cita ID 3: 2025-10-10 - Laura García)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000014' AND fecha = '2025-10-10'), '2025-10-10' ),
+
+ -- FÓRMULA 3 (Cita ID 6: 2025-10-14 - Luis Martínez)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000017' AND fecha = '2025-10-14'), '2025-10-14' ),
+
+ -- FÓRMULA 4 (Cita ID 9: 2025-10-05 - Marta Álvarez)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000020' AND fecha = '2025-10-05'), '2025-10-05' ),
+
+ -- FÓRMULA 5 (Cita ID 11: 2025-10-26 - Elena Ruiz)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000022' AND fecha = '2025-10-26'), '2025-10-26' ),
+
+ -- FÓRMULA 6 (Cita ID 13: 2025-10-15 - Sofía Flores)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000024' AND fecha = '2025-10-15'), '2025-10-15' ),
+
+ -- FÓRMULA 7 (Cita ID 16: 2025-10-25 - Felipe Silva)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000027' AND fecha = '2025-10-25'), '2025-10-25' ),
+
+ -- FÓRMULA 8 (Cita ID 19: 2025-10-18 - Isabella Núñez)
+ ( (SELECT id_cita FROM citas WHERE id_paciente = '1000000030' AND fecha = '2025-10-18'), '2025-10-18' );
+
+
+
+-- *** 1. LIMPIEZA INICIAL DE TABLAS ***
+TRUNCATE TABLE detalle_formula RESTART IDENTITY CASCADE;
+TRUNCATE TABLE formulas RESTART IDENTITY CASCADE;
+-- Asumimos que las 10 citas del 16 de octubre ya están en la tabla 'citas'.
+
+-- *** 2. INSERCIÓN DE 8 FÓRMULAS MÉDICAS (Solo id_cita y fecha) ***
+INSERT INTO formulas (id_cita, fecha)
+VALUES
+-- FÓRMULA 1 (Cita ID 1: 2025-10-15 - Cristian Castaño)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000003' AND fecha = '2025-10-15'), '2025-10-15' ),
+-- FÓRMULA 2 (Cita ID 3: 2025-10-10 - Laura García)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000014' AND fecha = '2025-10-10'), '2025-10-10' ),
+-- FÓRMULA 3 (Cita ID 6: 2025-10-14 - Luis Martínez)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000017' AND fecha = '2025-10-14'), '2025-10-14' ),
+-- FÓRMULA 4 (Cita ID 9: 2025-10-05 - Marta Álvarez)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000020' AND fecha = '2025-10-05'), '2025-10-05' ),
+-- FÓRMULA 5 (Cita ID 11: 2025-10-26 - Elena Ruiz)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000022' AND fecha = '2025-10-26'), '2025-10-26' ),
+-- FÓRMULA 6 (Cita ID 13: 2025-10-15 - Sofía Flores)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000024' AND fecha = '2025-10-15'), '2025-10-15' ),
+-- FÓRMULA 7 (Cita ID 16: 2025-10-25 - Felipe Silva)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000027' AND fecha = '2025-10-25'), '2025-10-25' ),
+-- FÓRMULA 8 (Cita ID 19: 2025-10-18 - Isabella Núñez)
+( (SELECT id_cita FROM citas WHERE id_paciente = '1000000030' AND fecha = '2025-10-18'), '2025-10-18' );
+
+
+
+
+
+
+-- *** 2. INSERCIÓN DE DETALLE_FORMULA  ***
+
+INSERT INTO detalle_formula (id_formula, id_medicamento, cantidad, dosis)
+VALUES
+-- FÓRMULA 1 (Paracetamol)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000003' AND fecha = '2025-10-15')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Paracetamol Jarabe'), -- ¡CORREGIDO!
+    1, '5ml cada 6 horas por 24 horas.'
+),
+
+-- FÓRMULA 2 (Ibuprofeno)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000014' AND fecha = '2025-10-10')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Ibuprofeno 400mg'), -- ¡CORREGIDO!
+    20, 'Tomar 1 tableta cada 8 horas, solo si hay dolor.'
+),
+
+-- FÓRMULA 3 (Meloxicam y Omeprazol)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000017' AND fecha = '2025-10-14')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Meloxicam 15mg'), -- ¡CORREGIDO!
+    15, 'Tomar 1 tableta diaria en ayunas.'
+),
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000017' AND fecha = '2025-10-14')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Omeprazol 20mg'), -- ¡CORREGIDO!
+    30, 'Tomar 1 tableta antes de dormir.'
+),
+
+-- FÓRMULA 4 (Montelukast)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000020' AND fecha = '2025-10-05')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Montelukast 10mg'), -- ¡CORREGIDO!
+    30, 'Tomar 1 tableta diaria en las noches.'
+),
+
+-- FÓRMULA 6 (Loratadina)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000024' AND fecha = '2025-10-15')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Loratadina 10mg'), -- ¡CORREGIDO!
+    15, 'Tomar 1 tableta diaria.'
+),
+
+-- FÓRMULA 7 (Captopril)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000027' AND fecha = '2025-10-25')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Captopril 25mg'), -- ¡CORREGIDO!
+    30, 'Tomar media tableta diaria.'
+),
+
+-- FÓRMULA 8 (Simvastatina)
+(
+    (SELECT id_formula FROM formulas WHERE id_cita = (SELECT id_cita FROM citas WHERE id_paciente = '1000000030' AND fecha = '2025-10-18')),
+    (SELECT id_medicamento FROM medicamentos WHERE nombre_medicamento = 'Simvastatina 40mg'), -- ¡CORREGIDO!
+    30, 'Tomar 1 tableta por la noche.'
+);
+
+
+

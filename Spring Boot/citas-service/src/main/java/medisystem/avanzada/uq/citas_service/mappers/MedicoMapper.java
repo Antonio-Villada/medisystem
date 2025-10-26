@@ -5,42 +5,53 @@ import medisystem.avanzada.uq.citas_service.dtos.medico.MedicoResponseDTO;
 import medisystem.avanzada.uq.citas_service.entities.Medico;
 import medisystem.avanzada.uq.citas_service.entities.Especialidad;
 import medisystem.avanzada.uq.citas_service.entities.Usuario;
-import org.springframework.stereotype.Component;
+import medisystem.avanzada.uq.citas_service.entities.Rol; // Necesario para el método de ayuda
 
-@Component
-public class MedicoMapper {
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    public Medico toEntity(MedicoRequestDTO dto, Usuario usuario, Especialidad especialidad) {
-        Medico medico = new Medico();
-        medico.setNombreMedico(dto.getNombreMedico());
-        medico.setTelefono(dto.getTelefono());
-        medico.setCorreo(dto.getCorreo());
-        medico.setUsuario(usuario);
-        medico.setEspecialidad(especialidad);
-        return medico;
-    }
+@Mapper(componentModel = "spring")
+public interface MedicoMapper {
 
-    public MedicoResponseDTO toResponseDTO(Medico medico) {
-        String especialidadNombre = medico.getEspecialidad() != null
-                ? medico.getEspecialidad().getNombreEspecialidad()
-                : null;
 
-        String username = medico.getUsuario() != null
-                ? medico.getUsuario().getUsername()
-                : null;
+    // DTO a ENTITY (Creación/Actualización)
 
-        String rol = (medico.getUsuario() != null && !medico.getUsuario().getRoles().isEmpty())
-                ? medico.getUsuario().getRoles().iterator().next().getNombre().name()
-                : null;
+    /**
+     * Mapea MedicoRequestDTO a Medico.
+     * El servicio es responsable de obtener/crear 'usuario' y 'especialidad' y pasarlos como argumentos.
+     */
+    @Mapping(target = "especialidad", source = "especialidad") // Mapea el objeto Especialidad
+    @Mapping(target = "usuario", source = "usuario")           // Mapea el objeto Usuario
+    @Mapping(target = "idMedico", ignore = true)               // El ID es autogenerado por la BD (ignoramos el source del DTO)
+    Medico toEntity(MedicoRequestDTO dto, Usuario usuario, Especialidad especialidad);
 
-        return new MedicoResponseDTO(
-                medico.getIdMedico(),
-                medico.getNombreMedico(),
-                medico.getTelefono(),
-                medico.getCorreo(),
-                especialidadNombre,
-                username,
-                rol
-        );
+
+    // ENTITY a RESPONSE DTO (Lectura)
+    /**
+     * Mapea la Entidad Medico a MedicoResponseDTO.
+     */
+    @Mapping(target = "nombreEspecialidad", source = "medico.especialidad.nombreEspecialidad") // Obtiene el nombre
+    @Mapping(target = "username", source = "medico.usuario.username")                       // Obtiene el username
+    @Mapping(target = "roles", source = "medico.usuario.roles", qualifiedByName = "rolesToStringSet") // Usa el método de ayuda
+    MedicoResponseDTO toResponseDTO(Medico medico);
+
+
+    //  Método de Ayuda para Mapeo Complejo (Set<Rol> a Set<String>)
+
+    /**
+     * Convierte el Set<Rol> del Usuario en un Set<String> con los nombres de los roles.
+     * Este método reemplaza la lógica manual que tenías para extraer el rol.
+     */
+    @Named("rolesToStringSet")
+    default Set<String> rolesToStringSet(Set<Rol> roles) {
+        if (roles == null) {
+            return Set.of();
+        }
+        return roles.stream()
+                .map(rol -> rol.getNombre().name()) // Convierte el Enum RolNombre a su String
+                .collect(Collectors.toSet());
     }
 }

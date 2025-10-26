@@ -3,15 +3,20 @@ package medisystem.avanzada.uq.citas_service.security;
 import medisystem.avanzada.uq.citas_service.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.core.GrantedAuthorityDefaults; // 🌟 Nuevo Import
+
+// Importaciones requeridas para el PasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,7 +31,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                // Es crucial configurar el manejo de sesión como STATELESS para una API con JWT
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // 🔓 Swagger y documentación
                         .requestMatchers(
@@ -37,14 +44,26 @@ public class SecurityConfig {
                                 "/v3/api-docs.json"
                         ).permitAll()
 
-                        // 🔓 Autenticación pública
+                        // 🔓 Autenticación pública (Ej: /sistema/api/v1/auth/login)
                         .requestMatchers("/auth/**").permitAll()
 
-                        // 🔒 Reglas específicas por rol
-                        .requestMatchers("/medicos/**", "/pacientes/**", "/telefonos/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers("/eps/**", "/Especialidad/**", "/medicamentos/**").hasAnyRole("MEDICO", "ADMINISTRADOR")
-                        .requestMatchers("/citas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
-                        .requestMatchers("/formulas/**", "/detalle-formulas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
+                        // 🔒 Reglas específicas por rol (Los nombres en BD: ADMINISTRADOR, MEDICO, PACIENTE)
+                        .requestMatchers(
+                                "/medicos/**",
+                                "/pacientes/**",
+                                "/telefonos/**",
+                                "/usuarios/**"
+                        ).hasRole("ADMINISTRADOR")
+                        .requestMatchers(
+                                "/eps/**",
+                                "/especialidades/**",
+                                "/medicamentos/**"
+                        ).hasAnyRole("MEDICO", "ADMINISTRADOR")
+                        .requestMatchers(
+                                "/citas/**",
+                                "/formulas/**",
+                                "/detalle-formulas/**"
+                        ).hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
 
                         // 🔒 Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
@@ -62,5 +81,15 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Bean clave: Le dice a Spring Security que use una cadena vacía ("") como prefijo de autoridad.
+     * Esto hace que hasRole("ADMINISTRADOR") coincida EXACTAMENTE con el rol "ADMINISTRADOR" de la BD,
+     * respetando la restricción de tu base de datos.
+     */
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
     }
 }

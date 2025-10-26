@@ -1,6 +1,7 @@
 package medisystem.avanzada.uq.citas_service.security.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,31 +40,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             if (jwtTokenProvider.validarToken(token)) {
-                // Extraer claims del token
-                Claims claims = io.jsonwebtoken.Jwts.parser()
-                        .verifyWith(jwtTokenProvider.getSecretKey()) // acceder a la misma clave
+
+                // 1. Extraer claims
+                Claims claims = Jwts.parser()
+                        .verifyWith(jwtTokenProvider.getSecretKey())
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();
 
                 String username = claims.getSubject();
+                // NOTA: Los roles en el payload del JWT son el nombre limpio (ADMINISTRADOR)
                 List<String> roles = claims.get("roles", List.class);
 
-                // Convertir los roles en autoridades de Spring
+                // 2. Convertir los roles en autoridades de Spring
+                // ¡CORRECCIÓN CLAVE! Ya no añadimos "ROLE_", ya que la BD no lo tiene
+                // y el SecurityConfig fue ajustado con GrantedAuthorityDefaults("").
                 List<SimpleGrantedAuthority> authorities = roles != null
                         ? roles.stream()
-                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                        .map(r -> new SimpleGrantedAuthority(r)) // <-- Se quitó "ROLE_" +
                         .collect(Collectors.toList())
                         : Collections.emptyList();
 
+                // 3. Crear el objeto de autenticación
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                new User(username, "", authorities),
+                                new User(username, "", authorities), // Principio de seguridad
                                 null,
                                 authorities);
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                // 4. Establecer la autenticación en el contexto de seguridad
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

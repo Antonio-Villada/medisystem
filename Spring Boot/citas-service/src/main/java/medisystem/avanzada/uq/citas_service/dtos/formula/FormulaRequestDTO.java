@@ -1,25 +1,18 @@
 package medisystem.avanzada.uq.citas_service.dtos.formula;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import java.time.LocalDate; // Usamos el objeto nativo de Java
+
+@Data
 public class FormulaRequestDTO {
 
-    private String fecha;  // formato: "yyyy-MM-dd"
-    private Integer idCita;
+    @NotNull(message = "La fecha de la fórmula no puede ser nula.")
+    // Jackson se encarga de mapear el String JSON "yyyy-MM-dd" a LocalDate.
+    private LocalDate fecha;
 
-    public FormulaRequestDTO() {}
+    @NotNull(message = "Se requiere el ID de la cita asociada.")
+    private Long idCita; // CAMBIADO: Integer -> Long
 
-    public String getFecha() {
-        return fecha;
-    }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public Integer getIdCita() {
-        return idCita;
-    }
-
-    public void setIdCita(Integer idCita) {
-        this.idCita = idCita;
-    }
 }
