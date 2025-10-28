@@ -1,4 +1,4 @@
-package medisystem.avanzada.uq.citas_service.configurations;
+package medisystem.avanzada.uq.citas_service.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

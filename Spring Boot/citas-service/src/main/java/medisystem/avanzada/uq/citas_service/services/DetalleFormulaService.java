@@ -14,6 +14,10 @@ public interface DetalleFormulaService {
 
     DetalleFormulaResponseDTO postDetalleFormula(DetalleFormulaRequestDTO detalleFormulaDTO);
 
+    // NUEVO MÉTODO PARA SOPORTAR LA CREACIÓN ANIDADA
+    DetalleFormulaResponseDTO postDetalleFormulaAnidado(Long idFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
+
+
     // CAMBIADO: Integer -> Long
     DetalleFormulaResponseDTO putDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
 

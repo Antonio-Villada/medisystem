@@ -75,16 +75,17 @@ public class DetalleFormulaServiceImpl implements DetalleFormulaService {
      * @param dto Datos del medicamento.
      * @return DetalleFormulaResponseDTO
      */
-    public DetalleFormulaResponseDTO createDetalleForFormula(Long idFormula, DetalleFormulaRequestDTO dto) {
-        // 1. Buscar Fórmula
+    @Override // Sobreescribe el nuevo método de la interfaz
+    public DetalleFormulaResponseDTO postDetalleFormulaAnidado(Long idFormula, DetalleFormulaRequestDTO dto) {
+
         Formula formula = formulaRepository.findById(idFormula)
                 .orElseThrow(() -> new FormulaNoEncontradaException(idFormula));
 
-        // 2. Buscar Medicamento
+
         Medicamento medicamento = medicamentoRepository.findById(dto.getIdMedicamento())
                 .orElseThrow(() -> new MedicamentoNoEncontradoException(dto.getIdMedicamento()));
 
-        // 3. Mapear y Guardar
+
         DetalleFormula entity = detalleFormulaMapper.toEntity(dto, formula, medicamento);
         DetalleFormula saved = detalleFormulaRepository.save(entity);
 
