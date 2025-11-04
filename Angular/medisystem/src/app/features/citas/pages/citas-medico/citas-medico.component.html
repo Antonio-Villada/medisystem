@@ -1,0 +1,52 @@
+<div class="container mt-4">
+
+  <h1 class="display-5">Mi Agenda de Citas</h1>
+  <p class="lead">Bienvenido/a a tu agenda. Desde aquí puedes gestionar las citas asignadas.</p>
+
+  <hr>
+
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando agenda...</p>
+  </div>
+
+  <div *ngIf="errorMensaje && !isLoading" class="alert alert-danger" role="alert">
+    <strong>Error de Carga:</strong> {{ errorMensaje }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMensaje">
+
+    <div *ngIf="agenda.length === 0" class="alert alert-info" role="alert">
+      ¡Felicidades! No tienes citas programadas en este momento.
+    </div>
+
+    <table *ngIf="agenda.length > 0" class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Hora Inicio</th>
+          <th scope="col">Paciente</th>
+          <th scope="col">Observaciones</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of agenda">
+          <td>{{ cita.fecha }}</td>
+          <td>{{ cita.horaInicio }} - {{ cita.horaFin }}</td>
+
+          <td>{{ cita.paciente.nombrePaciente }} (ID: {{ cita.paciente.idPaciente }})</td>
+
+          <td>{{ cita.observaciones || 'N/A' }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-warning me-2" (click)="iniciarEdicion(cita)">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="iniciarCancelacion(cita.idCita)">Cancelar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div>

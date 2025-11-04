@@ -1,38 +1,31 @@
-// auth.interceptor.ts
+// src/app/core/interceptors/auth.interceptor.ts
 
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core'; // Usamos inject() en lugar de constructor
 import { JwtStorageService } from '../services/jwt-storage.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private jwtStorage: JwtStorageService) {}
+/**
+ * Interceptor funcional (HttpInterceptorFn) para adjuntar el token JWT.
+ * Esto es la forma recomendada en Angular 20.
+ */
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // 1. Obtenemos el servicio usando inject()
+  const jwtStorage = inject(JwtStorageService);
+  const token = jwtStorage.obtenerToken();
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.jwtStorage.obtenerToken();
-    let authReq = req;
-
-    if (token != null) {
-      // Clona la petición y añade el encabezado Authorization: Bearer <token>
-      authReq = req.clone({
-        headers: req.headers.set('Authorization', 'Bearer ' + token),
-      });
-    }
-
-    return next.handle(authReq);
+  // 2. Si NO hay token o la llamada es para obtener el token (login),
+  //    simplemente deja pasar la solicitud original.
+  if (!token) {
+    return next(req);
   }
-}
 
-// Exportar como un provider para usar en la configuración
-export const authInterceptorProvider = {
-  provide: HTTP_INTERCEPTORS,
-  useClass: AuthInterceptor,
-  multi: true,
+  // 3. Si SÍ hay token, clonamos la solicitud y añadimos la cabecera
+  const authReq = req.clone({
+    headers: req.headers.set('Authorization', 'Bearer ' + token),
+  });
+
+  // 4. Dejamos pasar la solicitud MODIFICADA (con el token)
+  return next(authReq);
 };
+
+// NOTA: Ya no exportamos 'authInterceptorProvider' ni la clase.

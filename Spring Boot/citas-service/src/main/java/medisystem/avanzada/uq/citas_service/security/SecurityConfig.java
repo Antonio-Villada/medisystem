@@ -16,7 +16,6 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-// ✨ 1. IMPORTACIONES CORREGIDAS (Servlet, no Reactive)
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,13 +36,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // ✨ 2. CONEXIÓN DE CORS AÑADIDA
+                // CONFIGURACIÓN CORS (YA EXISTENTE Y CORRECTA)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ... (Reglas de Swagger y Auth)
+                        // Reglas de Swagger y Auth (sin cambios)
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -52,14 +51,13 @@ public class SecurityConfig {
                                 "/v3/api-docs.json"
                         ).permitAll()
                         .requestMatchers("/auth/**").permitAll()
-
-                        // ... (Reglas de roles)
+                        .requestMatchers("/medicos/**").hasAnyRole("ADMINISTRADOR", "MEDICO", "PACIENTE")
+                        .requestMatchers("/pacientes/**").hasAnyRole("ADMINISTRADOR", "MEDICO", "PACIENTE")
                         .requestMatchers(
-                                "/medicos/**",
-                                "/pacientes/**",
                                 "/telefonos/**",
                                 "/usuarios/**"
                         ).hasRole("ADMINISTRADOR")
+
                         .requestMatchers(
                                 "/eps/**",
                                 "/especialidades/**",
@@ -69,7 +67,6 @@ public class SecurityConfig {
                                 "/citas/**",
                                 "/formulas/**",
                                 "/detalle-formulas/**"
-                                // ✨ 3. ERROR DE TIPO CORREGIDO (ADMINISTRAD -> ADMINISTRADOR)
                         ).hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
 
                         .anyRequest().authenticated()
@@ -110,4 +107,3 @@ public class SecurityConfig {
         return new GrantedAuthorityDefaults("");
     }
 }
-

@@ -1,0 +1,203 @@
+<div class="container mt-4">
+
+  <h1 class="display-5">Mis Citas</h1>
+  <p class="lead">Agenda nuevas citas y consulta tu historial médico.</p>
+
+  <hr>
+
+  <button
+    type="button"
+    class="btn btn-primary mb-4"
+    data-bs-toggle="modal"
+    data-bs-target="#agendarCitaModal"
+    [disabled]="!idPacienteAutenticado"
+  >
+    Agendar Nueva Cita
+  </button>
+
+  <div *ngIf="!idPacienteAutenticado && !isLoading" class="alert alert-warning">
+    No se pudo obtener tu ID de paciente. No puedes agendar citas hasta que se solucione este problema.
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+  </div>
+  <div *ngIf="formError" class="alert alert-danger">
+      {{ formError }}
+  </div>
+
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando mis citas...</p>
+  </div>
+
+  <div *ngIf="errorMensaje && !isLoading" class="alert alert-danger" role="alert">
+    <strong>Error de Carga:</strong> {{ errorMensaje }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMensaje">
+
+    <h2 class="h4 mt-5">Próximas y Anteriores Citas</h2>
+
+    <div *ngIf="listaDeCitas.length === 0" class="alert alert-info" role="alert">
+      No tienes citas agendadas en este momento.
+    </div>
+
+    <table *ngIf="listaDeCitas.length > 0" class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">ID Cita</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Hora</th>
+          <th scope="col">Médico</th>
+          <th scope="col">Especialidad</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of listaDeCitas">
+          <td>{{ cita.idCita }}</td>
+          <td>{{ cita.fecha }}</td>
+          <td>{{ cita.horaInicio }} - {{ cita.horaFin }}</td>
+          <td>Dr. {{ cita.medico.nombreMedico }}</td>
+          <td>{{ cita.medico.nombreEspecialidad }}</td>
+          <td>
+            <ng-container *ngIf="isFutureDate(cita.fecha); else pastCita">
+              <button
+                class="btn btn-sm btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmCancelModal"
+                (click)="iniciarCancelacionVisual(cita.idCita)"
+              >
+                Cancelar
+              </button>
+            </ng-container>
+
+            <ng-template #pastCita>
+              <span class="text-muted">Finalizada</span>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>
+
+<div class="modal fade" id="agendarCitaModal" tabindex="-1" aria-labelledby="agendarCitaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="agendarCitaModalLabel">Agendar Nueva Cita</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form [formGroup]="citaForm" (ngSubmit)="agendarCita()">
+        <div class="modal-body">
+
+            <div class="mb-3">
+              <label for="idMedico" class="form-label">Seleccionar Médico (*)</label>
+              <select
+                id="idMedico"
+                formControlName="idMedico"
+                class="form-select"
+                [class.is-invalid]="citaForm.get('idMedico')?.invalid && formSubmitted"
+                [disabled]="listaDeMedicos.length === 0"
+              >
+                <option value="">-- Seleccione un Médico --</option>
+                <option *ngFor="let medico of listaDeMedicos" [ngValue]="medico.idMedico">
+                    Dr/a. {{ medico.nombreMedico }} ({{ medico.nombreEspecialidad }})
+                </option>
+              </select>
+              <div class="invalid-feedback">El médico es obligatorio.</div>
+              <div *ngIf="listaDeMedicos.length === 0" class="form-text text-danger">No se cargó la lista de médicos.</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="fecha" class="form-label">Fecha (*)</label>
+                    <input
+                        id="fecha"
+                        type="date"
+                        formControlName="fecha"
+                        class="form-control"
+                        [class.is-invalid]="citaForm.get('fecha')?.invalid && formSubmitted"
+                    >
+                    <div class="invalid-feedback">La fecha es obligatoria.</div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="horaInicio" class="form-label">Hora (Ej: 08:00) (*)</label>
+                    <input
+                        id="horaInicio"
+                        type="time"
+                        formControlName="horaInicio"
+                        class="form-control"
+                        [class.is-invalid]="citaForm.get('horaInicio')?.invalid && formSubmitted"
+                    >
+                    <div class="invalid-feedback">La hora es obligatoria.</div>
+                    <div class="form-text">Horario de atención: 8:00 AM - 5:00 PM.</div>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="observaciones" class="form-label">Observaciones (Opcional)</label>
+              <textarea id="observaciones" formControlName="observaciones" class="form-control" rows="2"></textarea>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="citaForm.invalid && formSubmitted"
+          >
+            Confirmar Agendamiento
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="confirmCancelModalLabel">Confirmar Cancelación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="fs-5 text-dark">
+            ¿Está seguro de cancelar la cita?
+        </p>
+        <p class="text-danger small">
+            Solo puedes cancelar con 24h de anticipación (regla de negocio).
+        </p>
+      </div>
+
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mantener Cita</button>
+        <button
+            type="button"
+            class="btn btn-danger"
+            data-bs-dismiss="modal"
+            (click)="ejecutarCancelacionConfirmada()"
+        >
+            Sí, Cancelar Ahora
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

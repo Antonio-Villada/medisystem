@@ -1,0 +1,19 @@
+<div class="container mt-4">
+
+  <div *ngIf="esPaciente">
+    <app-citas-paciente></app-citas-paciente>
+  </div>
+
+  <div *ngIf="esMedico">
+    <app-citas-medico></app-citas-medico>
+    <h1 class="display-5">Mi Agenda de Citas (Vista Médico Pendiente)</h1>
+    <p class="lead">El componente del Médico se cargó correctamente.</p>
+  </div>
+
+  <div *ngIf="esAdmin">
+    <app-citas-admin></app-citas-admin>
+    <h1 class="display-5">Gestión de Citas (Vista Admin Pendiente)</h1>
+    <p class="lead">El componente del Administrador se cargó correctamente.</p>
+  </div>
+
+</div>

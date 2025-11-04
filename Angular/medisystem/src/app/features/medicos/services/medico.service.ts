@@ -1,31 +1,30 @@
-// medico.service.ts
+// src/app/features/medicos/services/medico.service.ts
 
 import { Injectable } from '@angular/core';
-import { MedicoApiRepository } from '../data/medico-api.repository';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+
+// Importa la interfaz Medico (si está en otro archivo, ajusta la ruta)
 import { Medico } from '../models/medico.interface';
-import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MedicoService {
-  constructor(private apiRepository: MedicoApiRepository) {}
+  // --- CORRECCIÓN CRÍTICA ---
+  // La URL completa es la del environment + el recurso '/medicos'
+  private readonly API_URL = environment.API_URL + '/medicos';
+
+  constructor(private http: HttpClient) {}
 
   /**
-   * Obtiene la lista de médicos y aplica una lógica de negocio.
-   * Por ejemplo: si quieres ordenar la lista o filtrar datos sensibles antes de enviarlos a la UI.
+   * Obtiene la lista completa de médicos (necesario para el dropdown de citas).
+   * Corresponde a GET /sistema/api/v1/medicos
    */
-  getMedicosParaUI(): Observable<Medico[]> {
-    // Lógica 1: Llamar al repositorio (capa inferior)
-    return this.apiRepository.obtenerTodos().pipe(
-      // Lógica 2: Aquí aplicamos lógica de negocio específica del frontend
-      map((medicos) =>
-        medicos
-          // Ejemplo de lógica: Filtrar médicos inactivos (si el DTO lo tuviera)
-          // .filter(m => m.activo)
-          // Ejemplo de lógica: Ordenar alfabéticamente
-          .sort((a, b) => a.nombreMedico.localeCompare(b.nombreMedico))
-      )
-    );
+  public getMedicosParaUI(): Observable<Medico[]> {
+    return this.http.get<Medico[]>(this.API_URL);
   }
+
+  // ... (otros métodos si existen)
 }

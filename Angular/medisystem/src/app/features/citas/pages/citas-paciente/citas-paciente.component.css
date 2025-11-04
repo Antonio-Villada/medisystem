@@ -1,0 +1,62 @@
+/* Estilos generales del contenedor del componente */
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+/* ----------------------------------- */
+/* 1. Estilos del Modal de Agendamiento */
+/* ----------------------------------- */
+
+/* Personaliza el fondo del encabezado del modal con tu color primario */
+.modal-header.bg-primary {
+  background-color: #002147 !important;
+  /* Azul Oscuro (De tu SecurityConfig) */
+  color: white;
+  border-bottom: 3px solid #0d6efd;
+  /* Línea de color de acento */
+}
+
+/* Asegura que el botón de cerrar sea visible en fondo oscuro */
+.modal-header .btn-close {
+  filter: invert(1);
+  /* Convierte el icono de cerrar a blanco */
+}
+
+/* Estilo para el botón de Agendar, si está deshabilitado */
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ----------------------------------- */
+/* 2. Estilos de la Tabla */
+/* ----------------------------------- */
+
+/* Hace las filas de la tabla ligeramente más compactas */
+.table td,
+.table th {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+/* Resalta el encabezado de la tabla */
+.table-light {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+/* ----------------------------------- */
+/* 3. Mensajes de Estado */
+/* ----------------------------------- */
+
+/* Mensaje de error crítico si el ID del paciente falta */
+.alert.alert-warning {
+  border-left: 5px solid #ffc107;
+}
+
+/* Spinner centrado */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}

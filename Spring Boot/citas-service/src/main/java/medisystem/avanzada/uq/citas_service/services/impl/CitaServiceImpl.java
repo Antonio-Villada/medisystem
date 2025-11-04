@@ -38,7 +38,7 @@ public class CitaServiceImpl implements CitaService {
     private final MedicoRepository medicoRepository;
     private final PacienteRepository pacienteRepository;
     private final CitaMapper citaMapper;
-    // Inyección por Constructor
+
     public CitaServiceImpl(CitaRepository citaRepository,
                            MedicoRepository medicoRepository,
                            PacienteRepository pacienteRepository,
@@ -56,9 +56,22 @@ public class CitaServiceImpl implements CitaService {
         return (auth != null) ? auth.getName() : null;
     }
 
+    /**
+     * CORRECCIÓN 1: Permite el acceso al ADMINISTRADOR y lanza excepción si no hay usuario.
+     */
     private void verificarAcceso(Cita cita) {
         String username = getAuthenticatedUsername();
-        if (username == null) return;
+        if (username == null) {
+            throw new AccessDeniedException("No hay usuario autenticado.");
+        }
+
+        // Obtener roles
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
+
+        // Si es ADMIN, permite el acceso.
+        if (esAdmin) return;
 
         boolean esPaciente = cita.getPaciente().getUsuario().getUsername().equals(username);
         boolean esMedico = cita.getMedico().getUsuario().getUsername().equals(username);
@@ -68,7 +81,6 @@ public class CitaServiceImpl implements CitaService {
     }
 
 
-
     @Override
     public CitaResponseDTO agendarCita(CitaRequestDTO dto) {
         // 1. Validar y Buscar Dependencias (Médico y Paciente)
@@ -76,7 +88,8 @@ public class CitaServiceImpl implements CitaService {
                 .orElseThrow(() -> new MedicoNoEncontradoException(dto.getIdMedico()));
         Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
                 .orElseThrow(() -> new PacienteNoEncontradoException(dto.getIdPaciente()));
-// 2. Seguridad: Solo el paciente autenticado puede agendar su propia cita
+
+        // 2. Seguridad: Solo el paciente autenticado puede agendar su propia cita
         String username = getAuthenticatedUsername();
         if (!paciente.getUsuario().getUsername().equals(username)) {
             throw new AccessDeniedException("Solo puedes agendar tus propias citas.");
@@ -84,7 +97,8 @@ public class CitaServiceImpl implements CitaService {
 
         // 3. Aplicar Reglas de Agendamiento
         validarReglasDeAgendamiento(medico, dto);
-// 4. Mapear y Guardar
+
+        // 4. Mapear y Guardar
         Cita nuevaCita = citaMapper.toEntity(dto, medico, paciente);
         Cita savedCita = citaRepository.save(nuevaCita);
 
@@ -93,11 +107,41 @@ public class CitaServiceImpl implements CitaService {
     }
 
 
-
+    /**
+     * CORRECCIÓN 2: Implementa el filtrado por rol en la obtención de todas las citas (GET /citas).
+     * Esto resuelve el error 500/403 que ocurría cuando un usuario intentaba listar citas de otros.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CitaResponseDTO> getAllCitas() {
-        return citaRepository.findAll().stream()
+        String username = getAuthenticatedUsername();
+        if (username == null) return List.of();
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
+        boolean esMedico = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("MEDICO"));
+
+        List<Cita> citas;
+
+        if (esAdmin) {
+            // ADMIN: Retorna todas las citas del sistema
+            citas = citaRepository.findAll();
+        } else if (esMedico) {
+            // MEDICO: Retorna solo las citas asignadas a ese médico
+            Medico medico = medicoRepository.findByUsuarioUsername(username)
+                    .orElseThrow(() -> new MedicoNoEncontradoException(username));
+            citas = citaRepository.findByMedico(medico);
+        } else {
+            // PACIENTE: Retorna solo las citas agendadas por ese paciente
+            Paciente paciente = pacienteRepository.findByUsuarioUsername(username)
+                    .orElseThrow(() -> new PacienteNoEncontradoException(username));
+            citas = citaRepository.findByPaciente(paciente);
+        }
+
+        return citas.stream()
                 .map(citaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -133,7 +177,6 @@ public class CitaServiceImpl implements CitaService {
     }
 
 
-
     @Override
     public CitaResponseDTO updateCita(Long idCita, CitaRequestDTO dto) {
         Cita citaExistente = citaRepository.findById(idCita)
@@ -142,11 +185,13 @@ public class CitaServiceImpl implements CitaService {
 
         // Validar la nueva hora y fecha
         validarReglasDeAgendamiento(citaExistente.getMedico(), dto);
-// Actualización completa
+
+        // Actualización completa
         citaExistente.setFecha(dto.getFecha());
         citaExistente.setHoraInicio(dto.getHoraInicio());
         citaExistente.setObservaciones(dto.getObservaciones());
-// La duración es de 1 hora
+
+        // La duración es de 1 hora
         citaExistente.setHoraFin(dto.getHoraInicio().plusHours(1));
 
         Cita updatedCita = citaRepository.save(citaExistente);
@@ -166,7 +211,8 @@ public class CitaServiceImpl implements CitaService {
             existente.setHoraFin(dto.getHoraInicio().plusHours(1));
         }
         if (dto.getObservaciones() != null) existente.setObservaciones(dto.getObservaciones());
-// Volver a validar reglas si se modificó el horario
+
+        // Volver a validar reglas si se modificó el horario
         if (dto.getFecha() != null || dto.getHoraInicio() != null) {
             validarReglasDeAgendamiento(existente.getMedico(), dto);
         }
@@ -190,7 +236,7 @@ public class CitaServiceImpl implements CitaService {
     }
 
     // ==========================================================
-    // MÉTODOS PRIVADOS DE VALIDACIÓN
+    // MÉTODOS PRIVADOS DE VALIDACIÓN (sin cambios)
     // ==========================================================
 
     private void validarReglasDeAgendamiento(Medico medico, CitaRequestDTO dto) {

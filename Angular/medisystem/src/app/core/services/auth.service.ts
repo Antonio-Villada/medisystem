@@ -6,7 +6,7 @@ import { Observable, tap, BehaviorSubject, switchMap, of } from 'rxjs'; // Impor
 import { JwtStorageService } from './jwt-storage.service';
 import { LoginRequest, LoginResponse } from '../models/auth.models';
 import { jwtDecode } from 'jwt-decode'; // <-- ¡Importante! Instala con: npm install jwt-decode
-import { Paciente, PacienteService } from '../../features/pacientes/services/paciente.service';
+import { PacientePerfil,PacienteService,} from '../../features/pacientes/services/paciente.service';
 import { environment } from '../../../environments/environment';
 
 // Datos del usuario que mantendremos en memoria
@@ -72,29 +72,26 @@ export class AuthService {
     }
   }
 
+  // src/app/core/services/auth.service.ts
+
   private procesarToken(token: string): void {
     try {
       const decodedToken: any = jwtDecode(token);
       const username = decodedToken.sub;
       const roles = decodedToken.roles; // Tus roles [cite: 1360]
 
-      // Si es paciente, necesitamos buscar su 'idPaciente' (cédula)
-      if (roles.includes('PACIENTE')) {
-        this.pacienteService.getMiPerfil().subscribe((paciente) => {
-          this.user.next({
-            username: username,
-            roles: roles,
-            idPaciente: paciente.idPaciente, // ¡Guardamos la cédula!
-          });
-        });
-      } else {
-        // Si es ADMIN o MEDICO
-        this.user.next({
-          username: username,
-          roles: roles,
-          idPaciente: null, // No es paciente
-        });
-      }
+      // --- INICIO DE LA CORRECCIÓN ---
+      // Ya no hacemos la llamada a pacienteService.getMiPerfil() AQUÍ.
+      // Simplemente guardamos los roles, igual que hacemos con ADMIN y MEDICO.
+      // Dejaremos la búsqueda del idPaciente para cuando entremos a la página de Citas.
+
+      this.user.next({
+        username: username,
+        roles: roles,
+        idPaciente: null, // Lo dejaremos nulo POR AHORA
+      });
+
+      // --- FIN DE LA CORRECCIÓN ---
     } catch (error) {
       console.error('Error decodificando el token', error);
       this.logout();

@@ -1,0 +1,55 @@
+/* Estilos específicos para la vista de la agenda del médico */
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+/* ----------------------------------- */
+/* 1. Estilos de la Tabla (Agenda) */
+/* ----------------------------------- */
+
+/* Resalta el encabezado de la tabla */
+.table-light {
+  background-color: #e9ecef;
+  /* Un gris claro para el encabezado */
+  font-weight: 600;
+  color: #343a40;
+}
+
+/* Asegura que los botones de acción sean compactos */
+.btn-sm {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Color del botón de Edición (Amarillo/Naranja) */
+.btn-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+/* Color del botón de Cancelación (Rojo) */
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* ----------------------------------- */
+/* 2. Mensajes de Estado */
+/* ----------------------------------- */
+
+/* Mensaje de error/alerta */
+.alert.alert-danger {
+  border-left: 5px solid #dc3545;
+}
+
+/* Mensaje de sin citas */
+.alert.alert-info {
+  border-left: 5px solid #0dcaf0;
+}
+
+/* Spinner centrado */
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+}
