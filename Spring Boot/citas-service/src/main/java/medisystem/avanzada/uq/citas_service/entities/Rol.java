@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "roles")
 @Getter
 @Setter
-@NoArgsConstructor // Constructor vacío para JPA
+@NoArgsConstructor
 @EqualsAndHashCode(of = "nombre") // Usa el nombre
 public class Rol {
 

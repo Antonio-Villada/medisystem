@@ -1,0 +1,68 @@
+/* Contenedor principal de la página */
+.home-main-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Color de texto primario */
+.text-primary {
+  color: #007bff;
+}
+
+/* Ajuste del tamaño de las imágenes del carrusel */
+.carousel-item img {
+  width: 65% !important;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Estilos visuales de los botones */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  background-size: 60%;
+  filter: invert(1);
+}
+
+/* Hover más oscuro */
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 1);
+}
+
+/* No agregar margen extra al carrusel */
+.carousel {
+  margin-top: 0;
+}
+/* Fondo negro semitransparente para el texto */
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.55);
+  /* negro semi-transparente */
+  padding: 1rem;
+  border-radius: 10px;
+  max-width: 65%;
+  /* igual que el ancho de la imagen */
+  margin: 0 auto;
+  /* centrado */
+}
+
+/* Ajuste del tamaño del texto */
+.carousel-caption h5 {
+  font-size: 1.5rem;
+  /* más pequeño que la imagen */
+  margin-bottom: 0.5rem;
+}
+
+.carousel-caption p {
+  font-size: 1rem;
+  /* más pequeño que el título */
+}
+
+/* Color del texto */
+.carousel-caption h5,
+.carousel-caption p {
+  color: #fff;
+}

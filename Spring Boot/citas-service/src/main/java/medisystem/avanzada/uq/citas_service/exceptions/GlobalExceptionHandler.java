@@ -53,10 +53,7 @@ public class GlobalExceptionHandler {
     }
 
     // --- MANEJADOR ESPECÍFICO DE AUTENTICACIÓN (401 UNAUTHORIZED) ---
-    /**
-     * Captura las excepciones lanzadas por el AuthenticationManager para retornar 401.
-     * Esto corrige el error donde el login fallido retornaba 500.
-     */
+
     @ExceptionHandler({
             BadCredentialsException.class,
             UsernameNotFoundException.class // Cuando el UserDetailsService no encuentra el usuario
@@ -95,10 +92,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // --- MÉTODO DE CONSTRUCCIÓN DE RESPUESTA CENTRALIZADO ---
-    /**
-     * Construye y formatea el cuerpo de la respuesta de error HTTP.
-     */
+
     private ResponseEntity<Map<String, Object>> buildErrorResponse(
             Exception ex,
             HttpStatus status,

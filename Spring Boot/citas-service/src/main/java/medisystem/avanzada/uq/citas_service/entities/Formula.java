@@ -26,7 +26,7 @@ public class Formula {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    // AÑADIDO: Relación con DetalleFormula
+
     @OneToMany(mappedBy = "formula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleFormula> detalles; // <-- Ahora la propiedad "detalles" existe en la Entidad
+    private List<DetalleFormula> detalles;
 }

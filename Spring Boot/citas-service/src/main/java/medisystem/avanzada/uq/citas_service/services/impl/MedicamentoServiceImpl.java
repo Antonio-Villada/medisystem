@@ -27,9 +27,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         this.medicamentoMapper = medicamentoMapper;
     }
 
-    // ========================================================
-    // LECTURA (GET)
-    // ========================================================
 
     @Override
     @Transactional(readOnly = true)
@@ -48,14 +45,8 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         return medicamentoMapper.toResponseDTO(medicamento);
     }
 
-    // ========================================================
-    // CREACIÓN (POST)
-    // ========================================================
-
     @Override
     public MedicamentoResponseDTO postMedicamento(MedicamentoRequestDTO medicamentoDTO) {
-        // Validación de Negocio: No debe existir otro con el mismo nombre
-        // CORRECCIÓN 1: existsByNombre -> existsByNombreMedicamento
         if (medicamentoRepository.existsByNombreMedicamento(medicamentoDTO.getNombreMedicamento())) {
             throw new MedicamentoYaExisteException(medicamentoDTO.getNombreMedicamento(), true);
         }
@@ -65,16 +56,12 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         return medicamentoMapper.toResponseDTO(saved);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN TOTAL (PUT)
-    // ========================================================
 
     @Override
     public MedicamentoResponseDTO putMedicamento(Long idMedicamento, MedicamentoRequestDTO medicamentoDTO) {
         Medicamento existente = medicamentoRepository.findById(idMedicamento)
                 .orElseThrow(() -> new MedicamentoNoEncontradoException(idMedicamento));
 
-        // Validación de Negocio: Si el nombre cambia, debe ser único
         if (!existente.getNombreMedicamento().equalsIgnoreCase(medicamentoDTO.getNombreMedicamento())) {
             // CORRECCIÓN 2: existsByNombre -> existsByNombreMedicamento
             if (medicamentoRepository.existsByNombreMedicamento(medicamentoDTO.getNombreMedicamento())) {
@@ -89,9 +76,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         return medicamentoMapper.toResponseDTO(actualizado);
     }
 
-    // ========================================================
-    // ELIMINACIÓN (DELETE)
-    // ========================================================
 
     @Override
     public void deleteMedicamento(Long idMedicamento) {
@@ -102,9 +86,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         medicamentoRepository.deleteById(idMedicamento);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN PARCIAL (PATCH)
-    // ========================================================
 
     @Override
     public MedicamentoResponseDTO patchMedicamento(Long idMedicamento, MedicamentoRequestDTO medicamentoDTO) {

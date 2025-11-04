@@ -23,27 +23,13 @@ public class FormulaController {
         this.formulaService = formulaService;
     }
 
-    // ==========================================================
-    // GET /api/formulas : Listar todas
-    // ==========================================================
 
-    /**
-     * Permite a Administradores y Médicos listar todas las fórmulas.
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     public ResponseEntity<List<FormulaResponseDTO>> findAll() {
         return ResponseEntity.ok(formulaService.findAll());
     }
 
-    // ==========================================================
-    // GET /api/formulas/{id} : Obtener por ID
-    // ==========================================================
-
-    /**
-     * Permite a Administradores, el Médico que la creó y el Paciente asociado ver la fórmula.
-     * La verificación de acceso se maneja en FormulaServiceImpl.
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     // CORREGIDO: int -> Long
@@ -51,14 +37,7 @@ public class FormulaController {
         return ResponseEntity.ok(formulaService.findById(id));
     }
 
-    // ==========================================================
-    // POST /api/formulas : Crear
-    // ==========================================================
 
-    /**
-     * Permite solo al MÉDICO crear una nueva fórmula para una cita.
-     * Se requiere que la cita no tenga fórmula y que el médico autenticado sea el de la cita.
-     */
     @PostMapping
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<FormulaResponseDTO> create(@Valid @RequestBody FormulaRequestDTO formulaRequest) {
@@ -73,14 +52,7 @@ public class FormulaController {
         return ResponseEntity.created(location).body(nueva);
     }
 
-    // ==========================================================
-    // PUT /api/formulas/{id} : Actualización total (Fecha/Detalles)
-    // ==========================================================
 
-    /**
-     * Permite solo al MÉDICO que creó la fórmula actualizarla.
-     * La verificación de autoría se realiza en FormulaServiceImpl.
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('MEDICO')")
     // CORREGIDO: int -> Long, Formula -> FormulaRequestDTO
@@ -90,13 +62,6 @@ public class FormulaController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/formulas/{id} : Eliminación
-    // ==========================================================
-
-    /**
-     * Permite solo al MÉDICO que creó la fórmula o al ADMINISTRADOR eliminarla.
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     // CORREGIDO: int -> Long

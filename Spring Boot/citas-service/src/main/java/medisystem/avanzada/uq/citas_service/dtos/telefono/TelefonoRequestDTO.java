@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-@Data // Incluye @Getter, @Setter, @ToString, etc.
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TelefonoRequestDTO {
 
     @NotBlank(message = "El número de teléfono no puede estar vacío.")
-    @Pattern(regexp = "^[0-9]{7,20}$", message = "El formato del teléfono debe contener solo números (7 a 20 dígitos).")
-    private String telefono; // El número de teléfono
+    @Pattern(regexp = "^[0-9]{10}$", message = "El formato del teléfono debe contener solo números (10 dígitos).")
+    private String telefono;
 }

@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/medicos") // Cambiado a /api/medicos por convención
+@RequestMapping("/medicos")
 public class MedicoController {
 
     private final MedicoService medicoService;
@@ -23,14 +23,6 @@ public class MedicoController {
         this.medicoService = medicoService;
     }
 
-    // ==========================================================
-    // POST /api/medicos : Registrar nuevo médico
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR registrar un nuevo médico.
-     * Utiliza el método registrarMedico que crea el Usuario y la Entidad.
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<MedicoResponseDTO> registrarMedico(@Valid @RequestBody MedicoRequestDTO dto) {
@@ -45,13 +37,6 @@ public class MedicoController {
         return ResponseEntity.created(location).body(nuevoMedico); // Devuelve el DTO en el cuerpo
     }
 
-    // ==========================================================
-    // GET /api/medicos : Listar todos los médicos
-    // ==========================================================
-
-    /**
-     * Permite a todos los roles ver la lista de médicos (esencial para agendar citas).
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<List<MedicoResponseDTO>> getAllMedicos() {
@@ -59,13 +44,6 @@ public class MedicoController {
         return ResponseEntity.ok(medicos);
     }
 
-    // ==========================================================
-    // GET /api/medicos/{idMedico} : Obtener médico por ID
-    // ==========================================================
-
-    /**
-     * Permite a todos consultar un médico específico.
-     */
     @GetMapping("/{idMedico}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<MedicoResponseDTO> getMedicoById(@PathVariable Long idMedico) {
@@ -73,13 +51,6 @@ public class MedicoController {
         return ResponseEntity.ok(medico);
     }
 
-    // ==========================================================
-    // PUT /api/medicos/{idMedico} : Actualización total
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR o al MEDICO que se está editando actualizar totalmente.
-     */
     @PutMapping("/{idMedico}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')") // La lógica de 'solo el propio médico' debe ir en el servicio
     public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long idMedico,
@@ -88,13 +59,6 @@ public class MedicoController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/medicos/{idMedico} : Eliminación
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR eliminar un registro.
-     */
     @DeleteMapping("/{idMedico}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> deleteMedico(@PathVariable Long idMedico) {
@@ -102,13 +66,6 @@ public class MedicoController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==========================================================
-    // PATCH /api/medicos/{idMedico} : Actualización parcial
-    // ==========================================================
-
-    /**
-     * Permite al ADMINISTRADOR o al MEDICO asociado actualizar parcialmente.
-     */
     @PatchMapping("/{idMedico}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     public ResponseEntity<MedicoResponseDTO> patchMedico(@PathVariable Long idMedico,
@@ -117,13 +74,6 @@ public class MedicoController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // GET /api/medicos/especialidad/{idEspecialidad} : Búsqueda por filtro
-    // ==========================================================
-
-    /**
-     * Permite a todos ver los médicos filtrados por especialidad.
-     */
     @GetMapping("/especialidad/{idEspecialidad}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<List<MedicoResponseDTO>> getMedicosByEspecialidad(@PathVariable Long idEspecialidad) {

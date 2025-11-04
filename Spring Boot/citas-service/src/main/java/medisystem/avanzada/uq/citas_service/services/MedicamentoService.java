@@ -8,17 +8,9 @@ public interface MedicamentoService {
 
     List<MedicamentoResponseDTO> getMedicamentos();
 
-    // CAMBIADO: Integer -> Long
     MedicamentoResponseDTO getMedicamentoById(Long idMedicamento);
-
     MedicamentoResponseDTO postMedicamento(MedicamentoRequestDTO medicamentoDTO);
-
-    // CAMBIADO: Integer -> Long
     MedicamentoResponseDTO putMedicamento(Long idMedicamento, MedicamentoRequestDTO medicamentoDTO);
-
-    // CAMBIADO: Integer -> Long
     void deleteMedicamento(Long idMedicamento);
-
-    // CAMBIADO: Integer -> Long
     MedicamentoResponseDTO patchMedicamento(Long idMedicamento, MedicamentoRequestDTO medicamentoDTO);
 }

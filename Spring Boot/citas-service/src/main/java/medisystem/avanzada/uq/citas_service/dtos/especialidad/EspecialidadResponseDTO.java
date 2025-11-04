@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class EspecialidadResponseDTO {
 
-    private Long idEspecialidad; // Coherente con la entidad (Long)
+    private Long idEspecialidad;
     private String nombreEspecialidad;
 
 

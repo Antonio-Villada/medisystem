@@ -30,10 +30,7 @@ public interface PacienteMapper {
     @Mapping(target = "telefonos", source = "paciente.telefonos", qualifiedByName = "telefonosToStringSet")
     PacienteResponseDTO toResponseDTO(Paciente paciente);
 
-    /**
-     * MÉTODO SOBRECARGADO para usar en servicios (POST/PUT/PATCH)
-     * donde la lista de teléfonos ya fue procesada en el servicio.
-     */
+
     @Mapping(target = "nombreEps", source = "paciente.eps.nombreEps")
     @Mapping(target = "username", source = "paciente.usuario.username")
     @Mapping(target = "telefonos", source = "telefonos") // Mapea el Set<String> directo
@@ -46,8 +43,6 @@ public interface PacienteMapper {
             return Set.of();
         }
 
-        // Esta línea es correcta si la entidad PacienteTelefono tiene el campo 'telefono'
-        // y este campo es de tipo Telefono, y Telefono tiene un getTelefono().
         return telefonos.stream()
                 .map(pt -> pt.getTelefono().getTelefono())
                 .collect(Collectors.toSet());

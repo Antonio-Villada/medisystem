@@ -8,22 +8,10 @@ import java.util.List;
 public interface DetalleFormulaService {
 
     List<DetalleFormulaResponseDTO> getDetalleFormulas();
-
-    // CAMBIADO: Integer -> Long
     DetalleFormulaResponseDTO getDetalleFormulaById(Long idDetalleFormula);
-
     DetalleFormulaResponseDTO postDetalleFormula(DetalleFormulaRequestDTO detalleFormulaDTO);
-
-    // NUEVO MÉTODO PARA SOPORTAR LA CREACIÓN ANIDADA
     DetalleFormulaResponseDTO postDetalleFormulaAnidado(Long idFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
-
-
-    // CAMBIADO: Integer -> Long
     DetalleFormulaResponseDTO putDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
-
-    // CAMBIADO: Integer -> Long
     void deleteDetalleFormula(Long idDetalleFormula);
-
-    // CAMBIADO: Integer -> Long
     DetalleFormulaResponseDTO patchDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO detalleFormulaDTO);
 }

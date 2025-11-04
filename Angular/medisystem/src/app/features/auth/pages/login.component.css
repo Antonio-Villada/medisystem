@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+/* Contenedor del login centrado y por encima de todo */
+.login-container {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: none !important;
+  /* evita que el blur del fondo afecte al login */
+}
+
+/* Tarjeta del formulario de login */
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  padding: 2rem;
+  position: relative;
+  z-index: 25;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: fadeZoomIn 0.8s ease-out forwards;
+}
+
+/* Etiquetas del formulario */
+.form-label {
+  font-weight: 500;
+}
+
+/* Alertas más pequeñas */
+.alert {
+  font-size: 0.9rem;
+}
+
+/* Animación de entrada suave del login */
+@keyframes fadeZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

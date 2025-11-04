@@ -20,14 +20,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ==========================================================
-    // GET /api/usuarios/perfil : Obtener el perfil del usuario autenticado
-    // ==========================================================
 
-    /**
-     * Permite a cualquier usuario autenticado ver su propio perfil (sin contraseña).
-     * El username se extrae automáticamente del token/sesión de Spring Security.
-     */
+    // GET /api/usuarios/perfil : Obtener el perfil del usuario autenticado
+
     @GetMapping("/perfil")
     @PreAuthorize("isAuthenticated()") // Permite cualquier rol que haya iniciado sesión
     public ResponseEntity<UsuarioResponseDTO> getPerfilUsuario() {
@@ -41,9 +36,4 @@ public class UserController {
         return ResponseEntity.ok(perfil);
     }
 
-    // NOTA: Los endpoints de POST (Registro) para Usuarios son delegados a
-    // MedicoController y PacienteController, que usan el UserService internamente.
-
-    // Si fuera necesario un endpoint para cambiar la contraseña o actualizar el username,
-    // se añadirían métodos PUT/PATCH que interactuarían con el UserService.
 }

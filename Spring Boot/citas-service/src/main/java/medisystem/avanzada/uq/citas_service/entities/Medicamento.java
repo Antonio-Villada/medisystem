@@ -28,6 +28,6 @@ public class Medicamento {
     private String nombreMedicamento;
 
     @Column(name = "precio", nullable = false, precision = 10, scale = 2)
-    private BigDecimal precio; // CAMBIADO: Integer -> BigDecimal
+    private BigDecimal precio;
 
 }

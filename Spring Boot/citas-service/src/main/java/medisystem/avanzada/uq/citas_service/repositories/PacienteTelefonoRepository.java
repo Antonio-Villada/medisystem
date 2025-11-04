@@ -10,16 +10,7 @@ import java.util.List;
 @Repository
 public interface PacienteTelefonoRepository extends JpaRepository<PacienteTelefono, Long> {
 
-    /**
-     * Devuelve todos los registros de la tabla de unión
-     * que corresponden a un Paciente específico.
-     * Esta es la consulta principal que usa el servicio.
-     */
-    List<PacienteTelefono> findAllByPaciente(Paciente paciente);
 
-    /**
-     * Elimina todos los registros de teléfonos para un paciente dado.
-     * Útil al actualizar o eliminar un paciente.
-     */
+    List<PacienteTelefono> findAllByPaciente(Paciente paciente);
     void deleteAllByPaciente(Paciente paciente);
 }

@@ -9,10 +9,10 @@ import java.time.LocalTime;
 public class CitaRequestDTO {
 
     @NotNull(message = "La fecha no puede ser nula.")
-    private LocalDate fecha;       // CAMBIADO: String -> LocalDate
+    private LocalDate fecha;
 
     @NotNull(message = "La hora de inicio no puede ser nula.")
-    private LocalTime horaInicio;  // CAMBIADO: String -> LocalTime
+    private LocalTime horaInicio;
 
     @Size(max = 500, message = "Las observaciones no deben exceder los 500 caracteres.")
     private String observaciones;

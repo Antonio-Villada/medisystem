@@ -39,9 +39,6 @@ public class DetalleFormulaServiceImpl implements DetalleFormulaService {
         this.detalleFormulaMapper = detalleFormulaMapper;
     }
 
-    // ========================================================
-    // LECTURA (GET) - Corregido para usar Long
-    // ========================================================
 
     @Override
     @Transactional(readOnly = true)
@@ -63,18 +60,8 @@ public class DetalleFormulaServiceImpl implements DetalleFormulaService {
         return detalleFormulaMapper.toResponseDTO(entity);
     }
 
-    // ========================================================
-    // MÉTODOS DE SOPORTE (Uso interno por FormulaService)
-    // Estos métodos deberían ser llamados por FormulaService
-    // ========================================================
 
-    /**
-     * Crea y asocia un DetalleFormula a una Formula existente.
-     * Este método es llamado por FormulaServiceImpl.
-     * @param idFormula ID de la fórmula contenedora.
-     * @param dto Datos del medicamento.
-     * @return DetalleFormulaResponseDTO
-     */
+
     @Override // Sobreescribe el nuevo método de la interfaz
     public DetalleFormulaResponseDTO postDetalleFormulaAnidado(Long idFormula, DetalleFormulaRequestDTO dto) {
 
@@ -92,12 +79,6 @@ public class DetalleFormulaServiceImpl implements DetalleFormulaService {
         return detalleFormulaMapper.toResponseDTO(saved);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN (PUT/PATCH/DELETE) - Basados en la interfaz original
-    // ========================================================
-
-    // NOTA: POST y PUT directo del DetalleFormula no tiene sentido de negocio,
-    // pero los mantenemos para el contrato de la interfaz.
 
     @Override
     public DetalleFormulaResponseDTO postDetalleFormula(DetalleFormulaRequestDTO dto) {
@@ -108,12 +89,9 @@ public class DetalleFormulaServiceImpl implements DetalleFormulaService {
 
     @Override
     public DetalleFormulaResponseDTO putDetalleFormula(Long idDetalleFormula, DetalleFormulaRequestDTO dto) {
-        // Lógica de PUT simplificada
         DetalleFormula existente = detalleFormulaRepository.findById(idDetalleFormula)
                 .orElseThrow(() -> new DetalleFormulaNoEncontradaException(idDetalleFormula));
 
-        // NOTA: Se evita buscar Formula y Medicamento aquí, ya que el put/patch de detalle
-        // no debería ser la vía principal para cambiar el medicamento asociado.
 
         if (dto.getCantidad() != null) {
             existente.setCantidad(dto.getCantidad());

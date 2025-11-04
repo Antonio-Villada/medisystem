@@ -27,7 +27,7 @@ public class Usuario {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY) // CAMBIADO: EAGER -> LAZY
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "usuarios_roles",
             joinColumns = @JoinColumn(name = "id_usuario"),

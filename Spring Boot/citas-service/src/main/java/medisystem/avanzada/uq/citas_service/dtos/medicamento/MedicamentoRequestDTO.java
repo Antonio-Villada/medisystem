@@ -2,9 +2,9 @@ package medisystem.avanzada.uq.citas_service.dtos.medicamento;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import java.math.BigDecimal; // Importar el tipo de dato correcto
+import java.math.BigDecimal;
 
-@Data // Incluye @Getter, @Setter, @ToString, etc.
+@Data
 public class MedicamentoRequestDTO {
 
     @NotBlank(message = "El nombre del medicamento no puede estar vacío.")
@@ -13,7 +13,7 @@ public class MedicamentoRequestDTO {
 
     @NotNull(message = "El precio no puede estar vacío.")
     @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser positivo.")
-    private BigDecimal precio; // CAMBIADO: Integer -> BigDecimal (para seguridad financiera)
+    private BigDecimal precio;
 
 
 }

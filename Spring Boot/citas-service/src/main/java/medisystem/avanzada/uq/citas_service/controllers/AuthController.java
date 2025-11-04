@@ -29,12 +29,9 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // ==========================================================
     // POST /auth/login : Inicio de sesión y generación de token
-    // ==========================================================
 
     @PostMapping("/login")
-    // Usamos el DTO de entrada y devolvemos el DTO de respuesta estándar
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
 
         try {

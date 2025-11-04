@@ -18,11 +18,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "idPaciente") // Usamos el ID natural (cédula) como clave
+@EqualsAndHashCode(of = "idPaciente")
 public class Paciente {
 
     @Id
-    // Asumimos que el ID (cédula/identificación) es un valor natural y no se autogenera.
     @Column(name = "id_paciente", nullable = false, unique = true)
     private String idPaciente;
 
@@ -33,7 +32,7 @@ public class Paciente {
     @Column(name = "nombre_paciente", nullable = false)
     private String nombrePaciente;
 
-    @Column(name = "ciudad", nullable = false) // Asumimos que la ciudad es requerida
+    @Column(name = "ciudad", nullable = false)
     private String ciudad;
 
     @Column(name = "correo", nullable = false, unique = true)
@@ -44,7 +43,7 @@ public class Paciente {
     private Eps eps;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonIgnore // Previene bucles infinitos al serializar a JSON
+    @JsonIgnore
     private List<PacienteTelefono> telefonos;
 
 

@@ -27,9 +27,6 @@ public class TelefonoServiceImpl implements TelefonoService {
         this.telefonoMapper = telefonoMapper;
     }
 
-    // --------------------------------------------------------------------
-    // MÉTODOS DE NEGOCIO (Uso interno por PacienteService)
-    // --------------------------------------------------------------------
 
     @Override
     @Transactional(readOnly = true)
@@ -43,10 +40,6 @@ public class TelefonoServiceImpl implements TelefonoService {
                     return telefonoRepository.save(nuevoTelefono);
                 });
     }
-
-    // --------------------------------------------------------------------
-    // MÉTODOS CRUD ESTANDARIZADOS (Uso por el Controller)
-    // --------------------------------------------------------------------
 
     @Override
     @Transactional(readOnly = true)
@@ -68,23 +61,17 @@ public class TelefonoServiceImpl implements TelefonoService {
 
     @Override
     public TelefonoResponseDTO postTelefono(TelefonoRequestDTO dto) { // Acepta DTO
-        // 1. Convertir DTO a Entidad
         Telefono telefono = telefonoMapper.toEntity(dto);
-
-        // 2. Guardar
         Telefono guardado = telefonoRepository.save(telefono);
 
-        // 3. Convertir Entidad a Response DTO
         return telefonoMapper.toResponseDTO(guardado);
     }
 
     @Override
     public TelefonoResponseDTO putTelefono(Long idTelefono, TelefonoRequestDTO dto) { // ID es LONG y acepta DTO
-        // Buscar o lanzar 404
         Telefono existente = telefonoRepository.findById(idTelefono)
                 .orElseThrow(() -> new TelefonoNoEncontradoException(idTelefono));
 
-        // Actualizar: MapStruct o manualmente (si no usas MapStruct para updates)
         if (dto.getTelefono() != null) {
             existente.setTelefono(dto.getTelefono());
         }
@@ -93,8 +80,7 @@ public class TelefonoServiceImpl implements TelefonoService {
     }
 
     @Override
-    public void deleteTelefono(Long idTelefono) { // ID es LONG
-        // Usamos existsById para validar y lanzar 404 si no existe
+    public void deleteTelefono(Long idTelefono) {
         if (!telefonoRepository.existsById(idTelefono)) {
             throw new TelefonoNoEncontradoException(idTelefono);
         }
@@ -103,11 +89,9 @@ public class TelefonoServiceImpl implements TelefonoService {
 
     @Override
     public TelefonoResponseDTO patchTelefono(Long idTelefono, TelefonoRequestDTO dto) { // ID es LONG y acepta DTO
-        // Buscar o lanzar 404
         Telefono existente = telefonoRepository.findById(idTelefono)
                 .orElseThrow(() -> new TelefonoNoEncontradoException(idTelefono));
 
-        // Actualización parcial
         if (dto.getTelefono() != null) {
             existente.setTelefono(dto.getTelefono());
         }

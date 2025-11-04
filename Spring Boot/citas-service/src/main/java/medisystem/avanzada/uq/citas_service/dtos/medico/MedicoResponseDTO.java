@@ -15,11 +15,8 @@ public class MedicoResponseDTO {
     private String nombreMedico;
     private String telefono;
     private String correo;
-
     private String nombreEspecialidad;
-
     private String username;
-
     private Set<String> roles;
 
 }

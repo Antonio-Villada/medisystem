@@ -29,7 +29,6 @@ public class FormulaServiceImpl implements FormulaService {
     private final CitaRepository citaRepository;
     private final FormulaMapper formulaMapper;
     private final MedicoRepository medicoRepository;
-    // Eliminada la inyección de CitaMapper y CitaResponseDTO
 
     public FormulaServiceImpl(FormulaRepository formulaRepository,
                               CitaRepository citaRepository,
@@ -41,102 +40,70 @@ public class FormulaServiceImpl implements FormulaService {
         this.medicoRepository = medicoRepository;
     }
 
-    // ==========================================================
-    // LECTURA (GET)
-    // ==========================================================
 
     @Override
     @Transactional(readOnly = true)
     public List<FormulaResponseDTO> findAll() {
         return formulaRepository.findAll()
                 .stream()
-                // Uso del mapper simplificado
                 .map(formulaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    // CORREGIDO: int -> Long
     public FormulaResponseDTO findById(Long id) {
         Formula formula = formulaRepository.findById(id)
-                // Uso de la excepción con Long
                 .orElseThrow(() -> new FormulaNoEncontradaException(id));
 
-        // Uso del mapper simplificado
         return formulaMapper.toResponseDTO(formula);
     }
 
-    // ==========================================================
-    // CREACIÓN (POST)
-    // ==========================================================
 
     @Override
     public FormulaResponseDTO save(FormulaRequestDTO dto) {
         Cita cita = citaRepository.findById(dto.getIdCita())
-                // Uso de la excepción con Long
                 .orElseThrow(() -> new CitaNoEncontradaException(dto.getIdCita()));
 
-        // Verificar si la cita ya tiene una fórmula
         if (cita.getFormula() != null) {
             throw new RuntimeException("La cita con ID " + dto.getIdCita() + " ya tiene una fórmula asociada.");
         }
 
-        // El servicio de seguridad debe verificar que el médico autenticado sea el dueño de la cita
-
         Formula formula = formulaMapper.toEntity(dto, cita);
         Formula guardada = formulaRepository.save(formula);
 
-        // Uso del mapper simplificado
         return formulaMapper.toResponseDTO(guardada);
     }
 
-    // ==========================================================
-    // ACTUALIZACIÓN (PUT)
-    // ==========================================================
 
     @Override
-    // CORREGIDO: int -> Long, Formula -> FormulaRequestDTO
     public FormulaResponseDTO update(Long id, FormulaRequestDTO dto) {
         Formula existente = formulaRepository.findById(id)
                 .orElseThrow(() -> new FormulaNoEncontradaException(id));
 
-        // Validación de Autoría
         verificarPropiedadMedico(existente);
 
-        // Actualizar solo los campos que se pueden modificar (fecha y detalles)
         if (dto.getFecha() != null) {
             existente.setFecha(dto.getFecha());
         }
-        // NOTA: La actualización de los detalles (medicamentos) se haría aquí.
 
         return formulaMapper.toResponseDTO(formulaRepository.save(existente));
     }
 
-    // ==========================================================
-    // ELIMINACIÓN (DELETE)
-    // ==========================================================
 
     @Override
-    // CORREGIDO: int -> Long
     public void delete(Long id) {
         Formula formula = formulaRepository.findById(id)
                 .orElseThrow(() -> new FormulaNoEncontradaException(id));
 
-        // Validación de Autoría
         verificarPropiedadMedico(formula);
-
         formulaRepository.delete(formula);
     }
 
-    // ==========================================================
-    // Método auxiliar: verifica que el médico autenticado sea dueño de la fórmula
-    // ==========================================================
     private void verificarPropiedadMedico(Formula formula) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
-        // Se usa findByUsuarioUsername del MedicoRepository
         Medico medicoActual = medicoRepository.findByUsuarioUsername(username)
                 .orElseThrow(() -> new MedicoNoEncontradoException(username));
 

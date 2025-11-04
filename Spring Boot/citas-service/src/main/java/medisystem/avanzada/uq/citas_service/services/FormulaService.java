@@ -7,13 +7,10 @@ import java.util.List;
 
 public interface FormulaService {
 
-    // --- Métodos originales que trabajan con la entidad (Ajustados a DTOs y Long) ---
-    // Usaremos DTOs para actualizar, no entidades.
-    FormulaResponseDTO update(Long id, FormulaRequestDTO dto); // CAMBIADO: int -> Long, Formula -> DTO
-    void delete(Long id); // CAMBIADO: int -> Long
 
-    // --- Nuevos métodos con DTOs ---
+    FormulaResponseDTO update(Long id, FormulaRequestDTO dto);
+    void delete(Long id);
     List<FormulaResponseDTO> findAll();
-    FormulaResponseDTO findById(Long id); // CAMBIADO: int -> Long
+    FormulaResponseDTO findById(Long id);
     FormulaResponseDTO save(FormulaRequestDTO dto);
 }

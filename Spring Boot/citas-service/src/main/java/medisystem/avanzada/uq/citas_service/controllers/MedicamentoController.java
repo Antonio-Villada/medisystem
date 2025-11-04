@@ -23,13 +23,6 @@ public class MedicamentoController {
         this.medicamentoService = medicamentoService;
     }
 
-    // ==========================================================
-    // GET /api/medicamentos : Listar todos los medicamentos
-    // ==========================================================
-
-    /**
-     * Permite a Médicos y Administradores consultar el catálogo (necesario para formular).
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     public ResponseEntity<List<MedicamentoResponseDTO>> getMedicamentos() {
@@ -37,13 +30,6 @@ public class MedicamentoController {
         return ResponseEntity.ok(medicamentos);
     }
 
-    // ==========================================================
-    // GET /api/medicamentos/{idMedicamento} : Obtener medicamento por ID
-    // ==========================================================
-
-    /**
-     * Permite a Médicos y Administradores consultar un medicamento específico.
-     */
     @GetMapping("/{idMedicamento}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     // CORREGIDO: Integer -> Long
@@ -52,13 +38,6 @@ public class MedicamentoController {
         return ResponseEntity.ok(medicamento);
     }
 
-    // ==========================================================
-    // POST /api/medicamentos : Crear nuevo medicamento
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR crear un nuevo medicamento.
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<MedicamentoResponseDTO> postMedicamento(@Valid @RequestBody MedicamentoRequestDTO medicamento) {
@@ -72,13 +51,6 @@ public class MedicamentoController {
         return ResponseEntity.created(location).body(nuevo); // Devuelve el DTO en el cuerpo
     }
 
-    // ==========================================================
-    // PUT /api/medicamentos/{idMedicamento} : Actualización total
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR actualizar totalmente un medicamento.
-     */
     @PutMapping("/{idMedicamento}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: Integer -> Long
@@ -88,13 +60,7 @@ public class MedicamentoController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/medicamentos/{idMedicamento} : Eliminación
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR eliminar un medicamento.
-     */
     @DeleteMapping("/{idMedicamento}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: Integer -> Long
@@ -103,13 +69,7 @@ public class MedicamentoController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==========================================================
-    // PATCH /api/medicamentos/{idMedicamento} : Actualización parcial
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR actualizar parcialmente un medicamento.
-     */
     @PatchMapping("/{idMedicamento}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: Integer -> Long

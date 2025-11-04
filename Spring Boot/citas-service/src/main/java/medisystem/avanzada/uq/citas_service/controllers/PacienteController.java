@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,14 +25,7 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
 
-    // ==========================================================
-    // POST /api/pacientes : Registrar nuevo paciente
-    // ==========================================================
 
-    /**
-     * Permite al ADMINISTRADOR y al público (si la seguridad lo permite) registrar un nuevo paciente.
-     * Utiliza el método registrarPaciente que maneja la lógica de Usuario, EPS y Teléfonos.
-     */
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR')") // Generalmente, el registro inicial está abierto o es para el admin.
     public ResponseEntity<PacienteResponseDTO> registrarPaciente(@Valid @RequestBody PacienteRequestDTO dto) {
@@ -45,13 +40,6 @@ public class PacienteController {
         return ResponseEntity.created(location).body(response); // Devuelve el DTO de respuesta
     }
 
-    // ==========================================================
-    // GET /api/pacientes : Listar todos los pacientes
-    // ==========================================================
-
-    /**
-     * Solo el ADMINISTRADOR o el MEDICO pueden listar todos los pacientes.
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     public ResponseEntity<List<PacienteResponseDTO>> getAllPacientes() {
@@ -59,13 +47,6 @@ public class PacienteController {
         return ResponseEntity.ok(pacientes);
     }
 
-    // ==========================================================
-    // GET /api/pacientes/{idPaciente} : Obtener paciente por ID
-    // ==========================================================
-
-    /**
-     * Permite a ADMIN, al MEDICO, o al propio PACIENTE (verificación en servicio) consultar el registro.
-     */
     @GetMapping("/{idPaciente}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<PacienteResponseDTO> getPacienteById(@PathVariable String idPaciente) {
@@ -73,13 +54,7 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
 
-    // ==========================================================
-    // PUT /api/pacientes/{idPaciente} : Actualización total
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR o al propio PACIENTE actualizar totalmente el registro.
-     */
     @PutMapping("/{idPaciente}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'PACIENTE')")
     public ResponseEntity<PacienteResponseDTO> putPaciente(@PathVariable String idPaciente,
@@ -88,13 +63,6 @@ public class PacienteController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // PATCH /api/pacientes/{idPaciente} : Actualización parcial
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR o al propio PACIENTE actualizar parcialmente el registro.
-     */
     @PatchMapping("/{idPaciente}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'PACIENTE')")
     public ResponseEntity<PacienteResponseDTO> patchPaciente(@PathVariable String idPaciente,
@@ -103,17 +71,21 @@ public class PacienteController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/pacientes/{idPaciente} : Eliminación
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR eliminar un registro.
-     */
     @DeleteMapping("/{idPaciente}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> deletePaciente(@PathVariable String idPaciente) {
         pacienteService.deletePaciente(idPaciente);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/perfil")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public ResponseEntity<PacienteResponseDTO> getPacientePropio() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        PacienteResponseDTO paciente = pacienteService.getPacientePorUsername(username);
+        return ResponseEntity.ok(paciente);
     }
 }

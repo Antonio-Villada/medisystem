@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class EpsResponseDTO {
 
-    private Long idEps; // Coherente con la entidad Eps (Long)
+    private Long idEps;
     private String nombreEps;
 
 }

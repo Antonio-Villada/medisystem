@@ -12,16 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 public class FormulaResponseDTO {
 
-    private Long idFormula; // CAMBIADO: Integer -> Long
-
-    // CAMBIO 1: Usamos LocalDate para que Jackson lo serialice correctamente
+    private Long idFormula;
     private LocalDate fecha;
-
-    // CAMBIO 2: Evitamos el bucle infinito. Solo incluimos el ID de la cita.
     private Long idCita;
-
-    // CAMBIO 3: Incluimos el contenido de la fórmula (la lista de medicamentos)
     private List<DetalleFormulaResponseDTO> detalles;
 
-    // ¡Se eliminaron todos los getters, setters y constructores manuales!
+
 }

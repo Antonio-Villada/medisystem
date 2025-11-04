@@ -23,13 +23,7 @@ public class EpsController {
         this.epsService = epsService;
     }
 
-    // ==========================================================
-    // GET /api/eps : Listar todas las EPS
-    // ==========================================================
 
-    /**
-     * Permite a todos los roles consultar las EPS (necesario para el registro de Pacientes).
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<List<EpsResponseDTO>> getAllEps() {
@@ -37,13 +31,6 @@ public class EpsController {
         return ResponseEntity.ok(eps);
     }
 
-    // ==========================================================
-    // GET /api/eps/{idEps} : Obtener EPS por ID
-    // ==========================================================
-
-    /**
-     * Permite a todos consultar una EPS específica.
-     */
     @GetMapping("/{idEps}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     // CORREGIDO: int -> Long
@@ -52,13 +39,6 @@ public class EpsController {
         return ResponseEntity.ok(eps);
     }
 
-    // ==========================================================
-    // POST /api/eps : Crear nueva EPS
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR crear una nueva EPS.
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: Eps -> EpsRequestDTO y devuelve EpsResponseDTO
@@ -71,16 +51,10 @@ public class EpsController {
                 .buildAndExpand(nuevaEps.getIdEps())
                 .toUri();
 
-        return ResponseEntity.created(location).body(nuevaEps); // Devuelve el DTO
+        return ResponseEntity.created(location).body(nuevaEps);
     }
 
-    // ==========================================================
-    // PUT /api/eps/{idEps} : Actualización total
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR actualizar totalmente una EPS.
-     */
     @PutMapping("/{idEps}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: int -> Long, Eps -> EpsRequestDTO y devuelve EpsResponseDTO
@@ -90,13 +64,6 @@ public class EpsController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/eps/{idEps} : Eliminación
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR eliminar una EPS.
-     */
     @DeleteMapping("/{idEps}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: int -> Long
@@ -105,13 +72,7 @@ public class EpsController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==========================================================
-    // PATCH /api/eps/{idEps} : Actualización parcial
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR actualizar parcialmente una EPS.
-     */
     @PatchMapping("/{idEps}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     // CORREGIDO: int -> Long, Eps -> EpsRequestDTO y devuelve EpsResponseDTO

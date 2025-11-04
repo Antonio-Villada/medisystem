@@ -12,9 +12,6 @@ public class UsuarioResponseDTO {
 
     private Long id;
     private String username;
-
-    // Se mapea el Set<Rol> de la entidad a un Set<String> con los nombres
     private Set<String> roles;
 
-    // ¡Se omite el campo 'password' por seguridad!
 }

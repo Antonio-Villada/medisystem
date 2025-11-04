@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioMapper usuarioMapper;
 
-    // Inyección de dependencias (Constructor) - PRÁCTICA RECOMENDADA
     public UserServiceImpl(UsuarioRepository usuarioRepository, RolRepository rolRepository,
                            PasswordEncoder passwordEncoder, UsuarioMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
@@ -39,31 +38,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Usuario crearNuevoUsuario(String username, String password, RolNombre rolNombre) {
-        // Validación: Lanza la excepción específica 409
         if (usuarioRepository.existsByUsername(username)) {
             throw new UsuarioYaExisteException("El nombre de usuario '" + username + "' ya está en uso.");
         }
 
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
-
-        // 1. Encriptación: Codifica la contraseña
         usuario.setPassword(passwordEncoder.encode(password));
-
-        // 2. Asignación de Rol: Usa la excepción específica 500 para errores de configuración
         Rol rol = rolRepository.findByNombre(rolNombre)
                 .orElseThrow(() -> new RolNoEncontradoException("Error de configuración: Rol '" + rolNombre.name() + "' no encontrado en la BD."));
 
         usuario.setRoles(Set.of(rol));
-
-        // 3. Guardar y retornar
         return usuarioRepository.save(usuario);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Usuario> findByUsername(String username) {
-        // El método solo retorna el Optional, el manejo de errores lo hace quien lo consume.
         return usuarioRepository.findByUsername(username);
     }
 
@@ -71,13 +62,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UsuarioResponseDTO getPerfilUsuario(String username) {
 
-        // Uso de la excepción 404 específica y mensaje claro.
         Usuario usuario = usuarioRepository.findByUsername(username)
 
-                // CORRECTO: La expresión lambda simple funciona perfectamente.
                 .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario con username '" + username + "' no encontrado."));
 
-        // Uso del mapper
         return usuarioMapper.toResponseDTO(usuario);
     }
 }

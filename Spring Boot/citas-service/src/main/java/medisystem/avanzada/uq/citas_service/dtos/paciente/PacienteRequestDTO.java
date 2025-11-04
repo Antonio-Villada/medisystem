@@ -23,7 +23,7 @@ public class PacienteRequestDTO {
     private String correo;
 
     @NotNull(message = "El id de la EPS no puede ser nulo.")
-    private Long idEps; // CAMBIADO: Integer -> Long (para coincidir con la Entidad)
+    private Long idEps;
 
     @NotBlank(message = "El nombre de usuario no puede estar vacío.")
     @Size(min = 4, message = "El nombre de usuario debe tener al menos 4 caracteres.")

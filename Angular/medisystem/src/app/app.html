@@ -1,6 +1,14 @@
-<app-header></app-header>
+<div class="app-shell" [class.blur-active]="isLoginPage">
+  <app-header></app-header>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
-<app-footer></app-footer>
+  <main>
+    <router-outlet *ngIf="!isLoginPage"></router-outlet>
+  </main>
+
+  <app-footer></app-footer>
+</div>
+
+@if (isLoginPage) {
+  <div class="overlay"></div>
+  <app-login></app-login>
+}

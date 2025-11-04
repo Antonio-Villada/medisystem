@@ -1,0 +1,84 @@
+/* src/app/components/header/header.component.css */
+
+/* 1. EL NAVBAR (EL FONDO AZUL OSCURO) */
+/* ----------------------------------- */
+.navbar {
+  /* Este es un azul marino oscuro, como pediste.
+     Puedes cambiarlo por otro tono si lo deseas (ej: #000080) */
+  background-color: #002147;
+
+  /* Hacemos el header un poco más alto, similar a tu padding original */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+
+/* 2. TU LOGO PERSONALIZADO */
+/* ----------------------------------- */
+.navbar-brand.logo {
+  font-family: "Times New Roman", serif;
+  font-size: 32px;
+  /* Tu tamaño original */
+  font-style: italic;
+  font-weight: bold;
+  color: white;
+  /* Aseguramos que sea blanco */
+}
+
+/* El span 'System' en el logo */
+.navbar-brand.logo span {
+  /* Un azul más brillante para el contraste */
+  color: #0d6efd;
+}
+
+/* Quitamos cualquier hover feo del logo */
+.navbar-brand.logo:hover {
+  color: white;
+}
+
+
+/* 3. ENLACES (INICIO, CITAS, ETC.) */
+/* ----------------------------------- */
+.nav-link {
+  color: white;
+  /* Texto de enlace blanco */
+  font-weight: 500;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  padding: 10px 16px;
+  /* Tu padding original */
+
+  /* Transición suave para tu efecto hover */
+  transition: all 0.3s ease;
+}
+
+
+/* 4. TU EFECTO HOVER (¡EL MÁS IMPORTANTE!) */
+/* ----------------------------------- */
+.nav-link:hover,
+.nav-link.active {
+  /* 'active' aplica el estilo si estamos en esa página */
+
+  /* Tu estilo original de hover */
+  background-color: white;
+  border-radius: 20px;
+
+  /* Usamos !important para asegurarnos de sobrescribir
+     el color 'blanco' que Bootstrap da al texto */
+  color: black !important;
+}
+
+
+/* 5. EL BOTÓN HAMBURGUESA (MÓVIL) */
+/* ----------------------------------- */
+
+/* Cambia el color del borde del botón a blanco */
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Cambia el color de las 3 líneas (el icono) a blanco */
+.navbar-toggler-icon {
+  /* Esta variable de Bootstrap usa un SVG blanco */
+  background-image: var(--bs-navbar-toggler-icon-bg);
+}

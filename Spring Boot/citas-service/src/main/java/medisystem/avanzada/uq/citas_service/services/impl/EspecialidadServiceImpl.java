@@ -27,9 +27,6 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         this.especialidadMapper = especialidadMapper;
     }
 
-    // ========================================================
-    // LECTURA (GET) - Corregido para devolver DTOs
-    // ========================================================
 
     @Override
     @Transactional(readOnly = true)
@@ -48,9 +45,6 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         return especialidadMapper.toResponseDTO(especialidad);
     }
 
-    // ========================================================
-    // CREACIÓN (POST) - Corregido para usar DTOs y validación
-    // ========================================================
 
     @Override
     public EspecialidadResponseDTO postEspecialidad(EspecialidadRequestDTO dto) {
@@ -64,9 +58,6 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         return especialidadMapper.toResponseDTO(saved);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN TOTAL (PUT) - Corregido para usar DTOs
-    // ========================================================
 
     @Override
     public EspecialidadResponseDTO putEspecialidad(Long idEspecialidad, EspecialidadRequestDTO dto) {
@@ -86,9 +77,6 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         return especialidadMapper.toResponseDTO(actualizado);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN PARCIAL (PATCH) - Corregido para usar DTOs
-    // ========================================================
 
     @Override
     public EspecialidadResponseDTO patchEspecialidad(Long idEspecialidad, EspecialidadRequestDTO dto) {
@@ -109,13 +97,9 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         return especialidadMapper.toResponseDTO(actualizado);
     }
 
-    // ========================================================
-    // ELIMINACIÓN (DELETE)
-    // ========================================================
 
     @Override
     public void deleteEspecialidad(Long idEspecialidad) {
-        // Usamos existsById para validar antes de borrar
         if (!especialidadRepository.existsById(idEspecialidad)) {
             throw new EspecialidadNoEncontradaException(idEspecialidad);
         }

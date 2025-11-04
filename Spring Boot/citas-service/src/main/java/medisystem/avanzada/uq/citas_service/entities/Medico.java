@@ -14,9 +14,9 @@ import medisystem.avanzada.uq.citas_service.entities.Usuario;
 @Table(name = "medicos")
 @Getter
 @Setter
-@NoArgsConstructor // Genera el constructor vacío
-@AllArgsConstructor // Genera el constructor con todos los argumentos
-@EqualsAndHashCode(of = "correo") // Implementa equals y hashCode basado en 'correo'
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "correo")
 public class Medico {
 
     @Id

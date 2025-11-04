@@ -9,9 +9,6 @@ import java.util.Optional;
 @Repository // Mantenemos esta anotación por consistencia de estilo.
 public interface RolRepository extends JpaRepository<Rol, Long> {
 
-    // Método para encontrar un rol por su nombre (clave natural), usando Optional.
     Optional<Rol> findByNombre(RolNombre nombre);
-
-    // Método para verificar la existencia (opcional, pero útil para validaciones).
     boolean existsByNombre(RolNombre nombre);
 }

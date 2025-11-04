@@ -25,13 +25,6 @@ public class EspecialidadController {
         this.especialidadService = especialidadService;
     }
 
-    // ==========================================================
-    // GET /api/especialidades : Listar todas las Especialidades
-    // ==========================================================
-
-    /**
-     * Permite a todos los roles consultar las especialidades (necesario para registro de Médicos).
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<List<EspecialidadResponseDTO>> getAllEspecialidades(){
@@ -39,13 +32,7 @@ public class EspecialidadController {
         return ResponseEntity.ok(especialidades);
     }
 
-    // ==========================================================
-    // GET /api/especialidades/{idEspecialidad} : Obtener por ID
-    // ==========================================================
 
-    /**
-     * Permite a todos consultar una especialidad específica.
-     */
     @GetMapping("/{idEspecialidad}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<EspecialidadResponseDTO> getEspecialidadById(@PathVariable Long idEspecialidad){
@@ -53,13 +40,7 @@ public class EspecialidadController {
         return ResponseEntity.ok(especialidad);
     }
 
-    // ==========================================================
-    // POST /api/especialidades : Crear nueva Especialidad
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR crear una nueva especialidad.
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<EspecialidadResponseDTO> postEspecialidad(@Valid @RequestBody EspecialidadRequestDTO dto){
@@ -74,13 +55,6 @@ public class EspecialidadController {
         return ResponseEntity.created(location).body(nuevaEspecialidad);
     }
 
-    // ==========================================================
-    // PUT /api/especialidades/{idEspecialidad} : Actualización total
-    // ==========================================================
-
-    /**
-     * Permite solo al ADMINISTRADOR actualizar totalmente una especialidad.
-     */
     @PutMapping("/{idEspecialidad}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<EspecialidadResponseDTO> putEspecialidad(@PathVariable Long idEspecialidad,
@@ -89,13 +63,7 @@ public class EspecialidadController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/especialidades/{idEspecialidad} : Eliminación
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR eliminar una especialidad.
-     */
     @DeleteMapping("/{idEspecialidad}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> deleteEspecialidad(@PathVariable Long idEspecialidad){
@@ -103,13 +71,7 @@ public class EspecialidadController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==========================================================
-    // PATCH /api/especialidades/{idEspecialidad} : Actualización parcial
-    // ==========================================================
 
-    /**
-     * Permite solo al ADMINISTRADOR actualizar parcialmente una especialidad.
-     */
     @PatchMapping("/{idEspecialidad}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<EspecialidadResponseDTO> patchEspecialidad(@PathVariable Long idEspecialidad,

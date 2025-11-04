@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-@Data // Incluye @Getter, @Setter, @ToString, etc.
+@Data
 public class EpsRequestDTO {
 
     @NotBlank(message = "El nombre de la EPS no puede estar vacío.")

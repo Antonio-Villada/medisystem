@@ -23,13 +23,6 @@ public class DetalleFormulaController {
         this.detalleFormulaService = detalleFormulaService;
     }
 
-    // ==========================================================
-    // POST /api/formulas/{idFormula}/detalles : Crea un detalle (Anidado)
-    // ==========================================================
-
-    /**
-     * Permite solo al MÉDICO crear un nuevo detalle (medicamento) para una fórmula existente.
-     */
     @PostMapping("/{idFormula}/detalles")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<DetalleFormulaResponseDTO> postDetalleFormula(
@@ -48,13 +41,6 @@ public class DetalleFormulaController {
         return ResponseEntity.created(location).body(nuevo);
     }
 
-    // ==========================================================
-    // GET /api/formulas/detalles : Listar todos los detalles (Plano)
-    // ==========================================================
-
-    /**
-     * Permite a Administradores y Médicos listar todos los detalles de fórmulas.
-     */
     @GetMapping("/detalles")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO')")
     public ResponseEntity<List<DetalleFormulaResponseDTO>> getDetalleFormulas() {
@@ -62,13 +48,6 @@ public class DetalleFormulaController {
         return ResponseEntity.ok(detalles);
     }
 
-    // ==========================================================
-    // GET /api/formulas/detalles/{idDetalleFormula} : Obtener por ID (Plano)
-    // ==========================================================
-
-    /**
-     * Permite a todos los roles consultar un detalle de fórmula específico.
-     */
     @GetMapping("/detalles/{idDetalleFormula}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'MEDICO', 'PACIENTE')")
     public ResponseEntity<DetalleFormulaResponseDTO> getDetalleFormulaById(@PathVariable Long idDetalleFormula) {
@@ -76,13 +55,7 @@ public class DetalleFormulaController {
         return ResponseEntity.ok(detalle);
     }
 
-    // ==========================================================
-    // PUT /api/formulas/detalles/{idDetalleFormula} : Actualización total (Plano)
-    // ==========================================================
 
-    /**
-     * Permite solo al MÉDICO actualizar totalmente un detalle de fórmula.
-     */
     @PutMapping("/detalles/{idDetalleFormula}")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<DetalleFormulaResponseDTO> putDetalleFormula(
@@ -93,13 +66,6 @@ public class DetalleFormulaController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // PATCH /api/formulas/detalles/{idDetalleFormula} : Actualización parcial (Plano)
-    // ==========================================================
-
-    /**
-     * Permite solo al MÉDICO actualizar parcialmente un detalle de fórmula.
-     */
     @PatchMapping("/detalles/{idDetalleFormula}")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<DetalleFormulaResponseDTO> patchDetalleFormula(
@@ -110,13 +76,7 @@ public class DetalleFormulaController {
         return ResponseEntity.ok(actualizado);
     }
 
-    // ==========================================================
-    // DELETE /api/formulas/detalles/{idDetalleFormula} : Eliminación (Plano)
-    // ==========================================================
 
-    /**
-     * Permite solo al MÉDICO eliminar un detalle de fórmula.
-     */
     @DeleteMapping("/detalles/{idDetalleFormula}")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<Void> deleteDetalleFormula(@PathVariable Long idDetalleFormula) {

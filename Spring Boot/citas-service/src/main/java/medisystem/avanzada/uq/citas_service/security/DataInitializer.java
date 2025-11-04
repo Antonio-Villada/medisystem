@@ -29,7 +29,7 @@ public class DataInitializer {
 
             try (InputStream inputStream = getClass().getResourceAsStream("/data/usuarios.json")) {
                 if (inputStream == null) {
-                    System.err.println(" ❌ No se encontró el archivo usuarios.json");
+                    System.err.println("  No se encontró el archivo usuarios.json");
                     return;
                 }
 
@@ -50,12 +50,12 @@ public class DataInitializer {
                                     .orElseGet(() -> rolRepository.save(new Rol(rolNombre)));
                             usuario.getRoles().add(rol);
                         } catch (IllegalArgumentException ex) {
-                            System.err.println(" ⚠️ Rol no válido en JSON: " + rolNombreStr);
+                            System.err.println("  Rol no válido en JSON: " + rolNombreStr);
                         }
                     }
 
                     usuarioRepository.save(usuario);
-                    System.out.println("✅ Usuario creado: " + u.getUsername());
+                    System.out.println(" Usuario creado: " + u.getUsername());
                 }
 
             } catch (Exception e) {

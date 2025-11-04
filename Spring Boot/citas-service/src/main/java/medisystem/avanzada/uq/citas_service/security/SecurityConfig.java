@@ -11,11 +11,17 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.core.GrantedAuthorityDefaults; // 🌟 Nuevo Import
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 
-// Importaciones requeridas para el PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+// ✨ 1. IMPORTACIONES CORREGIDAS (Servlet, no Reactive)
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -31,11 +37,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // ✨ 2. CONEXIÓN DE CORS AÑADIDA
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .csrf(AbstractHttpConfigurer::disable)
-                // Es crucial configurar el manejo de sesión como STATELESS para una API con JWT
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Swagger y documentación
+                        // ... (Reglas de Swagger y Auth)
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -43,11 +51,9 @@ public class SecurityConfig {
                                 "/v3/api-docs.yaml",
                                 "/v3/api-docs.json"
                         ).permitAll()
-
-                        // 🔓 Autenticación pública (Ej: /sistema/api/v1/auth/login)
                         .requestMatchers("/auth/**").permitAll()
 
-                        // 🔒 Reglas específicas por rol (Los nombres en BD: ADMINISTRADOR, MEDICO, PACIENTE)
+                        // ... (Reglas de roles)
                         .requestMatchers(
                                 "/medicos/**",
                                 "/pacientes/**",
@@ -63,14 +69,30 @@ public class SecurityConfig {
                                 "/citas/**",
                                 "/formulas/**",
                                 "/detalle-formulas/**"
+                                // ✨ 3. ERROR DE TIPO CORREGIDO (ADMINISTRAD -> ADMINISTRADOR)
                         ).hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRADOR")
 
-                        // 🔒 Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     @Bean
@@ -83,13 +105,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Bean clave: Le dice a Spring Security que use una cadena vacía ("") como prefijo de autoridad.
-     * Esto hace que hasRole("ADMINISTRADOR") coincida EXACTAMENTE con el rol "ADMINISTRADOR" de la BD,
-     * respetando la restricción de tu base de datos.
-     */
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
 }
+

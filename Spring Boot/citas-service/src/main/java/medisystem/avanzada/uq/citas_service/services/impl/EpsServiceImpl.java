@@ -26,9 +26,6 @@ public class EpsServiceImpl implements EpsService {
         this.epsMapper = epsMapper;
     }
 
-    // ========================================================
-    // LECTURA (GET) - Ahora devuelve DTOs
-    // ========================================================
 
     @Override
     @Transactional(readOnly = true)
@@ -49,9 +46,6 @@ public class EpsServiceImpl implements EpsService {
         return epsMapper.toResponseDTO(eps);
     }
 
-    // ========================================================
-    // CREACIÓN (POST) - Ahora usa DTOs y validación
-    // ========================================================
 
     @Override
     public EpsResponseDTO postEps(EpsRequestDTO dto) {
@@ -65,9 +59,6 @@ public class EpsServiceImpl implements EpsService {
         return epsMapper.toResponseDTO(saved);
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN TOTAL (PUT) - Ahora usa DTOs y validación
-    // ========================================================
 
     @Override
     // CORREGIDO: int -> Long, Eps -> EpsRequestDTO
@@ -87,10 +78,6 @@ public class EpsServiceImpl implements EpsService {
         Eps actualizado = epsRepository.save(existente);
         return epsMapper.toResponseDTO(actualizado);
     }
-
-    // ========================================================
-    // ACTUALIZACIÓN PARCIAL (PATCH) - Ahora usa DTOs
-    // ========================================================
 
     @Override
     // CORREGIDO: int -> Long, Eps -> EpsRequestDTO
@@ -112,9 +99,6 @@ public class EpsServiceImpl implements EpsService {
         return epsMapper.toResponseDTO(actualizado);
     }
 
-    // ========================================================
-    // ELIMINACIÓN (DELETE)
-    // ========================================================
 
     @Override
     // CORREGIDO: int -> Long

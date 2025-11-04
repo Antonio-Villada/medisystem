@@ -14,20 +14,15 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class CitaResponseDTO {
 
-    private Long idCita; // CAMBIADO: Integer -> Long
+    private Long idCita;
 
-    // CAMBIADO: String -> LocalDate/LocalTime
+
     private LocalDate fecha;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-
     private String observaciones;
-
-    // Relaciones anidadas
     private MedicoResponseDTO medico;
     private PacienteResponseDTO paciente;
-
-    // AÑADIDO: Relación con la fórmula (sin riesgo de bucle)
     private FormulaResponseDTO formula;
 
 }

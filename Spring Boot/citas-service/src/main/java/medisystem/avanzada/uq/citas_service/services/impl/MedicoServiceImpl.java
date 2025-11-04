@@ -26,8 +26,8 @@ public class MedicoServiceImpl implements MedicoService {
 
     private final MedicoRepository medicoRepository;
     private final EspecialidadRepository especialidadRepository;
-    private final UserService userService; // Inyección para la lógica de Usuario
-    private final MedicoMapper medicoMapper; // Inyección del Mapper
+    private final UserService userService;
+    private final MedicoMapper medicoMapper;
 
     public MedicoServiceImpl(MedicoRepository medicoRepository,
                              EspecialidadRepository especialidadRepository,
@@ -39,43 +39,28 @@ public class MedicoServiceImpl implements MedicoService {
         this.medicoMapper = medicoMapper;
     }
 
-    // ========================================================
-    // CREACIÓN Y REGISTRO (POST)
-    // ========================================================
 
     @Override
     public MedicoResponseDTO registrarMedico(MedicoRequestDTO dto) {
-        // Validación 1: El correo no debe existir
         if (medicoRepository.existsByCorreo(dto.getCorreo())) {
             throw new MedicoYaExisteException(dto.getCorreo(), true);
         }
 
-        // Validación 2: El usuario no debe existir (Delegado a UserService)
 
-        // 1. Crear Usuario (Delegado al UserService para encriptación y rol)
         Usuario usuario = userService.crearNuevoUsuario(
                 dto.getUsername(),
                 dto.getPassword(),
                 RolNombre.MEDICO
         );
 
-        // 2. Buscar Especialidad
         Especialidad especialidad = especialidadRepository.findById(dto.getIdEspecialidad())
                 .orElseThrow(() -> new EspecialidadNoEncontradaException(dto.getIdEspecialidad()));
 
-        // 3. Crear Entidad Medico (Usando el Mapper)
         Medico medico = medicoMapper.toEntity(dto, usuario, especialidad);
-        // NOTA: El ID del médico es autogenerado (Long), no se toma del DTO.
-
         Medico savedMedico = medicoRepository.save(medico);
-
-        // 4. Retornar DTO de salida
         return medicoMapper.toResponseDTO(savedMedico);
     }
 
-    // ========================================================
-    // LECTURA (GET)
-    // ========================================================
 
     @Override
     @Transactional(readOnly = true)
@@ -100,42 +85,33 @@ public class MedicoServiceImpl implements MedicoService {
         Especialidad especialidad = especialidadRepository.findById(idEspecialidad)
                 .orElseThrow(() -> new EspecialidadNoEncontradaException(idEspecialidad));
 
-        // Usa el método optimizado del repositorio (findByEspecialidad)
         return medicoRepository.findByEspecialidad(especialidad).stream()
                 .map(medicoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // ========================================================
-    // ACTUALIZACIÓN (PUT/PATCH)
-    // ========================================================
 
     @Override
     public MedicoResponseDTO updateMedico(Long idMedico, MedicoRequestDTO dto) {
         Medico existente = medicoRepository.findById(idMedico)
                 .orElseThrow(() -> new MedicoNoEncontradoException(idMedico));
 
-        // 1. Validar que el correo no se duplique con otro médico
         if (medicoRepository.existsByCorreo(dto.getCorreo()) &&
                 !existente.getCorreo().equalsIgnoreCase(dto.getCorreo())) {
             throw new MedicoYaExisteException(dto.getCorreo(), true);
         }
 
-        // 2. Actualizar Especialidad (Requiere búsqueda)
         Especialidad nuevaEspecialidad = especialidadRepository.findById(dto.getIdEspecialidad())
                 .orElseThrow(() -> new EspecialidadNoEncontradaException(dto.getIdEspecialidad()));
 
-        // 3. Actualizar campos
         existente.setNombreMedico(dto.getNombreMedico());
         existente.setTelefono(dto.getTelefono());
         existente.setCorreo(dto.getCorreo());
         existente.setEspecialidad(nuevaEspecialidad);
 
-        // 4. NOTA: La actualización del Usuario (username/password) debe ser un método separado en UserService.
 
         Medico updatedMedico = medicoRepository.save(existente);
 
-        // 5. Retornar DTO
         return medicoMapper.toResponseDTO(updatedMedico);
     }
 
@@ -144,8 +120,6 @@ public class MedicoServiceImpl implements MedicoService {
         Medico existente = medicoRepository.findById(idMedico)
                 .orElseThrow(() -> new MedicoNoEncontradoException(idMedico));
 
-        // Aquí se requiere lógica compleja de mapeo nulo que MapStruct no hace fácilmente con un DTO.
-        // Se implementa manualmente la lógica de PATCH (solo actualiza si el campo no es nulo).
 
         if (dto.getNombreMedico() != null) {
             existente.setNombreMedico(dto.getNombreMedico());
@@ -167,15 +141,11 @@ public class MedicoServiceImpl implements MedicoService {
             existente.setEspecialidad(nuevaEspecialidad);
         }
 
-        // NOTA: Los campos de usuario (username, password) NO se manejan aquí.
 
         Medico updatedMedico = medicoRepository.save(existente);
         return medicoMapper.toResponseDTO(updatedMedico);
     }
 
-    // ========================================================
-    // ELIMINACIÓN (DELETE)
-    // ========================================================
 
     @Override
     public void deleteMedico(Long idMedico) {
@@ -183,6 +153,5 @@ public class MedicoServiceImpl implements MedicoService {
                 .orElseThrow(() -> new MedicoNoEncontradoException(idMedico));
 
         medicoRepository.delete(medico);
-        // El borrado del Usuario asociado debería ocurrir por la configuración de Cascade en la entidad Medico.
     }
 }
