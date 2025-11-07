@@ -5,6 +5,9 @@ import { LoginComponent } from './features/auth/pages/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { CitasComponent } from './pages/citas/citas.component';
 import { OrdenesComponent } from './pages/ordenes/ordenes.component';
+import { EpsComponent } from './features/eps/pages/eps/eps'; 
+import { Especialidades } from './features/especialidades/pages/especialidades/especialidades';
+import { Medicamentos } from './features/medicamentos/pages/medicamentos/medicamentos';
 
 // --- PASO 1: IMPORTA AMBOS GUARDIANES ---
 import { authGuard } from './core/guards/auth.guard';
@@ -43,6 +46,33 @@ export const routes: Routes = [
     canActivate: [
       authGuard,
       roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']), // <-- AÑADIDO
+    ],
+  },
+  // /Eps solo para ADMINISTRADOR
+  {
+    path: 'Eps',
+    component: EpsComponent,
+    canActivate: [
+      authGuard,
+      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
+    ],
+  },
+  // /Especialidades solo para ADMINISTRADOR
+  {
+    path: 'Especialidades',
+    component: Especialidades,
+    canActivate: [
+      authGuard,
+      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
+    ],
+  },
+  // /Medicamentos solo para ADMINISTRADOR
+  {
+    path: 'Medicamentos',
+    component: Medicamentos,
+    canActivate: [
+      authGuard,
+      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
     ],
   },
 
