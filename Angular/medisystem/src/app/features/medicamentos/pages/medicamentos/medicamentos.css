@@ -1,0 +1,266 @@
+/* --- 1. Estilos Generales y Contenedor --- */
+
+.container {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+h2 {
+    color: #1a73e8; /* Azul de Google, profesional y llamativo */
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+/* --- 2. Estilos de Mensajes (Alertas) --- */
+
+.alert {
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.alert.success {
+    background-color: #e6ffed;
+    color: #0b8043;
+    border: 1px solid #c2e8c2;
+}
+
+.alert.error {
+    background-color: #fce8e6;
+    color: #d93025;
+    border: 1px solid #f9bdbb;
+}
+
+/* --- 3. Estilos del Formulario de Crear/Editar --- */
+
+.medicamento-form {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 15px;
+    padding: 20px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    background-color: #f7f9fc;
+    align-items: center;
+}
+
+.medicamento-form h3 {
+    width: 100%;
+    margin-top: 0;
+    color: #3c4043;
+    font-size: 1.1em;
+}
+
+/* Contenedor de input y mensaje de error */
+.form-group {
+    flex: 1 1 45%; 
+    min-width: 180px;
+    position: relative; 
+}
+
+.medicamento-form input[type="text"],
+.medicamento-form input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%; /* Ocupa todo el ancho del form-group */
+    box-sizing: border-box;
+}
+
+/* 🟥 Estilo para input inválido (borde rojo) 🟥 */
+.medicamento-form input.is-invalid {
+    border: 2px solid #d93025; /* Rojo de error */
+    padding: 9px; /* Ajuste el padding por el borde de 2px */
+}
+
+/* ⚠️ Estilos para el mensaje de validación ⚠️ */
+.validation-message {
+    color: #d93025; /* Rojo de error */
+    font-size: 0.85em;
+    margin-top: 5px;
+    padding-left: 2px;
+    font-weight: 500;
+}
+
+.medicamento-form button {
+    margin-left: auto;
+}
+
+/* --- 4. Estilos de Botones --- */
+
+button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+/* Botón Primario (Guardar/Crear) */
+button[type="submit"] {
+    background-color: #1a73e8;
+    color: white;
+}
+
+button[type="submit"]:hover:not([disabled]) {
+    background-color: #1764cc;
+}
+
+/* Botón de Cancelar/Resetear */
+button[type="button"] {
+    background-color: #70757a;
+    color: white;
+}
+
+button[type="button"]:hover {
+    background-color: #5f6368;
+}
+
+/* Botón de Recargar Lista */
+.container > button:not(.medicamento-form button) {
+    background-color: #34a853; 
+    color: white;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.container > button:not(.medicamento-form button):hover {
+    background-color: #2c8c4a;
+}
+
+/* Estado Deshabilitado */
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* --- 5. Estilos de la Tabla (Lista de Medicamentos) --- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 14px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #1a73e8;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+/* Alineación específica para Precio */
+td:nth-child(3) {
+    text-align: right;
+    font-weight: bold;
+    color: #0b8043; 
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8fafd;
+}
+
+tbody tr:hover {
+    background-color: #eaf1fb;
+}
+
+/* Botones de Acción en la tabla */
+td button {
+    margin-right: 5px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+/* Botón Editar */
+td button:first-of-type {
+    background-color: #fbbc04; 
+    color: #3c4043;
+}
+
+td button:first-of-type:hover {
+    background-color: #f8b400;
+}
+
+/* Botón Eliminar */
+td button:last-child {
+    background-color: #d93025; 
+    color: white;
+}
+
+td button:last-child:hover {
+    background-color: #c5291a;
+}
+
+/* --- 6. Media Queries para Responsividad --- */
+
+@media (max-width: 650px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .form-group {
+         flex: 1 1 100% !important; /* Ocupa todo el ancho en móviles */
+    }
+    
+    .medicamento-form button {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Adaptación de la tabla (apilamiento de filas) */
+    table, thead, tbody, th, td, tr { 
+        display: block; 
+    }
+    thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr { border: 1px solid #ccc; margin-bottom: 10px; border-radius: 5px; }
+    td { 
+        border: none;
+        border-bottom: 1px solid #eee; 
+        position: relative;
+        padding-left: 50%; 
+        text-align: right !important; 
+    }
+    td:before { 
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: bold;
+        text-align: left;
+    }
+    td:nth-of-type(1):before { content: "ID"; }
+    td:nth-of-type(2):before { content: "Nombre"; }
+    td:nth-of-type(3):before { content: "Precio"; text-align: left; }
+    td:nth-of-type(4):before { content: "Acciones"; }
+
+}

@@ -1,0 +1,59 @@
+<div class="container">
+  <h1>Gestión de EPS 🏥</h1>
+
+  <div *ngIf="message" class="alert-message">
+    {{ message }}
+  </div>
+
+  <div class="form-card">
+    <h2>{{ isEditing ? 'Editar EPS' : 'Crear Nueva EPS' }}</h2>
+    <form (ngSubmit)="saveEps()">
+      <div class="form-group">
+        <label for="nombreEps">Nombre de la EPS</label>
+        <input
+          id="nombreEps"
+          name="nombreEps"
+          type="text"
+          [(ngModel)]="currentEps.nombreEps"
+          required
+          minlength="3"
+        />
+      </div>
+      <button type="submit" [disabled]="!currentEps.nombreEps">
+        {{ isEditing ? 'Guardar Cambios' : 'Crear EPS' }}
+      </button>
+      <button type="button" (click)="prepareCreate()">Cancelar</button>
+    </form>
+  </div>
+
+  <div class="list-card">
+    <h2>Listado de EPS</h2>
+    <table *ngIf="epsList.length > 0; else noEps">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let eps of epsList">
+          <td>{{ eps.idEps }}</td>
+          <td>{{ eps.nombreEps }}</td>
+          <td>
+            <button (click)="prepareEdit(eps)" class="btn-edit">
+              Editar
+            </button>
+            <button (click)="deleteEps(eps.idEps!)" class="btn-delete">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noEps>
+      <p class="no-data-message">No hay EPS registradas.</p>
+    </ng-template>
+  </div>
+</div>

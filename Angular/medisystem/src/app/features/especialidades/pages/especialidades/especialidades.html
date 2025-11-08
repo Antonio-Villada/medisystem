@@ -1,0 +1,57 @@
+<div class="container">
+    <h2>Gestión de Especialidades</h2>
+
+    <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+
+    <form (ngSubmit)="saveEspecialidad()" class="especialidad-form">
+        <h3>{{ isEditing ? 'Editar' : 'Crear Nueva' }} Especialidad</h3>
+        
+        <input 
+            type="text" 
+            [(ngModel)]="especialidadForm.nombreEspecialidad" 
+            name="nombreEspecialidad" 
+            placeholder="Nombre de la Especialidad" 
+            required>
+        
+        <button type="submit" [disabled]="!especialidadForm.nombreEspecialidad.trim()">
+            {{ isEditing ? 'Guardar Cambios' : 'Crear Especialidad' }}
+        </button>
+        
+        <button type="button" *ngIf="isEditing" (click)="resetForm()">
+            Cancelar Edición
+        </button>
+    </form>
+
+    <hr>
+    
+    <button (click)="loadEspecialidades()" [disabled]="loading">
+        {{ loading ? 'Recargando...' : 'Recargar Lista' }}
+    </button>
+    
+    <h3>Lista de Especialidades</h3>
+
+    <p *ngIf="loading">Cargando especialidades...</p>
+
+    <table *ngIf="!loading && especialidades.length > 0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let especialidad of especialidades">
+                <td>{{ especialidad.idEspecialidad }}</td>
+                <td>{{ especialidad.nombreEspecialidad }}</td>
+                <td>
+                    <button (click)="editEspecialidad(especialidad)">Editar</button>
+                    <button (click)="deleteEspecialidad(especialidad.idEspecialidad)">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p *ngIf="!loading && especialidades.length === 0">No se encontraron especialidades.</p>
+</div>
