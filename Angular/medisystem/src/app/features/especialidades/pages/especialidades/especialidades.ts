@@ -1,48 +1,49 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core'; // Importamos 'inject'
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para el two-way data binding de los formularios
-import { Especialidad } from '../../models/especialidad.interface'; // Importamos la interfaz Especialidad
-import { EspecialidadService } from '../../service/especialidad.service'; // Importamos el servicio EspecialidadService
+import { FormsModule } from '@angular/forms';
+import { Especialidad } from '../../models/especialidad.interface';
+import { EspecialidadService } from '../../service/especialidad.service'; // Asegúrate de que este servicio use @Injectable()
 
 @Component({
   selector: 'app-especialidades',
-  // Asegúrate de incluir FormsModule si vas a usar formularios en el HTML
   imports: [CommonModule, FormsModule], 
-  standalone: true, // Asumo que es standalone
+  standalone: true, 
   templateUrl: './especialidades.html',
   styleUrl: './especialidades.css'
 })
-export class Especialidades implements OnInit { 
+export class EspecialidadesComponent implements OnInit { 
+
+  // 1. INYECCIÓN DE DEPENDENCIAS usando 'inject()'
+  // La variable ahora es privada y se inicializa con la función 'inject()'
+  private especialidadService = inject(EspecialidadService);
 
   // --- Propiedades para el CRUD ---
 
-  // Leer (Read)
   public especialidades: Especialidad[] = [];
   public loading: boolean = true;
   public errorMessage: string | null = null;
   public successMessage: string | null = null;
 
-  // Crear/Editar (Create/Update)
-  // Objeto para el formulario (usado tanto para crear como para editar)
-  public especialidadForm: Especialidad = { nombreEspecialidad: '' };
-  public isEditing: boolean = false; // Bandera para saber si estamos editando
+  public especialidadForm: Partial<Especialidad> = { nombreEspecialidad: '' };
+  public isEditing: boolean = false; 
 
-  // --- Constructor e Inicialización ---
-
-  constructor(private especialidadService: EspecialidadService) { }
+  // El constructor ahora está vacío o puede eliminarse si no hace nada más.
+  // constructor() { } 
 
   ngOnInit(): void {
     this.loadEspecialidades();
   }
 
-  // --- 1. Leer (Read) - (Obtener todas) ---
+  // -------------------------------------------------------------------
+  // --- 1. Leer (Read) ------------------------------------------------
+  // -------------------------------------------------------------------
 
   loadEspecialidades(): void {
     this.loading = true;
     this.errorMessage = null;
     this.successMessage = null;
     
-    // Llama al servicio para obtener todas las especialidades
+    // Accedemos al servicio a través de 'this.especialidadService'
     this.especialidadService.getAll().subscribe({
       next: (data) => {
         this.especialidades = data;
@@ -56,60 +57,67 @@ export class Especialidades implements OnInit {
     });
   }
   
-  // --- 2. Crear y Actualizar (Create & Update) ---
+  // -------------------------------------------------------------------
+  // --- 2. Crear y Actualizar (Create & Update) -----------------------
+  // -------------------------------------------------------------------
 
-  // Establece el formulario para crear una nueva especialidad
   openCreateForm(): void {
     this.isEditing = false;
-    this.especialidadForm = { nombreEspecialidad: '' }; // Limpia el formulario
+    this.especialidadForm = { nombreEspecialidad: '' };
   }
 
-  // Establece el formulario para editar una especialidad existente
   editEspecialidad(especialidad: Especialidad): void {
     this.isEditing = true;
-    // Crea una copia profunda del objeto para evitar modificar la lista directamente
     this.especialidadForm = { ...especialidad };
   }
 
-  // Lógica para guardar (Crear o Actualizar)
   saveEspecialidad(): void {
-    // Validar que el campo no esté vacío
-    if (!this.especialidadForm.nombreEspecialidad.trim()) {
+    if (!this.especialidadForm.nombreEspecialidad || !this.especialidadForm.nombreEspecialidad.trim()) {
       this.errorMessage = 'El nombre de la especialidad no puede estar vacío.';
       return;
     }
+    
+    this.loading = true;
+    this.errorMessage = null;
 
     if (this.isEditing && this.especialidadForm.idEspecialidad) {
-      // Actualizar una Especialidad existente
-      this.especialidadService.update(this.especialidadForm.idEspecialidad, this.especialidadForm).subscribe({
+      // Actualizar
+      this.especialidadService.update(this.especialidadForm.idEspecialidad, this.especialidadForm as Especialidad).subscribe({
         next: (updatedEspecialidad) => {
           this.successMessage = `Especialidad "${updatedEspecialidad.nombreEspecialidad}" actualizada correctamente.`;
-          this.loadEspecialidades(); // Recarga la lista
+          this.loadEspecialidades(); 
           this.resetForm();
         },
         error: (error) => {
           console.error('Error al actualizar:', error);
           this.errorMessage = 'Error al actualizar la especialidad.';
+          this.loading = false;
         }
       });
     } else {
-      // Crear una nueva Especialidad
-      // No envía idEspecialidad ya que el backend lo genera automáticamente
-      this.especialidadService.create(this.especialidadForm).subscribe({
-        next: (newEspecialidad) => {
-          this.successMessage = `Especialidad "${newEspecialidad.nombreEspecialidad}" creada correctamente con ID: ${newEspecialidad.idEspecialidad}.`;
-          this.loadEspecialidades(); // Recarga la lista
+      // Crear
+      const newEspecialidad: Especialidad = { 
+        nombreEspecialidad: this.especialidadForm.nombreEspecialidad! // Usamos '!' ya validamos que no es null
+      };
+
+      this.especialidadService.create(newEspecialidad).subscribe({
+        next: (createdEspecialidad) => {
+          this.successMessage = `Especialidad "${createdEspecialidad.nombreEspecialidad}" creada correctamente.`;
+          this.loadEspecialidades(); 
           this.resetForm();
         },
         error: (error) => {
           console.error('Error al crear:', error);
           this.errorMessage = 'Error al crear la especialidad.';
+          this.loading = false;
         }
       });
     }
   }
 
-  // --- 3. Eliminar (Delete) ---
+  // -------------------------------------------------------------------
+  // --- 3. Eliminar (Delete) ------------------------------------------
+  // -------------------------------------------------------------------
 
   deleteEspecialidad(id: number | undefined): void {
     if (id === undefined) {
@@ -121,15 +129,18 @@ export class Especialidades implements OnInit {
     const confirmation = confirm(`¿Estás seguro de que quieres eliminar la especialidad: ${especialidadToDelete?.nombreEspecialidad}?`);
 
     if (confirmation) {
-      // Llama al método delete del servicio
+      this.loading = true;
+      this.errorMessage = null;
+      
       this.especialidadService.delete(id).subscribe({
         next: () => {
-          this.successMessage = `Especialidad eliminada correctamente.`;
-          this.loadEspecialidades(); // Recarga la lista para reflejar el cambio
+          this.successMessage = `Especialidad "${especialidadToDelete?.nombreEspecialidad}" eliminada correctamente.`;
+          this.loadEspecialidades(); 
         },
         error: (error) => {
           console.error('Error al eliminar:', error);
           this.errorMessage = 'Error al eliminar la especialidad.';
+          this.loading = false;
         }
       });
     }
@@ -140,6 +151,7 @@ export class Especialidades implements OnInit {
   resetForm(): void {
     this.isEditing = false;
     this.especialidadForm = { nombreEspecialidad: '' };
-    this.errorMessage = null; // Limpia errores después de una operación exitosa
+    this.errorMessage = null; 
+    this.loading = false;
   }
 }

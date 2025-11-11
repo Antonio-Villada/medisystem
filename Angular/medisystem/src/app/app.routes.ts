@@ -6,8 +6,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { CitasComponent } from './pages/citas/citas.component';
 import { OrdenesComponent } from './pages/ordenes/ordenes.component';
 import { EpsComponent } from './features/eps/pages/eps/eps'; 
-import { Especialidades } from './features/especialidades/pages/especialidades/especialidades';
 import { Medicamentos } from './features/medicamentos/pages/medicamentos/medicamentos';
+import { EspecialidadesComponent } from './features/especialidades/pages/especialidades/especialidades';
 // --- PASO 1: IMPORTA AMBOS GUARDIANES ---
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard'; // <-- AÑADIDO
@@ -59,7 +59,7 @@ export const routes: Routes = [
   // /Especialidades solo para ADMINISTRADOR
   {
     path: 'Especialidades',
-    component: Especialidades,
+    component: EspecialidadesComponent,
     canActivate: [
       authGuard,
       roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO

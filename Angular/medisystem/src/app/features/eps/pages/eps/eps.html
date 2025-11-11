@@ -7,6 +7,7 @@
 
   <div class="form-card">
     <h2>{{ isEditing ? 'Editar EPS' : 'Crear Nueva EPS' }}</h2>
+    
     <form (ngSubmit)="saveEps()">
       <div class="form-group">
         <label for="nombreEps">Nombre de la EPS</label>
@@ -14,14 +15,16 @@
           id="nombreEps"
           name="nombreEps"
           type="text"
-          [(ngModel)]="currentEps.nombreEps"
+          [(ngModel)]="currentEps.nombreEps" 
           required
           minlength="3"
         />
       </div>
+      
       <button type="submit" [disabled]="!currentEps.nombreEps">
         {{ isEditing ? 'Guardar Cambios' : 'Crear EPS' }}
       </button>
+      
       <button type="button" (click)="prepareCreate()">Cancelar</button>
     </form>
   </div>
@@ -44,6 +47,7 @@
             <button (click)="prepareEdit(eps)" class="btn-edit">
               Editar
             </button>
+            
             <button (click)="deleteEps(eps.idEps!)" class="btn-delete">
               Eliminar
             </button>

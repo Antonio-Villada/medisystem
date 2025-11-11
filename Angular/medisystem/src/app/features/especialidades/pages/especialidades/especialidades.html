@@ -14,7 +14,7 @@
             placeholder="Nombre de la Especialidad" 
             required>
         
-        <button type="submit" [disabled]="!especialidadForm.nombreEspecialidad.trim()">
+        <button type="submit" [disabled]="!especialidadForm.nombreEspecialidad?.trim()">
             {{ isEditing ? 'Guardar Cambios' : 'Crear Especialidad' }}
         </button>
         
