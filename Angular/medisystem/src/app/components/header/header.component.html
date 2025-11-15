@@ -9,25 +9,33 @@
 
     <div class="collapse navbar-collapse" id="navbarContent">
 
+      <!-- Todos los enlaces están visibles, como en tu versión anterior -->
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">Inicio</a>
+          <!-- CORRECCIÓN: Añadido routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/home">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/Citas">Citas</a>
+          <!-- CORRECCIÓN: Ruta en minúscula y routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/citas">Citas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/Ordenes">Órdenes</a>
+          <!-- CORRECCIÓN: Ruta y texto correctos, y routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/formulas">Formulas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/Eps">Eps</a>
+          <!-- CORRECCIÓN: Ruta en minúscula y routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/eps">Eps</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/Medicamentos">Medicamentos</a>
+          <!-- CORRECCIÓN: Ruta en minúscula y routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/medicamentos">Medicamentos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/Especialidades">Especialidades</a>
-        <li>
+          <!-- CORRECCIÓN: Ruta en minúscula y routerLinkActive="active" -->
+          <a class="nav-link" routerLinkActive="active" routerLink="/especialidades">Especialidades</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar sesión</a>
         </li>
       </ul>

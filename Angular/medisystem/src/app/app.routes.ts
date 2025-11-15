@@ -3,78 +3,93 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/pages/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import { CitasComponent } from './pages/citas/citas.component';
-import { OrdenesComponent } from './pages/ordenes/ordenes.component';
-import { EpsComponent } from './features/eps/pages/eps/eps'; 
-import { Medicamentos } from './features/medicamentos/pages/medicamentos/medicamentos';
-import { EspecialidadesComponent } from './features/especialidades/pages/especialidades/especialidades';
-// --- PASO 1: IMPORTA AMBOS GUARDIANES ---
+
+// --- IMPORTA AMBOS GUARDIANES ---
 import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard'; // <-- AÑADIDO
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  // Rutas públicas
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+  // --- Rutas Públicas ---
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
+    path: '', // Redirige a /home (ruta protegida)
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
 
-  // --- PASO 2: APLICA AMBOS GUARDIANES A LAS RUTAS PRIVADAS ---
-
-  // /home solo necesita estar autenticado
+  // --- Rutas Protegidas (Requieren solo Autenticación) ---
   {
     path: 'home',
     component: HomeComponent,
     canActivate: [authGuard],
   },
 
-  // /Citas necesita estar autenticado Y tener uno de los 3 roles
-  {
-    path: 'Citas',
-    component: CitasComponent,
-    // El array 'canActivate' puede tener múltiples guardianes.
-    // Se ejecutan en orden.
-    canActivate: [
-      authGuard,
-      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']), // <-- AÑADIDO
-    ],
-  },
+  // --- Rutas Protegidas por Rol (Basado en GET de tu backend) ---
 
-  // /Ordenes también necesita estar autenticado Y tener un rol
   {
-    path: 'Ordenes',
-    component: OrdenesComponent,
+    // CORRECCIÓN: Ruta en minúscula
+    path: 'citas',
+    loadComponent: () => import('./pages/citas/citas.component').then((m) => m.CitasComponent),
     canActivate: [
       authGuard,
-      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']), // <-- AÑADIDO
+      // CORRECTO: Todos los roles pueden ver sus citas
+      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']),
     ],
   },
-  // /Eps solo para ADMINISTRADOR
   {
-    path: 'Eps',
-    component: EpsComponent,
+    // CORRECCIÓN: Ruta en minúscula y nombre 'formulas'
+    path: 'formulas',
+    loadComponent: () =>
+      import('./features/formulas/pages/formula-list.component').then(
+        (m) => m.FormulaListComponent
+      ),
     canActivate: [
       authGuard,
-      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
+      // CORRECCIÓN: Arreglado el tipo 'ADMINISTRADOR'
+      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']),
     ],
   },
-  // /Especialidades solo para ADMINISTRADOR
   {
-    path: 'Especialidades',
-    component: EspecialidadesComponent,
+    // CORRECCIÓN: Ruta en minúscula
+    path: 'eps',
+    loadComponent: () =>
+      import('./features/eps/pages/eps/eps').then((m) => m.EpsComponent),
     canActivate: [
       authGuard,
-      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
+      // CORRECCIÓN: Tu backend (GET /eps) permite a todos ver la lista
+      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']),
     ],
   },
-  // /Medicamentos solo para ADMINISTRADOR
   {
-    path: 'Medicamentos',
-    component: Medicamentos,
+    // CORRECCIÓN: Ruta en minúscula
+    path: 'especialidades',
+    loadComponent: () =>
+      import('./features/especialidades/pages/especialidades/especialidades').then(
+        (m) => m.EspecialidadesComponent
+      ),
     canActivate: [
       authGuard,
-      roleGuard(['ADMINISTRADOR']), // <-- AÑADIDO
+      // CORRECCIÓN: Tu backend (GET /especialidades) permite a todos ver la lista
+      roleGuard(['ADMINISTRADOR', 'MEDICO', 'PACIENTE']),
+    ],
+  },
+  {
+    // CORRECCIÓN: Ruta en minúscula
+    path: 'medicamentos',
+    loadComponent: () =>
+      import('./features/medicamentos/pages/medicamentos/medicamentos').then(
+        (m) => m.Medicamentos
+      ),
+    canActivate: [
+      authGuard,
+      // CORRECCIÓN: Tu backend (GET /medicamentos) permite a ADMIN y MEDICO
+      roleGuard(['ADMINISTRADOR', 'MEDICO']),
     ],
   },
 
   // Ruta comodín
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'home' }, // Mejor redirigir a home si ya está logueado
 ];

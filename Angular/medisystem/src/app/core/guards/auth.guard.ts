@@ -1,25 +1,31 @@
-// src/app/core/guards/auth.guard.ts
-
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { JwtStorageService } from '../services/jwt-storage.service';
+// 1. CAMBIO: Importamos el AuthService (reactivo)
+import { AuthService } from '../services/auth.service';
+import { map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /**
  * Este guardián protege las rutas que requieren que el usuario esté autenticado.
- * (Versión simple)
+ * (Versión Reactiva)
  */
 export const authGuard: CanActivateFn = (route, state) => {
-  // 1. Obtenemos los servicios que necesitamos (el de JWT y el Router)
-  const jwtStorage = inject(JwtStorageService);
+  // 2. CAMBIO: Inyectamos el AuthService
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  // 2. Usamos el método que ya tenías en JwtStorageService
-  if (jwtStorage.estaAutenticado()) {
-    // Si tiene un token, puede continuar a la ruta
-    return true;
-  }
+  // 3. CAMBIO: Escuchamos el observable user$
+  return authService.user$.pipe(
+    take(1), // Tomamos solo el valor actual
+    map((user) => {
+      if (user) {
+        // Si hay un usuario en el estado, puede pasar
+        return true;
+      }
 
-  // 3. Si no tiene token, lo redirigimos a la página de login
-  router.navigate(['/login']);
-  return false;
+      // Si no hay usuario, redirigimos a login
+      router.navigate(['/login']);
+      return false;
+    })
+  ) as Observable<boolean>; // Aseguramos el tipo de retorno
 };

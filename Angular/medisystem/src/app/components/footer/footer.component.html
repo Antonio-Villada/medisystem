@@ -1,1 +1,41 @@
-<p>footer works!</p>
+<!--
+  NOTA: No usamos 'fixed-bottom'.
+  El posicionamiento se maneja en 'app.component.html' con Flexbox.
+-->
+<footer class="footer-container bg-dark text-light p-4">
+  <div class="container">
+    <div class="row">
+
+      <!-- Columna 1: Información de la App -->
+      <div class="col-md-4 mb-3">
+        <h5 class="text-uppercase">{{ appInfo.name }}</h5>
+        <!-- CORRECCIÓN DE CONTRASTE: Usamos text-secondary para el texto grisado -->
+        <p class="text-secondary mb-0">
+          {{ appInfo.description }} (v{{ appInfo.version }})
+        </p>
+      </div>
+
+      <!-- Columna 2: Espaciador -->
+      <div class="col-md-4 mb-3">
+        <!-- Puedes añadir enlaces rápidos aquí en el futuro -->
+      </div>
+
+      <!-- Columna 3: Integrantes -->
+      <div class="col-md-4 mb-3">
+        <h5 class="text-uppercase">Integrantes</h5>
+        <ul class="list-unstyled mb-0">
+          <!-- Iteramos sobre los integrantes -->
+          <li *ngFor="let integrante of appInfo.integrantes" class="text-secondary">
+            {{ integrante }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="border-top border-secondary my-2">
+
+    <div class="text-center text-secondary">
+      <small>&copy; {{ currentYear }} MediSystem. Todos los derechos reservados.</small>
+    </div>
+  </div>
+</footer>

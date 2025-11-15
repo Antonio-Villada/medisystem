@@ -1,0 +1,11 @@
+/* Estilos del Footer
+  No se necesita mucho gracias a Bootstrap.
+*/
+.footer-container {
+  /* Establecemos el color de fondo en el CSS
+     para mantener el HTML limpio (opcional) */
+  background-color: #212529;
+  /* Color 'dark' de Bootstrap */
+  flex-shrink: 0;
+  /* Evita que el footer se encoja */
+}

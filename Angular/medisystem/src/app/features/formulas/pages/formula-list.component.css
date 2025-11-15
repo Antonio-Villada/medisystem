@@ -1,0 +1,5 @@
+/* Puedes añadir estilos específicos para el modal o la tabla aquí si lo necesitas */
+.modal {
+  /* Asegura que el modal aparezca sobre el navbar (si usas uno fijo) */
+  z-index: 1050;
+}

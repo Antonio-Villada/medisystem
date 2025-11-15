@@ -5,6 +5,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-header',
   standalone: true,
+  // Ya no necesitamos CommonModule porque quitamos los *ngIf
   imports: [RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],

@@ -2,11 +2,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, BehaviorSubject, switchMap, of } from 'rxjs'; // Imports actualizados
+// Imports actualizados para el estado reactivo
+import { Observable, tap, BehaviorSubject } from 'rxjs';
 import { JwtStorageService } from './jwt-storage.service';
 import { LoginRequest, LoginResponse } from '../models/auth.models';
-import { jwtDecode } from 'jwt-decode'; // <-- ¡Importante! Instala con: npm install jwt-decode
-import { PacientePerfil,PacienteService,} from '../../features/pacientes/services/paciente.service';
+// ¡Importante! Instala con: npm install jwt-decode
+import { jwtDecode } from 'jwt-decode';
+// Importamos environment (asumiendo que lo tienes configurado)
 import { environment } from '../../../environments/environment';
 
 // Datos del usuario que mantendremos en memoria
@@ -20,18 +22,19 @@ export interface UserData {
   providedIn: 'root',
 })
 export class AuthService {
+  // Usamos la variable de entorno para la URL de la API
   private readonly API_URL = environment.API_URL + '/auth/';
 
-  // BehaviorSubject para manejar el estado del usuario
+  // BehaviorSubject para manejar el estado del usuario de forma reactiva
   private user = new BehaviorSubject<UserData | null>(null);
   public user$ = this.user.asObservable();
 
   constructor(
     private http: HttpClient,
     private jwtStorage: JwtStorageService,
-    private router: Router,
-    private pacienteService: PacienteService // Inyectamos el servicio de paciente
-  ) {
+    private router: Router
+  ) // Quitamos la dependencia de PacienteService, como acordamos en tu corrección
+  {
     // Al cargar el servicio, intenta cargar al usuario si hay un token
     this.cargarUsuarioDesdeToken();
   }
@@ -46,12 +49,22 @@ export class AuthService {
     return this.user.value?.idPaciente ?? null;
   }
 
+  // (Temporalmente, hasta que se implemente la carga del ID del paciente)
+  public setIdPaciente(id: string) {
+    const currentUser = this.user.value;
+    if (currentUser) {
+      this.user.next({ ...currentUser, idPaciente: id });
+    }
+  }
+
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.API_URL + 'login', credentials).pipe(
       tap((response) => {
+        // 1. Guardar token en localStorage
         this.jwtStorage.guardarToken(response.jwtToken);
-        // Decodifica y guarda los datos del usuario
+        // 2. Decodifica, extrae roles/username y actualiza el BehaviorSubject
         this.procesarToken(response.jwtToken);
+        // 3. Redirige
         this.router.navigate(['/home']);
       })
     );
@@ -59,7 +72,7 @@ export class AuthService {
 
   logout(): void {
     this.jwtStorage.limpiar();
-    this.user.next(null); // Limpia el usuario
+    this.user.next(null); // Limpia el usuario del estado reactivo
     this.router.navigate(['/login']);
   }
 
@@ -72,28 +85,25 @@ export class AuthService {
     }
   }
 
-  // src/app/core/services/auth.service.ts
-
+  // Procesa el token para extraer datos y actualizar el estado
   private procesarToken(token: string): void {
     try {
+      // Usamos 'any' para flexibilidad, pero idealmente se define una interface
       const decodedToken: any = jwtDecode(token);
-      const username = decodedToken.sub;
-      const roles = decodedToken.roles; // Tus roles [cite: 1360]
 
-      // --- INICIO DE LA CORRECCIÓN ---
-      // Ya no hacemos la llamada a pacienteService.getMiPerfil() AQUÍ.
-      // Simplemente guardamos los roles, igual que hacemos con ADMIN y MEDICO.
-      // Dejaremos la búsqueda del idPaciente para cuando entremos a la página de Citas.
+      const username = decodedToken.sub; // 'sub' (subject) es el username
+      const roles = decodedToken.roles; // Tus roles (basado en tu backend)
 
+      // Guardamos los datos del JWT en el estado
+      // Como acordamos, idPaciente se queda nulo por ahora.
       this.user.next({
         username: username,
         roles: roles,
-        idPaciente: null, // Lo dejaremos nulo POR AHORA
+        idPaciente: null,
       });
-
-      // --- FIN DE LA CORRECCIÓN ---
     } catch (error) {
-      console.error('Error decodificando el token', error);
+      console.error('Error decodificando el token (puede haber expirado)', error);
+      // Si el token es inválido o expiró, cerramos la sesión
       this.logout();
     }
   }
